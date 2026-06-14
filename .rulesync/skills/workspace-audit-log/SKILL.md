@@ -1,7 +1,9 @@
 ---
 name: workspace-audit-log
 description: >-
-  _workingspace/log/YYYYMM.md 査証ログを tools/kernel/workspace_audit_log.py で追記専用運用する。
+  _workingspace/log/YYYYMM.md へ workspace_audit_log.py で作業事実を追記専用で記録する。
+  コード・docs・設定を変更した後、テスト通過後、コミット前、セッション完了報告前に必ず適用する。
+  実装・レビュー修正・デプロイ・ドキュメント更新・Batch/Job 実行後など、作業セッションの締めでも使う。
   既存行の上書き・削除は行わない。
 targets: ["*"]
 ---
