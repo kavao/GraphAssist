@@ -19,6 +19,7 @@ GraphAssist subcommands. See each guide for path rules.
 | `sheet-pack` | Multiple PNGs → sprite sheet |
 | `sheet-split` | Sprite sheet → PNG cells |
 | `palette` | Dominant color extraction |
+| `assets fetch` / `assets materialize` / `assets list` | Curated free catalog fetch and list |
 
 ## ImageJob operations
 

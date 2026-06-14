@@ -73,6 +73,34 @@ LLM はパイプライン全体を 1 ファイルに書けます。
 | `mosaic.encode` | 画像 → MosaicArt JSON |
 | `mosaic.export` | MosaicArt JSON → JS / JSON テキスト |
 
+| `mosaic.export` | MosaicArt JSON → JS / JSON テキスト |
+| `assets.materialize` | カタログ素材の fetch + mirror（`ids` 省略で有効な全件） |
+
+## カタログ + Job
+
+```json
+{
+  "version": "1.0",
+  "commands": [
+    {"type": "assets.materialize", "ids": ["ornament-fleur-de-lis-simple"]},
+    {
+      "type": "job",
+      "input": "samples/source/demo_text_base.png",
+      "output": "generated/images/demo_catalog_pipeline.png",
+      "operations": [
+        {
+          "type": "composite",
+          "overlay": "samples/source/catalog/ornament-fleur-de-lis-simple.png",
+          "x": 308,
+          "y": 72,
+          "anchor": "top_left"
+        }
+      ]
+    }
+  ]
+}
+```
+
 ## 実行
 
 ```bash
@@ -84,7 +112,10 @@ uv run graphassist run samples/jobs/mosaic_pipeline.json
 
 ## サンプル
 
+- [samples/jobs/README.md](../../../samples/jobs/README.md) — Demo 一覧
 - [samples/jobs/mosaic_pipeline.json](../../../samples/jobs/mosaic_pipeline.json)
+- [samples/jobs/demo_catalog_pipeline_asset_ids.json](../../../samples/jobs/demo_catalog_pipeline_asset_ids.json) — 推奨（materialize + overlay_asset）
+- [samples/jobs/demo_catalog_pipeline.json](../../../samples/jobs/demo_catalog_pipeline.json)
 
 ## 参照
 

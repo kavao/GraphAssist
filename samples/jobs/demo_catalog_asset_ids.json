@@ -1,0 +1,41 @@
+{
+  "version": "1.0",
+  "input": "samples/source/demo_text_base.png",
+  "output": "generated/images/demo_catalog_asset_ids.png",
+  "operations": [
+    {
+      "type": "composite",
+      "overlay_asset": "ornament-fleur-de-lis-simple",
+      "x": 308,
+      "y": 72,
+      "anchor": "top_left"
+    },
+    {
+      "type": "composite",
+      "overlay_asset": "ornament-fleur-de-lis-outline",
+      "x": 16,
+      "y": 8,
+      "anchor": "top_left"
+    },
+    {
+      "type": "composite",
+      "overlay_asset": "ornament-laurel-wreath-icooon",
+      "x": 240,
+      "y": 8,
+      "anchor": "top_left"
+    },
+    {
+      "type": "text",
+      "content": "残業エクステンド",
+      "font": "assets/fonts/NotoSansJP-Regular.otf",
+      "size": 48,
+      "color": "#f0e040",
+      "x": 320,
+      "y": 48,
+      "direction": "vertical",
+      "line_spacing": 1.2,
+      "stroke_color": "#1a1a2e",
+      "stroke_width": 2
+    }
+  ]
+}

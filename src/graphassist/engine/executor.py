@@ -55,9 +55,9 @@ def apply_operation(img: Image.Image, op: Operation, *, root: Path) -> Image.Ima
 
 
 def execute_job(job: ImageJob, *, root: Path, dry_run: bool = False) -> tuple[Path, list[str]]:
-    input_path = job.resolved_input(must_exist=not dry_run)
+    input_path = job.resolved_input(root=root, must_exist=not dry_run)
     output_path = job.resolved_output()
-    steps: list[str] = [f"load {job.input}"]
+    steps: list[str] = [f"load {job.display_input}"]
 
     for op in job.operations:
         steps.append(f"{op.type} {op.model_dump(exclude={'type'})}")

@@ -1,0 +1,98 @@
+{
+  "version": "1.0",
+  "catalog_root": "runtime/assets/catalog",
+  "mirror_root": "samples/source/catalog",
+  "assets": [
+    {
+      "id": "ornament-fleur-de-lis-simple",
+      "kind": "svg",
+      "enabled": true,
+      "tags": ["ornament", "heraldic", "fleur-de-lis", "center"],
+      "description": "Simple heraldic fleur-de-lis (single path, ~1 KB)",
+      "license_name": "Public domain",
+      "copyright": "Author dedicated to public domain (Wikimedia Commons: NikNaks, optimised)",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Fleur-de-lis.svg",
+      "release": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/7/74/Fleur-de-lis.svg",
+        "license_url": "https://commons.wikimedia.org/wiki/File:Fleur-de-lis.svg"
+      },
+      "install": {
+        "path": "runtime/assets/catalog/svg/ornament-fleur-de-lis-simple.svg",
+        "mirror_svg": "samples/source/catalog/ornament-fleur-de-lis-simple.svg",
+        "mirror_raster": "samples/source/catalog/ornament-fleur-de-lis-simple.png"
+      },
+      "rasterize": {
+        "width": 128,
+        "backend": "resvg"
+      }
+    },
+    {
+      "id": "ornament-fleur-de-lis-outline",
+      "kind": "svg",
+      "enabled": true,
+      "tags": ["ornament", "heraldic", "fleur-de-lis", "outline"],
+      "description": "Outlined fleur-de-lis for overlays on dark UI",
+      "license_name": "Public domain",
+      "copyright": "Copyright holder released to public domain (Wikimedia)",
+      "source_url": "https://en.wikipedia.org/wiki/File:Fleur-de-lis-outline.svg",
+      "release": {
+        "url": "https://upload.wikimedia.org/wikipedia/en/a/a8/Fleur-de-lis-outline.svg",
+        "license_url": "https://en.wikipedia.org/wiki/File:Fleur-de-lis-outline.svg"
+      },
+      "install": {
+        "path": "runtime/assets/catalog/svg/ornament-fleur-de-lis-outline.svg",
+        "mirror_svg": "samples/source/catalog/ornament-fleur-de-lis-outline.svg",
+        "mirror_raster": "samples/source/catalog/ornament-fleur-de-lis-outline.png"
+      },
+      "rasterize": {
+        "width": 128,
+        "backend": "resvg"
+      }
+    },
+    {
+      "id": "ornament-laurel-wreath-icooon",
+      "kind": "svg",
+      "enabled": true,
+      "tags": ["ornament", "heraldic", "laurel", "wreath", "frame", "award"],
+      "description": "Laurel wreath icon for awards and headers (ICOON MONO, ~5 KB)",
+      "license_name": "ICOON MONO License",
+      "copyright": "TopeconHeroes (icooon-mono.com)",
+      "source_url": "https://icooon-mono.com/15552-%E6%9C%88%E6%A1%82%E5%86%A0%E3%82%A2%E3%82%A4%E3%82%B3%E3%83%B3/",
+      "release": {
+        "url": "https://icooon-mono.com/i/icon_15552/icon_155520.svg",
+        "license_url": "https://icooon-mono.com/license/"
+      },
+      "install": {
+        "path": "runtime/assets/catalog/svg/ornament-laurel-wreath-icooon.svg",
+        "mirror_svg": "samples/source/catalog/ornament-laurel-wreath-icooon.svg",
+        "mirror_raster": "samples/source/catalog/ornament-laurel-wreath-icooon.png"
+      },
+      "rasterize": {
+        "width": 128,
+        "backend": "resvg"
+      }
+    },
+    {
+      "id": "ui-panel-dark",
+      "kind": "svg",
+      "enabled": true,
+      "tags": ["ui", "panel", "background", "card"],
+      "description": "Dark rounded card panel 400x600 (project seed, demo_text_base 相当)",
+      "license_name": "CC0 1.0",
+      "copyright": "GraphAssist project (CC0 1.0)",
+      "source_url": "assets/catalog/seeds/ui-panel-dark.svg",
+      "release": {
+        "local": "assets/catalog/seeds/ui-panel-dark.svg"
+      },
+      "install": {
+        "path": "runtime/assets/catalog/svg/ui-panel-dark.svg",
+        "mirror_svg": "samples/source/catalog/ui-panel-dark.svg",
+        "mirror_raster": "samples/source/catalog/ui-panel-dark.png"
+      },
+      "rasterize": {
+        "width": 400,
+        "backend": "resvg"
+      }
+    }
+  ]
+}

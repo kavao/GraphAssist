@@ -64,6 +64,21 @@ Copyright and licenses: [assets/fonts/README.md](../../../assets/fonts/README.md
 
 JSON still references `assets/fonts/...`. `resolve_font` checks runtime first.
 
+## Asset catalog (CC0 / public domain)
+
+`setup-runtime` fetches SVG assets from `.rulesync/metadata/asset-catalog.jsonc` and mirrors SVG + PNG to `samples/source/catalog/`.
+
+```powershell
+.\scripts\setup-runtime.ps1
+uv run python scripts/runtime_fetch.py --catalog-only
+uv run graphassist assets fetch --id ornament-fleur-de-lis-simple
+```
+
+PNG rasterization requires **resvg-py** (`uv sync --extra catalog` or dev dependencies).
+
+Index: [samples/jobs/catalog/index.json](../../../samples/jobs/catalog/index.json)  
+Copyright: `assets/catalog/NOTICES.md` after setup.
+
 ## Future AI weights
 
 Reserved layout for optional models (e.g. background removal):

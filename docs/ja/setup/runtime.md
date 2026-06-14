@@ -64,6 +64,23 @@ runtime/bin/graphassist.exe
 
 JSON では従来どおり `assets/fonts/...` を指定します。`resolve_font` が runtime を優先参照します。
 
+## 素材カタログ（CC0 / Public domain）
+
+`setup-runtime` が `.rulesync/metadata/asset-catalog.jsonc` の SVG を取得し、`samples/source/catalog/` に SVG + PNG を配置します。
+
+```powershell
+.\scripts\setup-runtime.ps1
+# カタログのみ
+uv run python scripts/runtime_fetch.py --catalog-only
+# 特定 id のみ
+uv run graphassist assets fetch --id ornament-fleur-de-lis-simple
+```
+
+SVG の PNG 化には **resvg-py** が必要です（dev 依存に含む。本番のみなら `uv sync --extra catalog`）。
+
+索引: [samples/jobs/catalog/index.json](../../../samples/jobs/catalog/index.json)  
+著作権: setup 後の `assets/catalog/NOTICES.md`
+
 ## 将来の AI 重み
 
 背景白抜き等の重みは枠だけ用意:

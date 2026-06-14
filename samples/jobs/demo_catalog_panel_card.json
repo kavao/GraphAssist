@@ -1,0 +1,36 @@
+{
+  "version": "1.0",
+  "commands": [
+    {
+      "type": "assets.materialize",
+      "ids": ["ui-panel-dark", "ornament-fleur-de-lis-simple"]
+    },
+    {
+      "type": "job",
+      "input_asset": "ui-panel-dark",
+      "output": "generated/images/demo_catalog_panel_card.png",
+      "operations": [
+        {
+          "type": "composite",
+          "overlay_asset": "ornament-fleur-de-lis-simple",
+          "x": 308,
+          "y": 72,
+          "anchor": "top_left"
+        },
+        {
+          "type": "text",
+          "content": "定時退社",
+          "font": "assets/fonts/NotoSansJP-Regular.otf",
+          "size": 36,
+          "color": "#f0e040",
+          "x": 320,
+          "y": 120,
+          "direction": "vertical",
+          "line_spacing": 1.15,
+          "stroke_color": "#1a1a2e",
+          "stroke_width": 2
+        }
+      ]
+    }
+  ]
+}

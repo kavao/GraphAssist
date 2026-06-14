@@ -1,0 +1,21 @@
+{
+  "version": "1.0",
+  "input": "samples/source/demo_text_base.png",
+  "output": "generated/images/demo_catalog_anchor_center.png",
+  "operations": [
+    {
+      "type": "composite",
+      "overlay_asset": "ornament-laurel-wreath-icooon",
+      "x": 200,
+      "y": 120,
+      "anchor": "center"
+    },
+    {
+      "type": "composite",
+      "overlay_asset": "ornament-fleur-de-lis-simple",
+      "x": 200,
+      "y": 320,
+      "anchor": "center"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "version": "1.0",
+  "input": "samples/source/demo_text_base.png",
+  "output": "generated/images/demo_catalog_minimal.png",
+  "operations": [
+    {
+      "type": "composite",
+      "overlay_asset": "ornament-fleur-de-lis-simple",
+      "x": 308,
+      "y": 72,
+      "anchor": "top_left"
+    }
+  ]
+}

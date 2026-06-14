@@ -6,6 +6,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
+from graphassist.assets_cmd import materialize_catalog
 from graphassist.engine.executor import execute_job
 from graphassist.mosaic_cmd import (
     MosaicDecodeOptions,
@@ -16,6 +17,7 @@ from graphassist.mosaic_cmd import (
     run_export,
 )
 from graphassist.schema.batch import (
+    AssetsMaterializeCommand,
     BatchManifest,
     JobCommand,
     MosaicDecodeCommand,
@@ -116,6 +118,12 @@ def _execute_command(command, *, root: Path) -> str:
         )
         return command.output or f"stdout ({command.format})"
 
+    if isinstance(command, AssetsMaterializeCommand):
+        installed, missing = materialize_catalog(force=command.force, ids=command.ids)
+        if missing:
+            raise RuntimeError(f"assets.materialize failed: {', '.join(missing)}")
+        return f"materialized: {', '.join(installed)}"
+
     raise TypeError(f"unsupported command: {type(command)}")
 
 
@@ -128,6 +136,10 @@ def _describe_command(command) -> str:
         return command.output
     if isinstance(command, MosaicExportCommand):
         return command.output or "stdout"
+    if isinstance(command, AssetsMaterializeCommand):
+        if command.ids:
+            return f"materialized: {', '.join(command.ids)}"
+        return "materialized: (all enabled catalog assets)"
     return "?"
 
 

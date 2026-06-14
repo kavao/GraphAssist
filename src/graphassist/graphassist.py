@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 from graphassist.version import __version__
+from graphassist.assets_cmd import run_assets_fetch, run_assets_list, run_assets_materialize
 from graphassist.batch_runner import run_batch_file
 from graphassist.convert_cmd import ConvertOptions, run_convert
 from graphassist.job_runner import run_job_file
@@ -153,6 +154,32 @@ def build_parser() -> argparse.ArgumentParser:
     palette.add_argument("--max-colors", type=int, default=16)
     palette.add_argument("--format", dest="fmt", default="json", choices=["json", "text"])
 
+    assets = sub.add_parser("assets", help="fetch curated catalog assets (CC0 / PD)")
+    assets_sub = assets.add_subparsers(dest="assets_command", required=True)
+    assets_fetch = assets_sub.add_parser("fetch", help="download and mirror catalog assets")
+    assets_fetch.add_argument("--force", action="store_true", help="re-download and re-rasterize")
+    assets_fetch.add_argument(
+        "--id",
+        action="append",
+        dest="ids",
+        metavar="ID",
+        help="fetch only these catalog ids (repeatable)",
+    )
+    assets_list = assets_sub.add_parser("list", help="list catalog asset definitions")
+    assets_list.add_argument("--format", dest="fmt", default="text", choices=["text", "json"])
+    assets_materialize = assets_sub.add_parser(
+        "materialize",
+        help="download and mirror catalog assets (alias of fetch)",
+    )
+    assets_materialize.add_argument("--force", action="store_true", help="re-download and re-rasterize")
+    assets_materialize.add_argument(
+        "--id",
+        action="append",
+        dest="ids",
+        metavar="ID",
+        help="materialize only these catalog ids (repeatable)",
+    )
+
     return parser
 
 
@@ -267,6 +294,14 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "palette":
         print(run_palette(args.input, max_colors=args.max_colors, fmt=args.fmt), end="")
         return 0
+
+    if args.command == "assets":
+        if args.assets_command == "fetch":
+            return run_assets_fetch(force=args.force, ids=args.ids)
+        if args.assets_command == "materialize":
+            return run_assets_materialize(force=args.force, ids=args.ids)
+        if args.assets_command == "list":
+            return run_assets_list(fmt=args.fmt)
 
     return 1
 

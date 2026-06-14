@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""GraphAssist runtime bootstrap: layout, binary/font fetch, manifest."""
+"""GraphAssist runtime bootstrap: layout, binary/font/catalog fetch, manifest."""
 
 from __future__ import annotations
 
@@ -15,6 +15,14 @@ from pathlib import Path
 
 def repo_root() -> Path:
     return Path(__file__).resolve().parents[1]
+
+
+def _bootstrap_import_path() -> None:
+    src = repo_root() / "src"
+    if src.is_dir():
+        src_str = str(src)
+        if src_str not in sys.path:
+            sys.path.insert(0, src_str)
 
 
 def read_jsonc(path: Path) -> dict:
@@ -58,7 +66,7 @@ def fetch_binary(root: Path, runtime: Path, component: dict, *, force: bool = Fa
     version = json.loads(meta_path.read_text(encoding="utf-8"))["version"] if meta_path.is_file() else "unknown"
     record["version"] = version
 
-    install_rel = component["install"].get(plat)
+    install_rel = component.get("install", {}).get(plat)
     release = component.get("release", {}).get(plat)
     if not install_rel or not release:
         record["note"] = "no release mapping for platform"
@@ -195,29 +203,55 @@ def write_font_notices(root: Path, runtime: Path, manifest: dict) -> None:
         dest.write_text(body, encoding="utf-8")
 
 
-def write_manifest(root: Path, runtime: Path, components: list[dict]) -> None:
+def write_manifest(
+    root: Path,
+    runtime: Path,
+    components: list[dict],
+    *,
+    catalog: list[dict] | None = None,
+) -> None:
     record = {
         "updated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "runtime_root": str(runtime),
         "components": components,
     }
+    if catalog is not None:
+        record["catalog"] = catalog
     local_manifest = runtime / "manifest.local.json"
     local_manifest.write_text(json.dumps(record, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
-def main() -> int:
+def _parse_args(argv: list[str]) -> tuple[bool, bool, bool, list[str] | None]:
+    force = "--force" in argv
+    catalog_only = "--catalog-only" in argv
+    skip_catalog = "--skip-catalog" in argv
+    ids: list[str] | None = None
+    for arg in argv:
+        if arg.startswith("--catalog-id="):
+            ids = [part for part in arg.split("=", 1)[1].split(",") if part]
+    return force, catalog_only, skip_catalog, ids
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = argv if argv is not None else sys.argv[1:]
+    force, catalog_only, skip_catalog, catalog_ids = _parse_args(args)
+
     root = repo_root()
     runtime = Path(
         __import__("os").environ.get("GRAPHASSIST_RUNTIME", str(root / "runtime"))
     ).resolve()
-    force = "--force" in sys.argv[1:]
 
-    for sub in ("bin", "assets/fonts", "assets/weights/bg-removal"):
+    for sub in ("bin", "assets/fonts", "assets/catalog/svg", "assets/weights/bg-removal"):
         (runtime / sub).mkdir(parents=True, exist_ok=True)
     (root / "assets/fonts").mkdir(parents=True, exist_ok=True)
+    (root / "assets/catalog").mkdir(parents=True, exist_ok=True)
+    (root / "samples/source/catalog").mkdir(parents=True, exist_ok=True)
 
     print("GraphAssist runtime setup")
     print(f"  runtime: {runtime}")
+
+    _bootstrap_import_path()
+    from graphassist.engine.catalog_fetch import fetch_catalog, write_catalog_notices
 
     meta_path = root / ".rulesync/metadata/graphassist.json"
     tool_version = "unknown"
@@ -225,30 +259,54 @@ def main() -> int:
         tool_version = json.loads(meta_path.read_text(encoding="utf-8"))["version"]
     print(f"  tool version (metadata): {tool_version}")
 
-    components, manifest = fetch_components(root, runtime, force=force)
-    write_manifest(root, runtime, components)
-    if manifest:
-        write_font_notices(root, runtime, manifest)
-        print(f"  font notices: {root / 'assets/fonts/NOTICES.md'}")
+    components: list[dict] = []
+    manifest: dict = {}
+    if not catalog_only:
+        components, manifest = fetch_components(root, runtime, force=force)
+        if manifest:
+            write_font_notices(root, runtime, manifest)
+            print(f"  font notices: {root / 'assets/fonts/NOTICES.md'}")
 
-    binary = next((c for c in components if c.get("id") == "graphassist"), None)
-    if binary and binary.get("present"):
-        print("  binary: OK")
-    else:
-        print("  binary: not installed")
-        print("    Run with network to fetch from GitHub Releases, or:")
-        print("    uv run graphassist --version")
+    catalog_records: list[dict] = []
+    catalog_manifest: dict = {}
+    if not skip_catalog:
+        catalog_records, catalog_manifest = fetch_catalog(root, force=force, ids=catalog_ids)
+        if catalog_manifest:
+            write_catalog_notices(root, runtime, catalog_manifest)
+            print(f"  catalog notices: {root / 'assets/catalog/NOTICES.md'}")
 
-    fonts = [c for c in components if c.get("kind") == "font"]
-    installed_fonts = [c["id"] for c in fonts if c.get("present")]
-    if installed_fonts:
-        print(f"  fonts: {', '.join(installed_fonts)}")
-    else:
-        print("  fonts: none installed")
+    if not catalog_only:
+        write_manifest(root, runtime, components, catalog=catalog_records or None)
+    elif catalog_records:
+        write_manifest(root, runtime, [], catalog=catalog_records)
+
+    if not catalog_only:
+        binary = next((c for c in components if c.get("id") == "graphassist"), None)
+        if binary and binary.get("present"):
+            print("  binary: OK")
+        else:
+            print("  binary: not installed")
+            print("    Run with network to fetch from GitHub Releases, or:")
+            print("    uv run graphassist --version")
+
+        fonts = [c for c in components if c.get("kind") == "font"]
+        installed_fonts = [c["id"] for c in fonts if c.get("present")]
+        if installed_fonts:
+            print(f"  fonts: {', '.join(installed_fonts)}")
+        else:
+            print("  fonts: none installed")
+
+    if not skip_catalog:
+        installed_catalog = [c["id"] for c in catalog_records if c.get("present")]
+        if installed_catalog:
+            print(f"  catalog: {', '.join(installed_catalog)}")
+        else:
+            print("  catalog: none installed")
 
     print(f"  manifest: {runtime / 'manifest.local.json'}")
     print("Done.")
-    return 0
+    missing_catalog = [c for c in catalog_records if not c.get("present")]
+    return 1 if missing_catalog else 0
 
 
 if __name__ == "__main__":

@@ -59,6 +59,34 @@ Single ImageJob files (no `commands` key) still use `graphassist job`.
 | `mosaic.encode` | Image → MosaicArt JSON |
 | `mosaic.export` | MosaicArt JSON → JS / JSON text |
 
+| `mosaic.export` | MosaicArt JSON → JS / JSON text |
+| `assets.materialize` | Fetch and mirror catalog assets (`ids` omitted = all enabled) |
+
+## Catalog + Job
+
+```json
+{
+  "version": "1.0",
+  "commands": [
+    {"type": "assets.materialize", "ids": ["ornament-fleur-de-lis-simple"]},
+    {
+      "type": "job",
+      "input": "samples/source/demo_text_base.png",
+      "output": "generated/images/demo_catalog_pipeline.png",
+      "operations": [
+        {
+          "type": "composite",
+          "overlay": "samples/source/catalog/ornament-fleur-de-lis-simple.png",
+          "x": 308,
+          "y": 72,
+          "anchor": "top_left"
+        }
+      ]
+    }
+  ]
+}
+```
+
 ## Run
 
 ```bash
@@ -70,7 +98,10 @@ Logs are written to `generated/logs/` as JSONL.
 
 ## Sample
 
+- [samples/jobs/README.md](../../../samples/jobs/README.md) — Demo index
 - [samples/jobs/mosaic_pipeline.json](../../../samples/jobs/mosaic_pipeline.json)
+- [samples/jobs/demo_catalog_pipeline_asset_ids.json](../../../samples/jobs/demo_catalog_pipeline_asset_ids.json) — recommended (materialize + overlay_asset)
+- [samples/jobs/demo_catalog_pipeline.json](../../../samples/jobs/demo_catalog_pipeline.json)
 
 ## See also
 

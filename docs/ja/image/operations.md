@@ -19,6 +19,7 @@
 | `sheet-pack` | 複数 PNG → スプライトシート |
 | `sheet-split` | スプライトシート → 複数 PNG |
 | `palette` | 支配色抽出 |
+| `assets fetch` / `assets materialize` / `assets list` | 権利フリー素材カタログ取得・一覧 |
 
 ## ImageJob operations
 

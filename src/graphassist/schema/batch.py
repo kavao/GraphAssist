@@ -6,6 +6,7 @@ from typing import Annotated, Literal, Union
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
+from graphassist.schema.catalog import validate_catalog_id
 from graphassist.schema.job import ImageJob
 from graphassist.schema.mosaic import MosaicArt
 from graphassist.schema.ops import Operation
@@ -19,15 +20,25 @@ from graphassist.schema.paths import (
 
 class JobCommand(BaseModel):
     type: Literal["job"]
-    input: str
+    input: str | None = None
+    input_asset: str | None = None
     output: str
     operations: list[Operation]
 
     @field_validator("input")
     @classmethod
-    def validate_input(cls, value: str) -> str:
+    def validate_input(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
         resolve_input(value, must_exist=False)
         return value
+
+    @field_validator("input_asset")
+    @classmethod
+    def validate_input_asset(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        return validate_catalog_id(value)
 
     @field_validator("output")
     @classmethod
@@ -35,10 +46,17 @@ class JobCommand(BaseModel):
         resolve_output(value)
         return value
 
+    @model_validator(mode="after")
+    def validate_input_source(self) -> JobCommand:
+        if (self.input is None) == (self.input_asset is None):
+            raise ValueError("job command requires exactly one of 'input' or 'input_asset'")
+        return self
+
     def to_image_job(self) -> ImageJob:
         return ImageJob(
             version="1.0",
             input=self.input,
+            input_asset=self.input_asset,
             output=self.output,
             operations=self.operations,
         )
@@ -118,8 +136,31 @@ class MosaicExportCommand(BaseModel):
         return value
 
 
+class AssetsMaterializeCommand(BaseModel):
+    type: Literal["assets.materialize"]
+    ids: list[str] | None = None
+    force: bool = False
+
+    @field_validator("ids")
+    @classmethod
+    def validate_ids(cls, value: list[str] | None) -> list[str] | None:
+        if value is None:
+            return None
+        if not value:
+            raise ValueError("ids must be non-empty when provided")
+        for asset_id in value:
+            validate_catalog_id(asset_id)
+        return value
+
+
 BatchCommand = Annotated[
-    Union[JobCommand, MosaicDecodeCommand, MosaicEncodeCommand, MosaicExportCommand],
+    Union[
+        JobCommand,
+        MosaicDecodeCommand,
+        MosaicEncodeCommand,
+        MosaicExportCommand,
+        AssetsMaterializeCommand,
+    ],
     Field(discriminator="type"),
 ]
 

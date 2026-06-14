@@ -9,12 +9,14 @@ LLM は ImageJob JSON を生成し、Python 側が Pydantic で検証して Pill
 
 | 種別 | 許可パス |
 |------|----------|
-| 入力・overlay | `samples/source/` 配下のみ |
+| 入力・overlay | `samples/source/` 配下のみ（catalog の PNG mirror 含む） |
 | 出力 | `generated/` 配下のみ |
 
 絶対パス、`..` による親参照は拒否されます。
 
 ## 最小例
+
+Job ルート: `input` **または** `input_asset`（土台の catalog id）、`output`、`operations`
 
 ```json
 {
@@ -53,7 +55,7 @@ uv run graphassist job samples/jobs/resize_border.json
 | `extend` | `left`, `right`, `top`, `bottom`, `fill` |
 | `rotate` | `degrees`, `fill` |
 | `border` | `size`, `color` |
-| `composite` | `overlay`, `x`, `y`, `anchor` |
+| `composite` | `overlay` **または** `overlay_asset`（カタログ id）、`x`, `y`, `anchor`（`center` で中心锚点） |
 | `text` | `content`, `font`, `size`, `color`, `x`, `y`, `stroke_color`, `stroke_width` |
 | `trim` | `background`, `padding`, `tolerance` |
 | `flatten` | `background` |
@@ -61,6 +63,8 @@ uv run graphassist job samples/jobs/resize_border.json
 `fill` / `color` / `background`: 名前または `#RRGGBB`（`transparent`, `white`, `black`, `red`, `green`, `blue`, `gray`）
 
 ## 合成例
+
+パス指定（従来）:
 
 ```json
 {
@@ -71,6 +75,48 @@ uv run graphassist job samples/jobs/resize_border.json
   "anchor": "top_left"
 }
 ```
+
+カタログ id 指定（materialize 済み、または実行時に自動 fetch）:
+
+```json
+{
+  "type": "composite",
+  "overlay_asset": "ornament-fleur-de-lis-simple",
+  "x": 24,
+  "y": 24
+}
+```
+
+id は `.rulesync/metadata/asset-catalog.jsonc` のホワイトリストのみ。一覧: `samples/jobs/catalog/index.json`
+
+## 土台の catalog id（input_asset）
+
+```json
+{
+  "version": "1.0",
+  "input_asset": "ui-panel-dark",
+  "output": "generated/images/card.png",
+  "operations": []
+}
+```
+
+`input` と `input_asset` は **どちらか一方**。materialize 後に `samples/source/catalog/ui-panel-dark.png` として解決されます。
+
+## anchor: center
+
+`x`, `y` を overlay の中心锚点として扱います。
+
+```json
+{
+  "type": "composite",
+  "overlay_asset": "ornament-fleur-de-lis-simple",
+  "x": 200,
+  "y": 300,
+  "anchor": "center"
+}
+```
+
+例: `samples/jobs/demo_catalog_anchor_center.json`
 
 ## 禁止事項（LLM 向け）
 

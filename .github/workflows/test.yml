@@ -27,6 +27,9 @@ jobs:
       - name: Sync dependencies
         run: uv sync --dev
 
+      - name: Materialize catalog assets
+        run: uv run graphassist assets fetch
+
       - name: Run unit tests
         run: uv run python -m unittest discover -s tests -v
 

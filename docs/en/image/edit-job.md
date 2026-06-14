@@ -53,7 +53,7 @@ Logs (JSONL, Markdown, replay script) are written under `generated/logs/`.
 | `extend` | `left`, `right`, `top`, `bottom`, `fill` |
 | `rotate` | `degrees`, `fill` |
 | `border` | `size`, `color` |
-| `composite` | `overlay`, `x`, `y`, `anchor` |
+| `composite` | `overlay` **or** `overlay_asset` (catalog id), `x`, `y`, `anchor` |
 | `text` | `content`, `font`, `size`, `color`, `x`, `y`, `stroke_color`, `stroke_width` |
 | `trim` | `background`, `padding`, `tolerance` |
 | `flatten` | `background` |
@@ -61,6 +61,8 @@ Logs (JSONL, Markdown, replay script) are written under `generated/logs/`.
 Allowed `fill` / `color` / `background`: name or `#RRGGBB` (`transparent`, `white`, `black`, `red`, `green`, `blue`, `gray`)
 
 ## Composite example
+
+Path (classic):
 
 ```json
 {
@@ -71,6 +73,38 @@ Allowed `fill` / `color` / `background`: name or `#RRGGBB` (`transparent`, `whit
   "anchor": "top_left"
 }
 ```
+
+Catalog id (after materialize, or auto-fetch at run time):
+
+```json
+{
+  "type": "composite",
+  "overlay_asset": "ornament-fleur-de-lis-simple",
+  "x": 24,
+  "y": 24
+}
+```
+
+Ids must exist in `.rulesync/metadata/asset-catalog.jsonc`. Index: `samples/jobs/catalog/index.json`
+
+## Catalog input (`input_asset`)
+
+```json
+{
+  "version": "1.0",
+  "input_asset": "ui-panel-dark",
+  "output": "generated/images/card.png",
+  "operations": []
+}
+```
+
+Use **either** `input` or `input_asset`, not both.
+
+## `anchor: center`
+
+Treat `x`, `y` as the overlay center point.
+
+Example: `samples/jobs/demo_catalog_anchor_center.json`
 
 ## Prohibited (for LLMs)
 

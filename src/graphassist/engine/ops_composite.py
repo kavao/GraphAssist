@@ -7,8 +7,16 @@ from pathlib import Path
 from PIL import Image
 
 from graphassist.engine.canvas import load
+from graphassist.engine.catalog_resolve import resolve_catalog_asset
 from graphassist.schema.paths import resolve_input
 from graphassist.schema.ops import CompositeOp
+
+
+def _resolve_overlay_path(op: CompositeOp, *, root: Path) -> Path:
+    if op.overlay_asset:
+        return resolve_catalog_asset(op.overlay_asset, root=root, must_exist=True)
+    assert op.overlay is not None
+    return resolve_input(op.overlay, root=root, must_exist=True)
 
 
 def _anchor_offset(base: Image.Image, overlay: Image.Image, op: CompositeOp) -> tuple[int, int]:
@@ -21,7 +29,7 @@ def _anchor_offset(base: Image.Image, overlay: Image.Image, op: CompositeOp) -> 
 
 
 def apply_composite(img: Image.Image, op: CompositeOp, *, root: Path) -> Image.Image:
-    overlay = load(resolve_input(op.overlay, root=root, must_exist=True))
+    overlay = load(_resolve_overlay_path(op, root=root))
     base = img.convert("RGBA")
     x, y = _anchor_offset(base, overlay, op)
     base.paste(overlay, (x, y), overlay)

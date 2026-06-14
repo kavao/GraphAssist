@@ -6,6 +6,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from PIL import Image
 
@@ -89,6 +90,21 @@ class JobTest(unittest.TestCase):
         _, steps = execute_job(job, root=self.root, dry_run=True)
         self.assertFalse(self.out.exists())
         self.assertIn("rotate", steps[1])
+
+    def test_dry_run_input_asset_no_side_effects(self) -> None:
+        job = ImageJob.model_validate(
+            {
+                "version": "1.0",
+                "input_asset": "ui-panel-dark",
+                "output": "generated/images/job_test_out.png",
+                "operations": [],
+            }
+        )
+        with patch("graphassist.assets_cmd.materialize_catalog") as mock_mat:
+            _, steps = execute_job(job, root=self.root, dry_run=True)
+            mock_mat.assert_not_called()
+        self.assertFalse(self.out.exists())
+        self.assertIn("asset:ui-panel-dark", steps[0])
 
     def test_rejects_unsafe_output(self) -> None:
         with self.assertRaises(Exception):

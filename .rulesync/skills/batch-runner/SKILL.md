@@ -46,6 +46,41 @@ uv run graphassist run samples/jobs/pipeline.json
 | `mosaic.decode` | CharGrid → 画像。**`input`（JSON パス）か `art`（インライン）のどちらか一方** |
 | `mosaic.encode` | 画像 → MosaicArt JSON |
 | `mosaic.export` | MosaicArt JSON → JS / JSON テキスト |
+| `assets.materialize` | カタログ素材を fetch + mirror（`ids` 省略で全件） |
+
+## カタログ + Job パイプライン
+
+カタログ PNG を Job で使う前に materialize する例:
+
+```json
+{
+  "version": "1.0",
+  "commands": [
+    {
+      "type": "assets.materialize",
+      "ids": ["ornament-fleur-de-lis-simple", "ornament-fleur-de-lis-outline"]
+    },
+    {
+      "type": "job",
+      "input": "samples/source/demo_text_base.png",
+      "output": "generated/images/demo_catalog_pipeline.png",
+      "operations": [
+        {
+          "type": "composite",
+          "overlay": "samples/source/catalog/ornament-fleur-de-lis-simple.png",
+          "x": 308,
+          "y": 72,
+          "anchor": "top_left"
+        }
+      ]
+    }
+  ]
+}
+```
+
+- カタログ id の一覧: `samples/jobs/catalog/index.json`
+- **新規 URL 追加は LLM 禁止** — manifest は人間が更新
+- 単体 fetch: `uv run graphassist assets fetch` / `assets materialize`
 
 ## JSON 例
 
@@ -96,7 +131,7 @@ uv run graphassist run samples/jobs/pipeline.json
 | 種別 | 許可パス |
 |------|----------|
 | Batch ファイル | `samples/jobs/` |
-| job / mosaic.encode 入力 | `samples/source/` |
+| job / mosaic.encode 入力 | `samples/source/`（catalog materialize 後の `samples/source/catalog/` 含む） |
 | mosaic.decode 入力 | `samples/mosaic/`, `generated/mosaic/` |
 | mosaic.encode / export 出力 JSON | `generated/mosaic/` |
 | 画像出力 | `generated/` |
@@ -111,4 +146,10 @@ uv run graphassist run samples/jobs/pipeline.json
 
 - [docs/ja/image/batch.md](../../docs/ja/image/batch.md)（編集正本）
 - [docs/en/image/batch.md](../../docs/en/image/batch.md)
+- カタログパイプライン → [catalog-assets スキル](../catalog-assets/SKILL.md)
+- [samples/jobs/README.md](../../samples/jobs/README.md) — Demo 一覧
 - [samples/jobs/mosaic_pipeline.json](../../samples/jobs/mosaic_pipeline.json)
+- [samples/jobs/demo_catalog_pipeline_asset_ids.json](../../samples/jobs/demo_catalog_pipeline_asset_ids.json) — **推奨** Batch
+- [samples/jobs/demo_catalog_pipeline.json](../../samples/jobs/demo_catalog_pipeline.json)
+- [samples/jobs/demo_catalog_asset_ids.json](../../samples/jobs/demo_catalog_asset_ids.json)
+- [samples/jobs/demo_catalog_minimal.json](../../samples/jobs/demo_catalog_minimal.json)

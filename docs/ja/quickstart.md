@@ -46,3 +46,15 @@ uv run graphassist job samples/jobs/resize_border.json
 ```
 
 詳細は [edit-job.md](image/edit-job.md) を参照してください。
+
+## カタログ素材（composite）
+
+権利フリー装飾・UI パネルは manifest から fetch し、Job で `overlay_asset` に id を指定します。
+
+```powershell
+uv run graphassist assets fetch
+uv run graphassist job samples/jobs/demo_catalog_minimal.json
+uv run graphassist run samples/jobs/demo_catalog_pipeline_asset_ids.json
+```
+
+一覧: [samples/jobs/README.md](../../samples/jobs/README.md) · 索引: [samples/jobs/catalog/index.json](../../samples/jobs/catalog/index.json) · スキル: [catalog-assets](../../.rulesync/skills/catalog-assets/SKILL.md)

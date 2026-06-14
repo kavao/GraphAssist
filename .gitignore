@@ -6,6 +6,15 @@ samples/source/temp_align/*
 !samples/source/temp_align/
 !samples/source/temp_align/README.md
 
+# ===== カタログ素材（fetch 後の SVG/PNG — Git 管理外） =====
+samples/source/catalog/*
+!samples/source/catalog/
+!samples/source/catalog/README.md
+assets/catalog/*.svg
+assets/catalog/*.png
+assets/catalog/*-LICENSE
+assets/catalog/NOTICES.md
+
 # ===== runtime（設置・バイナリ・重み — Git 管理外） =====
 runtime/**
 !runtime/README.md

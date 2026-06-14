@@ -35,8 +35,10 @@ rulesync が各 LLM ツールのスキル設定へ変換します。
 | `.rulesync/skills/image-job-runner/SKILL.md` | ImageJob JSON | `.rulesync/skills/image-job-runner/` |
 | `.rulesync/skills/batch-runner/SKILL.md` | Batch manifest | `.rulesync/skills/batch-runner/` |
 | `.rulesync/skills/mosaic-art/SKILL.md` | CharGrid | `.rulesync/skills/mosaic-art/` |
+| `.rulesync/skills/catalog-assets/SKILL.md` | 素材カタログ fetch / id 参照 | `.rulesync/skills/catalog-assets/` |
 | `.rulesync/metadata/graphassist.json` | GraphAssist バージョン正本 | `.rulesync/metadata/graphassist.json` |
 | `.rulesync/metadata/runtime-manifest.jsonc` | runtime 取得対象一覧 | 同左 |
+| `.rulesync/metadata/asset-catalog.jsonc` | 素材カタログ manifest | 同左 |
 
 ## rulesync.jsonc（rulesync 設定）
 

@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from typing import Annotated, Literal, Optional, Union
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from graphassist.engine.colors import is_allowed_color
+from graphassist.schema.catalog import validate_catalog_id
 from graphassist.schema.paths import resolve_font, resolve_input
 
 
@@ -70,16 +71,32 @@ class BorderOp(BaseModel):
 
 class CompositeOp(BaseModel):
     type: Literal["composite"]
-    overlay: str
+    overlay: str | None = None
+    overlay_asset: str | None = None
     x: int = Field(default=0, ge=-8000, le=8000)
     y: int = Field(default=0, ge=-8000, le=8000)
     anchor: Literal["top_left", "center"] = "top_left"
 
     @field_validator("overlay")
     @classmethod
-    def validate_overlay(cls, value: str) -> str:
+    def validate_overlay(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
         resolve_input(value, must_exist=False)
         return value
+
+    @field_validator("overlay_asset")
+    @classmethod
+    def validate_overlay_asset(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        return validate_catalog_id(value)
+
+    @model_validator(mode="after")
+    def validate_overlay_source(self) -> CompositeOp:
+        if (self.overlay is None) == (self.overlay_asset is None):
+            raise ValueError("composite requires exactly one of 'overlay' or 'overlay_asset'")
+        return self
 
 
 class TextOp(BaseModel):

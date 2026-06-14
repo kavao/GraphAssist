@@ -1,0 +1,38 @@
+{
+  "version": "1.0",
+  "description": "Curated free assets for ImageJob composite. Run setup-runtime / assets fetch (Phase S2) before use.",
+  "assets": [
+    {
+      "id": "ui-panel-dark",
+      "kind": "svg",
+      "tags": ["ui", "panel", "background", "card"],
+      "license": "CC0 1.0",
+      "svg": "samples/source/catalog/ui-panel-dark.svg",
+      "png": "samples/source/catalog/ui-panel-dark.png"
+    },
+    {
+      "id": "ornament-fleur-de-lis-simple",
+      "kind": "svg",
+      "tags": ["ornament", "heraldic", "fleur-de-lis", "center"],
+      "license": "Public domain",
+      "svg": "samples/source/catalog/ornament-fleur-de-lis-simple.svg",
+      "png": "samples/source/catalog/ornament-fleur-de-lis-simple.png"
+    },
+    {
+      "id": "ornament-fleur-de-lis-outline",
+      "kind": "svg",
+      "tags": ["ornament", "heraldic", "fleur-de-lis", "outline"],
+      "license": "Public domain",
+      "svg": "samples/source/catalog/ornament-fleur-de-lis-outline.svg",
+      "png": "samples/source/catalog/ornament-fleur-de-lis-outline.png"
+    },
+    {
+      "id": "ornament-laurel-wreath-icooon",
+      "kind": "svg",
+      "tags": ["ornament", "heraldic", "laurel", "wreath", "frame", "award"],
+      "license": "ICOON MONO License",
+      "svg": "samples/source/catalog/ornament-laurel-wreath-icooon.svg",
+      "png": "samples/source/catalog/ornament-laurel-wreath-icooon.png"
+    }
+  ]
+}

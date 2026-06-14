@@ -61,7 +61,7 @@ def write_logs(
     md_path.write_text(
         f"# Image Job Log ({mode})\n\n"
         f"## Job file\n`{json_path}`\n\n"
-        f"## Input\n`{job.input}`\n\n"
+        f"## Input\n`{job.display_input}`\n\n"
         f"## Output\n`{job.output}`\n\n"
         "## Steps\n"
         + "\n".join(f"- {s}" for s in steps)

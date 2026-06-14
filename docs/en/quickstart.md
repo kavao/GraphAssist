@@ -46,3 +46,15 @@ uv run graphassist job samples/jobs/resize_border.json
 ```
 
 See [edit-job.md](image/edit-job.md) for details.
+
+## Asset catalog (composite)
+
+Fetch curated overlays and UI panels, then reference catalog ids in ImageJob:
+
+```powershell
+uv run graphassist assets fetch
+uv run graphassist job samples/jobs/demo_catalog_minimal.json
+uv run graphassist run samples/jobs/demo_catalog_pipeline_asset_ids.json
+```
+
+Index: [samples/jobs/catalog/index.json](../../samples/jobs/catalog/index.json) · [samples/jobs/README.md](../../samples/jobs/README.md) · Skill: [catalog-assets](../../.rulesync/skills/catalog-assets/SKILL.md)
