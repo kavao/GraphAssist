@@ -1,5 +1,5 @@
 ﻿#!/usr/bin/env python3
-# Version: 0.1.0 (正本: .rulesync/metadata/graphassist.json)
+# Version: 0.2.0 (正本: .rulesync/metadata/graphassist.json)
 """GraphAssist 画像処理 CLI。"""
 
 from __future__ import annotations
