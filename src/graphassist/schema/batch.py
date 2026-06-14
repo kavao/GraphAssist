@@ -11,6 +11,8 @@ from graphassist.schema.job import ImageJob
 from graphassist.schema.mosaic import MosaicArt
 from graphassist.schema.ops import Operation
 from graphassist.schema.paths import (
+    is_under_output,
+    normalize_manifest_path,
     resolve_input,
     resolve_mosaic_json,
     resolve_mosaic_output,
@@ -30,7 +32,10 @@ class JobCommand(BaseModel):
     def validate_input(cls, value: str | None) -> str | None:
         if value is None:
             return None
-        resolve_input(value, must_exist=False)
+        if is_under_output(value):
+            resolve_output(value)
+        else:
+            resolve_input(value, must_exist=False)
         return value
 
     @field_validator("input_asset")
@@ -52,14 +57,17 @@ class JobCommand(BaseModel):
             raise ValueError("job command requires exactly one of 'input' or 'input_asset'")
         return self
 
-    def to_image_job(self) -> ImageJob:
-        return ImageJob(
-            version="1.0",
-            input=self.input,
-            input_asset=self.input_asset,
-            output=self.output,
-            operations=self.operations,
-        )
+    def to_image_job(self, *, batch_chained: bool = False) -> ImageJob:
+        payload = {
+            "version": "1.0",
+            "input": self.input,
+            "input_asset": self.input_asset,
+            "output": self.output,
+            "operations": self.operations,
+        }
+        if batch_chained:
+            return ImageJob.model_construct(**payload)
+        return ImageJob.model_validate(payload)
 
 
 class MosaicDecodeCommand(BaseModel):
@@ -153,6 +161,47 @@ class AssetsMaterializeCommand(BaseModel):
         return value
 
 
+class RoiSpec(BaseModel):
+    name: str = Field(min_length=1, max_length=64)
+    x: int = Field(ge=0, le=8000)
+    y: int = Field(ge=0, le=8000)
+    width: int = Field(ge=1, le=8000)
+    height: int = Field(ge=1, le=8000)
+
+
+class AnalyzeCommand(BaseModel):
+    type: Literal["analyze"]
+    input: str
+    compare: str | None = None
+    output: str
+    max_long_edge: int = Field(default=512, ge=0, le=8000)
+    max_colors: int = Field(default=8, ge=1, le=32)
+    alpha_threshold: int = Field(default=128, ge=0, le=255)
+    threshold_brightness: float = Field(default=0.15, ge=0.0, le=1.0)
+    threshold_palette: float = Field(default=0.30, ge=0.0, le=1.0)
+    spatial: bool = False
+    background: Literal["transparent", "white", "black"] = "transparent"
+    tolerance: int = Field(default=0, ge=0, le=255)
+    grid_rows: int = Field(default=3, ge=1, le=16)
+    grid_cols: int = Field(default=3, ge=1, le=16)
+    rois: list[RoiSpec] | None = None
+    full_profiles: bool = False
+
+    @field_validator("input", "compare")
+    @classmethod
+    def validate_input_paths(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        resolve_input(value, must_exist=False)
+        return value
+
+    @field_validator("output")
+    @classmethod
+    def validate_output(cls, value: str) -> str:
+        resolve_output(value)
+        return value
+
+
 BatchCommand = Annotated[
     Union[
         JobCommand,
@@ -160,14 +209,40 @@ BatchCommand = Annotated[
         MosaicEncodeCommand,
         MosaicExportCommand,
         AssetsMaterializeCommand,
+        AnalyzeCommand,
     ],
     Field(discriminator="type"),
 ]
 
 
+def command_output_path(command: BatchCommand) -> str | None:
+    if isinstance(command, MosaicExportCommand):
+        return command.output
+    if isinstance(command, (JobCommand, MosaicDecodeCommand, MosaicEncodeCommand, AnalyzeCommand)):
+        return command.output
+    return None
+
+
 class BatchManifest(BaseModel):
     version: Literal["1.0"]
     commands: list[BatchCommand] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_job_input_chain(self) -> BatchManifest:
+        prev_output: str | None = None
+        for index, command in enumerate(self.commands):
+            if isinstance(command, JobCommand) and command.input and is_under_output(command.input):
+                if prev_output is None:
+                    raise ValueError(
+                        f"commands[{index}]: job input under generated/ requires a preceding command output"
+                    )
+                if normalize_manifest_path(command.input) != normalize_manifest_path(prev_output):
+                    raise ValueError(
+                        f"commands[{index}]: job input {command.input!r} must match "
+                        f"previous command output {prev_output!r}"
+                    )
+            prev_output = command_output_path(command)
+        return self
 
 
 def is_batch_manifest(data: dict) -> bool:

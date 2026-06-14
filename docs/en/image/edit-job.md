@@ -106,6 +106,14 @@ Treat `x`, `y` as the overlay center point.
 
 Example: `samples/jobs/demo_catalog_anchor_center.json`
 
+## Text on CharGrid art
+
+For Japanese titles on pixel art, use **Batch `mosaic.decode` → `job` (`text`)**, not CharGrid row embedding.
+
+```bash
+uv run graphassist run samples/jobs/birds_on_trunk_pipeline.json
+```
+
 ## Prohibited (for LLMs)
 
 - Generating or running ImageMagick / raw shell commands

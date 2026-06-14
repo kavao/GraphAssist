@@ -1,0 +1,47 @@
+{
+  "version": "1.0",
+  "width": 24,
+  "height": 22,
+  "transparent": ".",
+  "palette": {
+    "R": "#E53935",
+    "r": "#C62828",
+    "B": "#1E88E5",
+    "b": "#1565C0",
+    "Y": "#FFEB3B",
+    "G": "#43A047",
+    "O": "#FF6F00",
+    "K": "#212121",
+    "W": "#FAFAFA",
+    "L": "#EF5350"
+  },
+  "rows": [
+    "........................",
+    "........................",
+    "...........RRRR.........",
+    "..........RRrrRR........",
+    ".........RRrrrrRR.......",
+    "........RRrrWWrrR.......",
+    ".......RRrrWKKKrrR......",
+    "......ORRRrrrrrrRR......",
+    ".....OOOOOBBBBBBBB......",
+    "....RRRRRRBBBBBBBBB.....",
+    "...RRRRRRRBBBBBBBBBB....",
+    "..RRRRRRRRRBBBBBBBBB....",
+    "..RRRRRRRRRRRRRRRRRR....",
+    "...RRRRRRGGGGGGGRRR.....",
+    "....RRRRRGGGGGGRRR......",
+    ".....RRRRRRRRRRR........",
+    "......RRRRRRRR..........",
+    ".......RRRR.............",
+    "........RR..............",
+    ".......KK.KK............",
+    "........................",
+    "........................"
+  ],
+  "meta": {
+    "title": "parrot",
+    "source": "llm",
+    "description": "コンゴウインコ風オウム（横顔・カラフル）"
+  }
+}

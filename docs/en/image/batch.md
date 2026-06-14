@@ -87,6 +87,12 @@ Single ImageJob files (no `commands` key) still use `graphassist job`.
 }
 ```
 
+## Previous command output as job input
+
+When **`job.input` equals the previous command’s `output` path** in a Batch manifest, inputs under `generated/` are allowed (standalone `graphassist job` still requires `samples/source/` only).
+
+See [birds_on_trunk_pipeline.json](../../../samples/jobs/birds_on_trunk_pipeline.json) for a `mosaic.decode` → `job` example with title text.
+
 ## Run
 
 ```bash
@@ -100,6 +106,7 @@ Logs are written to `generated/logs/` as JSONL.
 
 - [samples/jobs/README.md](../../../samples/jobs/README.md) — Demo index
 - [samples/jobs/mosaic_pipeline.json](../../../samples/jobs/mosaic_pipeline.json)
+- [samples/jobs/birds_on_trunk_pipeline.json](../../../samples/jobs/birds_on_trunk_pipeline.json) — mosaic.decode → job (titled)
 - [samples/jobs/demo_catalog_pipeline_asset_ids.json](../../../samples/jobs/demo_catalog_pipeline_asset_ids.json) — recommended (materialize + overlay_asset)
 - [samples/jobs/demo_catalog_pipeline.json](../../../samples/jobs/demo_catalog_pipeline.json)
 

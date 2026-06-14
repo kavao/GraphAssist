@@ -7,6 +7,7 @@ from pathlib import Path
 from PIL import Image
 
 from graphassist.engine.canvas import load, save
+from graphassist.engine.ops_adjust import apply_adjust
 from graphassist.engine.ops_composite import apply_composite
 from graphassist.engine.ops_geometry import (
     apply_border,
@@ -18,7 +19,9 @@ from graphassist.engine.ops_geometry import (
 from graphassist.engine.ops_text import apply_text
 from graphassist.engine.ops_trim import apply_flatten, apply_trim
 from graphassist.schema.job import ImageJob
+from graphassist.schema.paths import normalize_manifest_path, resolve_batch_chained_input
 from graphassist.schema.ops import (
+    AdjustOp,
     BorderOp,
     CompositeOp,
     CropOp,
@@ -51,11 +54,23 @@ def apply_operation(img: Image.Image, op: Operation, *, root: Path) -> Image.Ima
         return apply_trim(img, op)
     if isinstance(op, FlattenOp):
         return apply_flatten(img, op)
+    if isinstance(op, AdjustOp):
+        return apply_adjust(img, op)
     raise ValueError(f"unsupported operation: {op}")
 
 
-def execute_job(job: ImageJob, *, root: Path, dry_run: bool = False) -> tuple[Path, list[str]]:
-    input_path = job.resolved_input(root=root, must_exist=not dry_run)
+def execute_job(
+    job: ImageJob,
+    *,
+    root: Path,
+    dry_run: bool = False,
+    chained_input: bool = False,
+) -> tuple[Path, list[str]]:
+    if chained_input:
+        assert job.input is not None
+        input_path = resolve_batch_chained_input(job.input, root=root, must_exist=not dry_run)
+    else:
+        input_path = job.resolved_input(root=root, must_exist=not dry_run)
     output_path = job.resolved_output()
     steps: list[str] = [f"load {job.display_input}"]
 

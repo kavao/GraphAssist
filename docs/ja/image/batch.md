@@ -101,6 +101,35 @@ LLM はパイプライン全体を 1 ファイルに書けます。
 }
 ```
 
+## 直前 command の output を job input に
+
+Batch 内で **`job.input` が直前の command の `output` と同一パス** のとき、`generated/` 配下を入力として許可します（単体 `graphassist job` は従来どおり `samples/source/` のみ）。
+
+```json
+{
+  "version": "1.0",
+  "commands": [
+    {
+      "type": "mosaic.decode",
+      "input": "samples/mosaic/birds_on_trunk.json",
+      "output": "generated/images/birds_on_trunk_base.png",
+      "cell_size": 8
+    },
+    {
+      "type": "job",
+      "input": "generated/images/birds_on_trunk_base.png",
+      "output": "generated/images/birds_on_trunk.png",
+      "operations": [
+        {"type": "extend", "top": 56, "fill": "black"},
+        {"type": "text", "content": "インコとオウム", "font": "assets/fonts/PixelMplus12-Regular.ttf", "size": 20, "color": "white", "x": 130, "y": 10}
+      ]
+    }
+  ]
+}
+```
+
+`generated/` を job input に書く場合、**必ず直前 command の output と同じパス**にしてください。
+
 ## 実行
 
 ```bash
@@ -114,6 +143,7 @@ uv run graphassist run samples/jobs/mosaic_pipeline.json
 
 - [samples/jobs/README.md](../../../samples/jobs/README.md) — Demo 一覧
 - [samples/jobs/mosaic_pipeline.json](../../../samples/jobs/mosaic_pipeline.json)
+- [samples/jobs/birds_on_trunk_pipeline.json](../../../samples/jobs/birds_on_trunk_pipeline.json) — mosaic.decode → job（タイトル付き）
 - [samples/jobs/demo_catalog_pipeline_asset_ids.json](../../../samples/jobs/demo_catalog_pipeline_asset_ids.json) — 推奨（materialize + overlay_asset）
 - [samples/jobs/demo_catalog_pipeline.json](../../../samples/jobs/demo_catalog_pipeline.json)
 

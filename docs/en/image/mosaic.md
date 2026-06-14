@@ -73,7 +73,25 @@ Prints `const FINALE_ROCKET = [...]` to stdout for chat copy-paste.
 
 ## Sample
 
-- [samples/mosaic/finale_rocket.json](../../../samples/mosaic/finale_rocket.json) — rocket 8×10
+| JSON | Content | decode example |
+|------|---------|----------------|
+| [finale_rocket.json](../../../samples/mosaic/finale_rocket.json) | Rocket 8×10 | `uv run graphassist mosaic decode samples/mosaic/finale_rocket.json generated/images/finale_rocket.png --cell-size 8` |
+| [parakeet.json](../../../samples/mosaic/parakeet.json) | Parakeet (single) | `… parakeet.json generated/images/parakeet.png --cell-size 8` |
+| [parrot.json](../../../samples/mosaic/parrot.json) | Parrot (single) | `… parrot.json generated/images/parrot.png --cell-size 8` |
+| [birds_on_trunk.json](../../../samples/mosaic/birds_on_trunk.json) | Two birds + branch (composite) | `… birds_on_trunk.json generated/images/birds_on_trunk_base.png --cell-size 8` |
+
+Titled final PNG: use Batch manifest [birds_on_trunk_pipeline.json](../../../samples/jobs/birds_on_trunk_pipeline.json) (below).
+
+## Mosaic + text
+
+Readable Japanese titles should use **ImageJob `text`**, not CharGrid rows.  
+Use a Batch manifest (`mosaic.decode` → `job`) as the canonical one-command pipeline.
+
+```bash
+uv run graphassist run samples/jobs/birds_on_trunk_pipeline.json
+```
+
+See [batch.md](batch.md) — “Previous command output as job input”.
 
 ## See also
 

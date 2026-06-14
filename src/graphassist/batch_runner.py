@@ -6,6 +6,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
+from graphassist.analyze_cmd import run_analyze
 from graphassist.assets_cmd import materialize_catalog
 from graphassist.engine.executor import execute_job
 from graphassist.mosaic_cmd import (
@@ -17,16 +18,18 @@ from graphassist.mosaic_cmd import (
     run_export,
 )
 from graphassist.schema.batch import (
+    AnalyzeCommand,
     AssetsMaterializeCommand,
     BatchManifest,
     JobCommand,
     MosaicDecodeCommand,
     MosaicEncodeCommand,
     MosaicExportCommand,
+    command_output_path,
     is_batch_manifest,
 )
 from graphassist.schema.job import ImageJob
-from graphassist.schema.paths import project_root, resolve_batch_file
+from graphassist.schema.paths import normalize_manifest_path, project_root, resolve_batch_file
 
 
 def load_manifest(json_path: Path) -> BatchManifest | ImageJob:
@@ -46,17 +49,20 @@ def run_batch_file(json_path: Path, *, dry_run: bool = False) -> list[str]:
 
     results: list[str] = []
     steps: list[str] = []
+    prev_output: str | None = None
 
     for index, command in enumerate(manifest.commands, start=1):
         label = f"[{index}/{len(manifest.commands)}] {command.type}"
         if dry_run:
             steps.append(f"{label} (dry-run)")
             results.append(_describe_command(command))
+            prev_output = command_output_path(command)
             continue
 
-        result = _execute_command(command, root=root)
+        result = _execute_command(command, root=root, prev_output=prev_output)
         steps.append(f"{label} -> {result}")
         results.append(result)
+        prev_output = command_output_path(command)
 
     _write_batch_log(resolved, manifest, steps, dry_run=dry_run)
 
@@ -73,9 +79,21 @@ def run_batch_file(json_path: Path, *, dry_run: bool = False) -> list[str]:
     return results
 
 
-def _execute_command(command, *, root: Path) -> str:
+def _is_chained_job_input(job_input: str | None, prev_output: str | None) -> bool:
+    if job_input is None or prev_output is None:
+        return False
+    return normalize_manifest_path(job_input) == normalize_manifest_path(prev_output)
+
+
+def _execute_command(command, *, root: Path, prev_output: str | None = None) -> str:
     if isinstance(command, JobCommand):
-        execute_job(command.to_image_job(), root=root, dry_run=False)
+        chained = _is_chained_job_input(command.input, prev_output)
+        execute_job(
+            command.to_image_job(batch_chained=chained),
+            root=root,
+            dry_run=False,
+            chained_input=chained,
+        )
         return command.output
 
     if isinstance(command, MosaicDecodeCommand):
@@ -124,6 +142,37 @@ def _execute_command(command, *, root: Path) -> str:
             raise RuntimeError(f"assets.materialize failed: {', '.join(missing)}")
         return f"materialized: {', '.join(installed)}"
 
+    if isinstance(command, AnalyzeCommand):
+        input_path = root / command.input
+        compare_path = root / command.compare if command.compare else None
+        output_path = root / command.output
+        roi_specs = command.rois or []
+        run_analyze(
+            input_path,
+            compare=compare_path,
+            fmt="json",
+            output=output_path,
+            max_long_edge=command.max_long_edge,
+            max_colors=command.max_colors,
+            alpha_threshold=command.alpha_threshold,
+            threshold_brightness=command.threshold_brightness,
+            threshold_palette=command.threshold_palette,
+            full_profiles=command.full_profiles,
+            spatial=command.spatial,
+            background=command.background,
+            tolerance=command.tolerance,
+            grid_rows=command.grid_rows,
+            grid_cols=command.grid_cols,
+            rois=[
+                f"{r.name},{r.x},{r.y},{r.width},{r.height}"
+                for r in roi_specs
+            ]
+            if roi_specs
+            else None,
+            root=root,
+        )
+        return str(command.output)
+
     raise TypeError(f"unsupported command: {type(command)}")
 
 
@@ -140,6 +189,8 @@ def _describe_command(command) -> str:
         if command.ids:
             return f"materialized: {', '.join(command.ids)}"
         return "materialized: (all enabled catalog assets)"
+    if isinstance(command, AnalyzeCommand):
+        return command.output
     return "?"
 
 

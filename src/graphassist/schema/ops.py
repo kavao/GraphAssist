@@ -146,6 +146,13 @@ class FlattenOp(BaseModel):
         return normalized
 
 
+class AdjustOp(BaseModel):
+    type: Literal["adjust"]
+    brightness: float = Field(default=1.0, ge=0.0, le=3.0)
+    contrast: float = Field(default=1.0, ge=0.0, le=3.0)
+    saturation: float = Field(default=1.0, ge=0.0, le=3.0)
+
+
 Operation = Annotated[
     Union[
         ResizeOp,
@@ -157,6 +164,7 @@ Operation = Annotated[
         TextOp,
         TrimOp,
         FlattenOp,
+        AdjustOp,
     ],
     Field(discriminator="type"),
 ]

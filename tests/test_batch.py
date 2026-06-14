@@ -22,12 +22,29 @@ class BatchTest(unittest.TestCase):
         self.out_js = self.root / "generated/mosaic/finale_rocket.js"
         self.catalog_batch = self.root / "samples/jobs/demo_catalog_pipeline.json"
         self.out_catalog = self.root / "generated/images/demo_catalog_pipeline.png"
-        for path in (self.out_file, self.out_inline, self.out_js, self.out_catalog):
+        self.birds_batch = self.root / "samples/jobs/birds_on_trunk_pipeline.json"
+        self.out_birds_base = self.root / "generated/images/birds_on_trunk_base.png"
+        self.out_birds = self.root / "generated/images/birds_on_trunk.png"
+        for path in (
+            self.out_file,
+            self.out_inline,
+            self.out_js,
+            self.out_catalog,
+            self.out_birds_base,
+            self.out_birds,
+        ):
             if path.exists():
                 path.unlink()
 
     def tearDown(self) -> None:
-        for path in (self.out_file, self.out_inline, self.out_js, self.out_catalog):
+        for path in (
+            self.out_file,
+            self.out_inline,
+            self.out_js,
+            self.out_catalog,
+            self.out_birds_base,
+            self.out_birds,
+        ):
             if path.exists():
                 path.unlink()
 
@@ -94,6 +111,56 @@ class BatchTest(unittest.TestCase):
         run_batch_file(self.catalog_batch, dry_run=False)
         self.assertTrue(self.out_catalog.exists())
         self.assertGreater(self.out_catalog.stat().st_size, 0)
+
+    def test_birds_pipeline_schema(self) -> None:
+        manifest = load_manifest(self.birds_batch)
+        self.assertIsInstance(manifest, BatchManifest)
+        self.assertEqual(len(manifest.commands), 2)
+        self.assertEqual(manifest.commands[0].type, "mosaic.decode")
+        self.assertEqual(manifest.commands[1].type, "job")
+
+    def test_validate_generated_job_input_without_chain(self) -> None:
+        data = {
+            "version": "1.0",
+            "commands": [
+                {
+                    "type": "job",
+                    "input": "generated/images/orphan.png",
+                    "output": "generated/images/out.png",
+                    "operations": [{"type": "resize", "long_edge": 64}],
+                }
+            ],
+        }
+        with self.assertRaises(ValueError):
+            BatchManifest.model_validate(data)
+
+    def test_validate_generated_job_input_mismatch(self) -> None:
+        data = {
+            "version": "1.0",
+            "commands": [
+                {
+                    "type": "mosaic.decode",
+                    "input": "samples/mosaic/finale_rocket.json",
+                    "output": "generated/images/step1.png",
+                    "cell_size": 8,
+                },
+                {
+                    "type": "job",
+                    "input": "generated/images/wrong.png",
+                    "output": "generated/images/out.png",
+                    "operations": [{"type": "resize", "long_edge": 64}],
+                },
+            ],
+        }
+        with self.assertRaises(ValueError):
+            BatchManifest.model_validate(data)
+
+    def test_run_birds_pipeline(self) -> None:
+        run_batch_file(self.birds_batch, dry_run=False)
+        self.assertTrue(self.out_birds_base.exists())
+        self.assertTrue(self.out_birds.exists())
+        self.assertEqual(Image.open(self.out_birds_base).size, (400, 208))
+        self.assertEqual(Image.open(self.out_birds).size, (400, 264))
 
 
 if __name__ == "__main__":

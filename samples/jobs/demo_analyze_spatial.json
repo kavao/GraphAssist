@@ -1,0 +1,25 @@
+{
+  "version": "1.0",
+  "commands": [
+    {
+      "type": "job",
+      "input_asset": "ui-panel-dark",
+      "output": "generated/images/demo_analyze_card.png",
+      "operations": [
+        {
+          "type": "composite",
+          "overlay_asset": "ornament-fleur-de-lis-simple",
+          "x": 200,
+          "y": 280,
+          "anchor": "center"
+        }
+      ]
+    },
+    {
+      "type": "analyze",
+      "input": "generated/images/demo_analyze_card.png",
+      "output": "generated/logs/demo_analyze_card.json",
+      "spatial": true
+    }
+  ]
+}

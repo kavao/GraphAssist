@@ -119,6 +119,24 @@ class Phase47Test(unittest.TestCase):
         out = self.root / "generated/images/phase47_vertical_text.png"
         self.assertTrue(out.exists())
 
+    def test_trim_white_background_alpha_tolerance(self) -> None:
+        """Low-alpha fringe must not expand bbox (regression: content_mask alpha_threshold=0)."""
+        from graphassist.engine.ops_trim import trim_image
+        from graphassist.schema.ops import TrimOp
+
+        img = Image.new("RGBA", (40, 40), (255, 255, 255, 255))
+        px = img.load()
+        assert px is not None
+        px[20, 20] = (255, 0, 0, 255)
+        px[0, 0] = (200, 200, 200, 5)
+
+        trimmed = trim_image(
+            img,
+            TrimOp(type="trim", background="white", tolerance=10, padding=0),
+        )
+        self.assertLess(trimmed.width, 10)
+        self.assertLess(trimmed.height, 10)
+
     def test_trim_and_flatten(self) -> None:
         out = self.root / "generated/images/phase47_trim.png"
         created = run_trim(self.src2, out, TrimOptions(background="transparent", padding=2))

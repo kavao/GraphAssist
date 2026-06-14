@@ -19,6 +19,7 @@
 | `sheet-pack` | 複数 PNG → スプライトシート |
 | `sheet-split` | スプライトシート → 複数 PNG |
 | `palette` | 支配色抽出 |
+| `analyze` | 画像 metrics（profile / compare）。`--spatial` で局所 bbox・grid・ROI |
 | `assets fetch` / `assets materialize` / `assets list` | 権利フリー素材カタログ取得・一覧 |
 
 ## ImageJob operations
@@ -34,6 +35,7 @@
 | `text` | フォント描画（`assets/fonts/`、`direction`: `horizontal` / `vertical`） |
 | `trim` | 余白除去 |
 | `flatten` | 透明を背景色で潰す |
+| `adjust` | 明るさ・コントラスト・彩度（Pillow Enhancer） |
 
 色: 名前（`white` 等）または `#RRGGBB`
 
@@ -45,6 +47,7 @@ uv run graphassist diff before.png after.png generated/images/diff.png
 uv run graphassist inspect samples/source/icon.png --format json
 uv run graphassist contact-sheet samples/source generated/images/sheet.png --cols 4
 uv run graphassist palette samples/source/icon.png --max-colors 8
+uv run graphassist analyze samples/source/icon.png --spatial --format json
 ```
 
 ## 参照

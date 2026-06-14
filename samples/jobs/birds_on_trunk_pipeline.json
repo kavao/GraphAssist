@@ -1,0 +1,41 @@
+{
+  "version": "1.0",
+  "commands": [
+    {
+      "type": "mosaic.decode",
+      "input": "samples/mosaic/birds_on_trunk.json",
+      "output": "generated/images/birds_on_trunk_base.png",
+      "cell_size": 8
+    },
+    {
+      "type": "job",
+      "input": "generated/images/birds_on_trunk_base.png",
+      "output": "generated/images/birds_on_trunk.png",
+      "operations": [
+        {
+          "type": "extend",
+          "top": 56,
+          "fill": "black"
+        },
+        {
+          "type": "text",
+          "content": "インコとオウム",
+          "font": "assets/fonts/PixelMplus12-Regular.ttf",
+          "size": 20,
+          "color": "white",
+          "x": 130,
+          "y": 10
+        },
+        {
+          "type": "text",
+          "content": "２匹は仲良し",
+          "font": "assets/fonts/PixelMplus12-Regular.ttf",
+          "size": 20,
+          "color": "white",
+          "x": 140,
+          "y": 38
+        }
+      ]
+    }
+  ]
+}

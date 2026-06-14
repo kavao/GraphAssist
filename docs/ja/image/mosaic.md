@@ -73,7 +73,25 @@ uv run graphassist mosaic export \
 
 ## サンプル
 
-- [samples/mosaic/finale_rocket.json](../../../samples/mosaic/finale_rocket.json) — ロケット 8×10
+| JSON | 内容 | decode 例 |
+|------|------|-----------|
+| [finale_rocket.json](../../../samples/mosaic/finale_rocket.json) | ロケット 8×10 | `uv run graphassist mosaic decode samples/mosaic/finale_rocket.json generated/images/finale_rocket.png --cell-size 8` |
+| [parakeet.json](../../../samples/mosaic/parakeet.json) | インコ（単体） | `… parakeet.json generated/images/parakeet.png --cell-size 8` |
+| [parrot.json](../../../samples/mosaic/parrot.json) | オウム（単体） | `… parrot.json generated/images/parrot.png --cell-size 8` |
+| [birds_on_trunk.json](../../../samples/mosaic/birds_on_trunk.json) | 2 羽 + 幹（合成） | `… birds_on_trunk.json generated/images/birds_on_trunk_base.png --cell-size 8` |
+
+タイトル付き完成 PNG は Batch 正本 [birds_on_trunk_pipeline.json](../../../samples/jobs/birds_on_trunk_pipeline.json) を使います（下記）。
+
+## Mosaic + テキスト
+
+読みやすい日本語タイトルは **CharGrid 行への直接埋め込みではなく ImageJob `text`** で重ねます。  
+1 コマンド再現は Batch manifest（`mosaic.decode` → `job`）を正本とします。
+
+```bash
+uv run graphassist run samples/jobs/birds_on_trunk_pipeline.json
+```
+
+詳細は [batch.md](batch.md) の「直前 command の output を job input に」節を参照してください。
 
 ## 参照
 

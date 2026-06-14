@@ -19,6 +19,7 @@ GraphAssist subcommands. See each guide for path rules.
 | `sheet-pack` | Multiple PNGs → sprite sheet |
 | `sheet-split` | Sprite sheet → PNG cells |
 | `palette` | Dominant color extraction |
+| `analyze` | Image metrics (profile / compare). `--spatial` for bbox, grid, ROI |
 | `assets fetch` / `assets materialize` / `assets list` | Curated free catalog fetch and list |
 
 ## ImageJob operations
@@ -34,6 +35,7 @@ GraphAssist subcommands. See each guide for path rules.
 | `text` | Font rendering (`assets/fonts/`, `direction`: `horizontal` / `vertical`) |
 | `trim` | Trim margins |
 | `flatten` | Flatten alpha to background |
+| `adjust` | Brightness, contrast, saturation (Pillow Enhancer) |
 
 Colors: names (`white`, etc.) or `#RRGGBB`
 
@@ -45,6 +47,7 @@ uv run graphassist diff before.png after.png generated/images/diff.png
 uv run graphassist inspect samples/source/icon.png --format json
 uv run graphassist contact-sheet samples/source generated/images/sheet.png --cols 4
 uv run graphassist palette samples/source/icon.png --max-colors 8
+uv run graphassist analyze samples/source/icon.png --spatial --format json
 ```
 
 ## See also

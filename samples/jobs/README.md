@@ -28,7 +28,7 @@
 | [demo_catalog_asset_fleur_outline.json](demo_catalog_asset_fleur_outline.json) | `ornament-fleur-de-lis-outline` |
 | [demo_catalog_asset_laurel.json](demo_catalog_asset_laurel.json) | `ornament-laurel-wreath-icooon` |
 
-索引: [catalog/index.json](catalog/index.json) · manifest: `.rulesync/metadata/asset-catalog.jsonc` · スキル: [catalog-assets](../../.rulesync/skills/catalog-assets/SKILL.md)
+索引: [catalog/index.json](catalog/index.json) · manifest: `.rulesync/metadata/asset-catalog.jsonc` · スキル: [ga-catalog-assets](../../.rulesync/skills/ga-catalog-assets/SKILL.md)
 
 将来 Demo（Phase A）: [_future/README.md](_future/README.md)
 
@@ -39,6 +39,20 @@
 | [demo_zangyo_extend.json](demo_zangyo_extend.json) | `generated/images/demo_zangyo_extend.png` |
 
 土台 PNG: `samples/source/demo_text_base.png`（[gen_demo_text_base.py](../../scripts/gen_demo_text_base.py) で再生成可）
+
+## Mosaic + Job（CharGrid + タイトル）
+
+| ファイル | コマンド | 出力 |
+|----------|----------|------|
+| [birds_on_trunk_pipeline.json](birds_on_trunk_pipeline.json) | `run` | `generated/images/birds_on_trunk.png` |
+
+```bash
+uv run graphassist run samples/jobs/birds_on_trunk_pipeline.json
+```
+
+- Mosaic 正本（合成）: [samples/mosaic/birds_on_trunk.json](../mosaic/birds_on_trunk.json)
+- 部品（単体 decode）: [parakeet.json](../mosaic/parakeet.json) · [parrot.json](../mosaic/parrot.json)
+- 中間 PNG は pipeline 内で `generated/` に出力（`samples/source/` へ置かない）
 
 ## その他
 

@@ -1,0 +1,42 @@
+{
+  "version": "1.0",
+  "width": 20,
+  "height": 18,
+  "transparent": ".",
+  "palette": {
+    "Y": "#F9E547",
+    "G": "#5CB85C",
+    "g": "#3D8B37",
+    "B": "#4FC3F7",
+    "b": "#0288D1",
+    "O": "#FF9800",
+    "K": "#263238",
+    "W": "#E8F5E9",
+    "L": "#81C784"
+  },
+  "rows": [
+    "....................",
+    "....................",
+    ".......YYYYYY.......",
+    "......YYYYYYYB......",
+    ".....YYYYbbbBY......",
+    "....YO..YKKYY.......",
+    "...OOOOGGGGGGG......",
+    "....GGGGGGGGGGG.....",
+    "...GGGGWGGGGGGG.....",
+    "..GGGGGGGGGGGGGG....",
+    "..GGGGGGgggGGGGG....",
+    "...GGGGGGGGGGGG.....",
+    "....GGGggggGGG......",
+    ".....GGGGGG.........",
+    "......ggggg.........",
+    ".......gg...........",
+    "......KK.KK.........",
+    "...................."
+  ],
+  "meta": {
+    "title": "parakeet",
+    "source": "llm",
+    "description": "セキセイインコ（横顔・止まり木風）"
+  }
+}

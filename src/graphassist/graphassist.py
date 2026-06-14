@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 from graphassist.version import __version__
+from graphassist.analyze_cmd import run_analyze
 from graphassist.assets_cmd import run_assets_fetch, run_assets_list, run_assets_materialize
 from graphassist.batch_runner import run_batch_file
 from graphassist.convert_cmd import ConvertOptions, run_convert
@@ -180,6 +181,30 @@ def build_parser() -> argparse.ArgumentParser:
         help="materialize only these catalog ids (repeatable)",
     )
 
+    analyze = sub.add_parser("analyze", help="image metrics profile / compare (Phase A+L)")
+    analyze.add_argument("input", type=Path, help="image file or directory")
+    analyze.add_argument("--compare", type=Path, default=None, help="compare target image")
+    analyze.add_argument("--format", dest="fmt", default="json", choices=["json", "text"])
+    analyze.add_argument("--output", type=Path, default=None, help="write JSON/text to file")
+    analyze.add_argument("--max-long-edge", type=int, default=512, help="stats downsample (0=full)")
+    analyze.add_argument("--max-colors", type=int, default=8)
+    analyze.add_argument("--alpha-threshold", type=int, default=128)
+    analyze.add_argument("--threshold-brightness", type=float, default=0.15)
+    analyze.add_argument("--threshold-palette", type=float, default=0.30)
+    analyze.add_argument("--full-profiles", action="store_true")
+    analyze.add_argument("--spatial", action="store_true", help="include Phase L local metrics")
+    analyze.add_argument("--background", default="transparent", choices=["transparent", "white", "black"])
+    analyze.add_argument("--tolerance", type=int, default=0)
+    analyze.add_argument("--grid-rows", type=int, default=3)
+    analyze.add_argument("--grid-cols", type=int, default=3)
+    analyze.add_argument(
+        "--roi",
+        action="append",
+        dest="rois",
+        metavar="NAME,X,Y,W,H",
+        help="named ROI (repeatable, max 4)",
+    )
+
     return parser
 
 
@@ -302,6 +327,31 @@ def main(argv: list[str] | None = None) -> int:
             return run_assets_materialize(force=args.force, ids=args.ids)
         if args.assets_command == "list":
             return run_assets_list(fmt=args.fmt)
+
+    if args.command == "analyze":
+        text = run_analyze(
+            args.input,
+            compare=args.compare,
+            fmt=args.fmt,
+            output=args.output,
+            max_long_edge=args.max_long_edge,
+            max_colors=args.max_colors,
+            alpha_threshold=args.alpha_threshold,
+            threshold_brightness=args.threshold_brightness,
+            threshold_palette=args.threshold_palette,
+            full_profiles=args.full_profiles,
+            spatial=args.spatial,
+            background=args.background,
+            tolerance=args.tolerance,
+            grid_rows=args.grid_rows,
+            grid_cols=args.grid_cols,
+            rois=args.rois,
+        )
+        if args.output is None:
+            print(text, end="")
+        else:
+            print(args.output)
+        return 0
 
     return 1
 

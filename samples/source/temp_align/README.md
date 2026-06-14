@@ -4,7 +4,7 @@
 
 - PNG は **Git に含めません**（`.gitignore`）
 - 実行前に `shot01.png` … `shot04.png` をここに置く（名前は Job JSON に合わせる）
-- 元素材は `_workingspace/_temp/` などローカル作業領域に置いてよい
+- 元素材は [_workingspace/_scratch/](../../../_workingspace/_scratch/README.md) などローカル作業領域に置いてよい（正本: scratch README）
 
 ## 実行
 
