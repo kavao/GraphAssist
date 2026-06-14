@@ -1,6 +1,11 @@
 # ===== 生成物 =====
 generated/**
 
+# ===== サンプル Job 用ローカル入力（temp_align 等） =====
+samples/source/temp_align/*
+!samples/source/temp_align/
+!samples/source/temp_align/README.md
+
 # ===== runtime（設置・バイナリ・重み — Git 管理外） =====
 runtime/**
 !runtime/README.md
@@ -15,6 +20,8 @@ build/
 assets/fonts/*.ttf
 assets/fonts/*.otf
 assets/fonts/*.ttc
+assets/fonts/*-LICENSE
+assets/fonts/NOTICES.md
 
 # ===== rulesync 生成物 =====
 # 正本は rulesync.jsonc と .rulesync/ に置き、各ツール向け生成物は除外する

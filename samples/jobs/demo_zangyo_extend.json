@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "input": "samples/source/demo_text_base.png",
+  "output": "generated/images/demo_zangyo_extend.png",
+  "operations": [
+    {
+      "type": "text",
+      "content": "残業エクステンド",
+      "font": "assets/fonts/NotoSansJP-Regular.otf",
+      "size": 48,
+      "color": "#f0e040",
+      "x": 320,
+      "y": 48,
+      "direction": "vertical",
+      "line_spacing": 1.2,
+      "stroke_color": "#1a1a2e",
+      "stroke_width": 2
+    }
+  ]
+}

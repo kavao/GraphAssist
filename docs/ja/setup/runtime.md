@@ -24,9 +24,10 @@ chmod +x scripts/setup-runtime.sh
 実行内容:
 
 - `runtime/bin/`, `runtime/assets/fonts/`, `runtime/assets/weights/` を作成
-- GitHub Releases からバイナリを取得（`runtime-manifest.jsonc` の URL、ネットワーク必須）
+- GitHub Releases から CLI バイナリを取得（ネットワーク必須）
+- **フォントを取得** — 日本語（Noto / 美咲 / PixelMplus）、英語（Inter / Roboto / Source Sans 3 / DejaVu）、Windows では Meiryo をシステムからコピー（`assets/fonts/` にもミラー、`NOTICES.md` 自動生成）
 - `runtime/manifest.local.json` にインストール状態を記録
-- 取得失敗時は **ソース実行** へフォールバック
+- 取得失敗時は **ソース実行** へフォールバック（バイナリ）、フォント optional はスキップ可
 
 強制再取得:
 
@@ -46,13 +47,22 @@ runtime/bin/graphassist.exe
 
 ## フォント
 
-ImageJob `text` 用フォントは **runtime** に置きます:
+`setup-runtime` が ImageJob `text` 用フォントを **`runtime/assets/fonts/`** に配置し、`assets/fonts/` へミラーします。
 
-```text
-runtime/assets/fonts/DejaVuSans.ttf
-```
+| フォント | 用途 | 取得 |
+|----------|------|------|
+| `NotoSansJP-Regular.otf` | 日本語（推奨） | ダウンロード（OFL） |
+| `misaki_gothic.ttf` | 8×8 ドット日本語 | ダウンロード |
+| `PixelMplus12-Regular.ttf` | ピクセル風日本語 | ダウンロード（M+ LICENSE） |
+| `DejaVuSans.ttf` | Latin 等 | ダウンロード |
+| `InterVariable.ttf` | 英語 UI | ダウンロード（OFL） |
+| `Roboto-Regular.ttf` | 英語 UI | ダウンロード（Apache 2.0） |
+| `SourceSans3-Regular.ttf` | 英語 UI | ダウンロード（OFL） |
+| `Meiryo.ttc` | Windows 向け optional | システムフォントからコピーのみ |
 
-後方互換: `assets/fonts/` も参照可能（移行期間）。
+著作権・ライセンス: [assets/fonts/README.md](../../../assets/fonts/README.md) および setup 後の `assets/fonts/NOTICES.md`
+
+JSON では従来どおり `assets/fonts/...` を指定します。`resolve_font` が runtime を優先参照します。
 
 ## 将来の AI 重み
 

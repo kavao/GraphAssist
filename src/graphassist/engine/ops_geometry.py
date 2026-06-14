@@ -19,9 +19,14 @@ def apply_resize(img: Image.Image, op: ResizeOp) -> Image.Image:
 
 def apply_crop(img: Image.Image, op: CropOp) -> Image.Image:
     w, h = img.size
-    if op.x + op.width > w or op.y + op.height > h:
+    if op.anchor == "center":
+        x = max(0, (w - op.width) // 2)
+        y = max(0, (h - op.height) // 2)
+    else:
+        x, y = op.x, op.y
+    if x + op.width > w or y + op.height > h:
         raise ValueError(f"crop exceeds image bounds: {w}x{h}")
-    return img.crop((op.x, op.y, op.x + op.width, op.y + op.height))
+    return img.crop((x, y, x + op.width, y + op.height))
 
 
 def apply_extend(img: Image.Image, op: ExtendOp) -> Image.Image:

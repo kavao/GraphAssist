@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
+import os
+import shutil
 from pathlib import Path
 
 INPUT_ROOT = "samples/source"
 OUTPUT_ROOT = "generated"
 FONT_ROOT = "assets/fonts"
+RUNTIME_DIR = "runtime"
+RUNTIME_FONT_ROOT = "runtime/assets/fonts"
 MOSAIC_JSON_ROOTS = ("samples/mosaic", "generated/mosaic")
 MOSAIC_OUTPUT_ROOT = "generated/mosaic"
 JOB_ROOT = "samples/jobs"
@@ -14,6 +18,14 @@ JOB_ROOT = "samples/jobs"
 
 def project_root() -> Path:
     return Path(__file__).resolve().parents[3]
+
+
+def runtime_root(*, root: Path | None = None) -> Path:
+    base = root or project_root()
+    env = os.environ.get("GRAPHASSIST_RUNTIME")
+    if env:
+        return Path(env).resolve()
+    return (base / RUNTIME_DIR).resolve()
 
 
 def _under(base: Path, root_name: str) -> Path:
@@ -75,11 +87,20 @@ def resolve_batch_file(path_str: str, *, root: Path | None = None, must_exist: b
 def resolve_font(path_str: str, *, root: Path | None = None, must_exist: bool = False) -> Path:
     base = root or project_root()
     resolved = _resolve_relative(path_str, base)
-    safe = _under(base, FONT_ROOT)
-    if not str(resolved).startswith(str(safe)):
+    legacy = _under(base, FONT_ROOT)
+    if not str(resolved).startswith(str(legacy)):
         raise ValueError(f"font must be under {FONT_ROOT}/: {path_str}")
-    if must_exist and not resolved.exists():
-        raise FileNotFoundError(resolved)
+
+    rel_name = Path(path_str).name
+    candidates = [
+        runtime_root(root=base) / "assets/fonts" / rel_name,
+        resolved,
+    ]
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate
+    if must_exist:
+        raise FileNotFoundError(f"font not found: {path_str}")
     return resolved
 
 

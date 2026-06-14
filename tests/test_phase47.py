@@ -95,6 +95,30 @@ class Phase47Test(unittest.TestCase):
         execute_job(job, root=self.root, dry_run=False)
         self.assertTrue(self.out.exists())
 
+    def test_vertical_text_job(self) -> None:
+        job = ImageJob.model_validate(
+            {
+                "version": "1.0",
+                "input": "samples/source/phase47_base.png",
+                "output": "generated/images/phase47_vertical_text.png",
+                "operations": [
+                    {
+                        "type": "text",
+                        "content": "AB",
+                        "font": test_font_rel(),
+                        "size": 16,
+                        "color": "#ffffff",
+                        "x": 10,
+                        "y": 8,
+                        "direction": "vertical",
+                    }
+                ],
+            }
+        )
+        execute_job(job, root=self.root, dry_run=False)
+        out = self.root / "generated/images/phase47_vertical_text.png"
+        self.assertTrue(out.exists())
+
     def test_trim_and_flatten(self) -> None:
         out = self.root / "generated/images/phase47_trim.png"
         created = run_trim(self.src2, out, TrimOptions(background="transparent", padding=2))

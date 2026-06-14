@@ -1,0 +1,45 @@
+{
+  "version": "1.0",
+  "commands": [
+    {
+      "type": "job",
+      "input": "samples/source/temp_align/shot01.png",
+      "output": "generated/images/temp_align_webp/shot01.webp",
+      "operations": [
+        {"type": "crop", "width": 3811, "height": 1921, "anchor": "center"},
+        {"type": "resize", "long_edge": 1280},
+        {"type": "flatten", "background": "#0a1628"}
+      ]
+    },
+    {
+      "type": "job",
+      "input": "samples/source/temp_align/shot02.png",
+      "output": "generated/images/temp_align_webp/shot02.webp",
+      "operations": [
+        {"type": "crop", "width": 3811, "height": 1921, "anchor": "center"},
+        {"type": "resize", "long_edge": 1280},
+        {"type": "flatten", "background": "#0a1628"}
+      ]
+    },
+    {
+      "type": "job",
+      "input": "samples/source/temp_align/shot03.png",
+      "output": "generated/images/temp_align_webp/shot03.webp",
+      "operations": [
+        {"type": "crop", "width": 3811, "height": 1921, "anchor": "center"},
+        {"type": "resize", "long_edge": 1280},
+        {"type": "flatten", "background": "#0a1628"}
+      ]
+    },
+    {
+      "type": "job",
+      "input": "samples/source/temp_align/shot04.png",
+      "output": "generated/images/temp_align_webp/shot04.webp",
+      "operations": [
+        {"type": "crop", "width": 3811, "height": 1921, "anchor": "center"},
+        {"type": "resize", "long_edge": 1280},
+        {"type": "flatten", "background": "#0a1628"}
+      ]
+    }
+  ]
+}

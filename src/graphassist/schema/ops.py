@@ -27,8 +27,9 @@ class CropOp(BaseModel):
     type: Literal["crop"]
     width: int = Field(ge=1, le=8000)
     height: int = Field(ge=1, le=8000)
-    x: int = Field(ge=0, le=8000)
-    y: int = Field(ge=0, le=8000)
+    x: int = Field(default=0, ge=0, le=8000)
+    y: int = Field(default=0, ge=0, le=8000)
+    anchor: Literal["top_left", "center"] = "top_left"
 
 
 class ExtendOp(BaseModel):
@@ -89,6 +90,8 @@ class TextOp(BaseModel):
     color: str = "white"
     x: int = Field(default=0, ge=-8000, le=8000)
     y: int = Field(default=0, ge=-8000, le=8000)
+    direction: Literal["horizontal", "vertical"] = "horizontal"
+    line_spacing: float = Field(default=1.15, ge=0.5, le=3.0)
     stroke_color: str | None = None
     stroke_width: int = Field(default=0, ge=0, le=50)
 

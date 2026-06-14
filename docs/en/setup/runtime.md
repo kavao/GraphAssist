@@ -24,9 +24,10 @@ chmod +x scripts/setup-runtime.sh
 This creates:
 
 - `runtime/bin/`, `runtime/assets/fonts/`, `runtime/assets/weights/`
-- Downloads binary from GitHub Releases when `runtime-manifest.jsonc` URLs are set (network required)
+- Downloads the CLI binary from GitHub Releases (network required)
+- **Fetches fonts** — Japanese (Noto / Misaki / PixelMplus), English (Inter / Roboto / Source Sans 3 / DejaVu); Meiryo copied from Windows when available (mirrored to `assets/fonts/`, `NOTICES.md` generated)
 - `runtime/manifest.local.json` (install record)
-- Falls back to source execution if download fails
+- Falls back to source execution if the binary download fails; optional fonts are skipped when unavailable
 
 Force re-download:
 
@@ -46,13 +47,22 @@ Do not commit it to Git.
 
 ## Fonts
 
-For ImageJob `text`, place fonts under:
+`setup-runtime` installs ImageJob `text` fonts under **`runtime/assets/fonts/`** and mirrors them to `assets/fonts/`.
 
-```text
-runtime/assets/fonts/DejaVuSans.ttf
-```
+| Font | Use | Source |
+|------|-----|--------|
+| `NotoSansJP-Regular.otf` | Japanese (recommended) | Download (OFL) |
+| `misaki_gothic.ttf` | 8×8 dot Japanese | Download |
+| `PixelMplus12-Regular.ttf` | Pixel-style Japanese | Download (M+ LICENSE) |
+| `DejaVuSans.ttf` | Latin, etc. | Download |
+| `InterVariable.ttf` | English UI | Download (OFL) |
+| `Roboto-Regular.ttf` | English UI | Download (Apache 2.0) |
+| `SourceSans3-Regular.ttf` | English UI | Download (OFL) |
+| `Meiryo.ttc` | Windows optional | System font copy only (not redistributable) |
 
-Legacy fallback: `assets/fonts/` during migration.
+Copyright and licenses: [assets/fonts/README.md](../../../assets/fonts/README.md) and `assets/fonts/NOTICES.md` after setup.
+
+JSON still references `assets/fonts/...`. `resolve_font` checks runtime first.
 
 ## Future AI weights
 

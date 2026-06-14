@@ -25,12 +25,12 @@
 | type | 概要 |
 |------|------|
 | `resize` | 拡大縮小 |
-| `crop` | 矩形トリミング |
+| `crop` | 矩形トリミング（`anchor`: `top_left` / `center`） |
 | `extend` | キャンバス拡張 |
 | `rotate` | 回転 |
 | `border` | 枠線 |
 | `composite` | 画像合成 |
-| `text` | フォント描画（`assets/fonts/`） |
+| `text` | フォント描画（`assets/fonts/`、`direction`: `horizontal` / `vertical`） |
 | `trim` | 余白除去 |
 | `flatten` | 透明を背景色で潰す |
 

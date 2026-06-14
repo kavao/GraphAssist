@@ -25,12 +25,12 @@ GraphAssist subcommands. See each guide for path rules.
 | type | Summary |
 |------|---------|
 | `resize` | Scale |
-| `crop` | Rectangular crop |
+| `crop` | Rectangular crop (`anchor`: `top_left` / `center`) |
 | `extend` | Canvas padding |
 | `rotate` | Rotation |
 | `border` | Border |
 | `composite` | Overlay |
-| `text` | Font rendering (`assets/fonts/`) |
+| `text` | Font rendering (`assets/fonts/`, `direction`: `horizontal` / `vertical`) |
 | `trim` | Trim margins |
 | `flatten` | Flatten alpha to background |
 

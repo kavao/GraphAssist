@@ -4,8 +4,11 @@
 
 **GraphAssist** は、Cursor などの LLM エディタ向けに、**Pillow + NumPy 中心の画像処理 CLI** を提供するプロジェクトです。
 
-## セットアップ
+## コンセプト
 
+**繰り返しの、創造性のない画像作業はツールに任せる** — リサイズ・形式変換・余白除去・サイズ揃えなど、手順は決まっているが地味でミスしやすい作業を CLI と ImageJob JSON に寄せます。やりたいことは JSON や引数で渡し、検証と実行は Python が担当します。詳細は [概要（plans）](_workingspace/plans/overview.md#コンセプト)。
+
+## セットアップ
 ### 1. Python 依存
 
 ```bash

@@ -63,6 +63,20 @@ class JobTest(unittest.TestCase):
         execute_job(job, root=self.root, dry_run=False)
         self.assertTrue(self.out.exists())
 
+    def test_center_crop(self) -> None:
+        job = ImageJob.model_validate(
+            {
+                "version": "1.0",
+                "input": "samples/source/job_test_base.png",
+                "output": "generated/images/job_test_crop.png",
+                "operations": [{"type": "crop", "width": 50, "height": 40, "anchor": "center"}],
+            }
+        )
+        execute_job(job, root=self.root, dry_run=False)
+        out = self.root / "generated/images/job_test_crop.png"
+        self.assertTrue(out.exists())
+        self.assertEqual(load(out).size, (50, 40))
+
     def test_dry_run(self) -> None:
         job = ImageJob.model_validate(
             {

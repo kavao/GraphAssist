@@ -4,6 +4,10 @@ English · [日本語](README.ja.md)
 
 **GraphAssist** is a **Pillow + NumPy** image processing CLI for LLM-assisted editors such as Cursor.
 
+## Concept
+
+**Offload repetitive, uncreative image work to the tool** — resizing, format conversion, trimming, alignment, and similar chores with fixed steps but little room for creativity belong in the CLI and ImageJob JSON. You describe *what* you want via JSON or flags; Python validates and runs it. See [overview (plans)](_workingspace/plans/overview.md#コンセプト).
+
 ## Setup
 
 ### 1. Python dependencies

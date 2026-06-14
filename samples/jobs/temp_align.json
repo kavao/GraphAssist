@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "commands": [
+    {
+      "type": "job",
+      "input": "samples/source/temp_align/shot01.png",
+      "output": "generated/images/temp_align/shot01_aligned.png",
+      "operations": [
+        {"type": "crop", "width": 3811, "height": 1921, "anchor": "center"}
+      ]
+    },
+    {
+      "type": "job",
+      "input": "samples/source/temp_align/shot02.png",
+      "output": "generated/images/temp_align/shot02_aligned.png",
+      "operations": [
+        {"type": "crop", "width": 3811, "height": 1921, "anchor": "center"}
+      ]
+    },
+    {
+      "type": "job",
+      "input": "samples/source/temp_align/shot03.png",
+      "output": "generated/images/temp_align/shot03_aligned.png",
+      "operations": [
+        {"type": "crop", "width": 3811, "height": 1921, "anchor": "center"}
+      ]
+    },
+    {
+      "type": "job",
+      "input": "samples/source/temp_align/shot04.png",
+      "output": "generated/images/temp_align/shot04_aligned.png",
+      "operations": [
+        {"type": "crop", "width": 3811, "height": 1921, "anchor": "center"}
+      ]
+    }
+  ]
+}

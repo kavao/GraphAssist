@@ -25,10 +25,125 @@
     {
       "id": "dejavu-sans",
       "kind": "font",
-      "optional": true,
-      "description": "Default font for text operation",
+      "description": "Latin fallback (DejaVu Sans)",
       "install": {
         "path": "runtime/assets/fonts/DejaVuSans.ttf"
+      },
+      "release": {
+        "url": "https://github.com/prawnpdf/prawn/raw/master/data/fonts/DejaVuSans.ttf",
+        "license_url": "https://raw.githubusercontent.com/dejavu-fonts/dejavu-fonts/master/LICENSE",
+        "license_name": "DejaVu Fonts License / Bitstream Vera License",
+        "copyright": "Copyright (c) 2003 by Bitstream, Inc. Modified by Dejavu Fonts Team",
+        "source_url": "https://dejavu-fonts.github.io/"
+      }
+    },
+    {
+      "id": "noto-sans-jp",
+      "kind": "font",
+      "description": "Japanese text (Noto Sans CJK JP)",
+      "install": {
+        "path": "runtime/assets/fonts/NotoSansJP-Regular.otf"
+      },
+      "release": {
+        "url": "https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/OTF/Japanese/NotoSansCJKjp-Regular.otf",
+        "license_url": "https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/LICENSE",
+        "license_name": "SIL Open Font License 1.1",
+        "copyright": "Copyright (c) 2014-2021 Adobe, Google, and contributors",
+        "source_url": "https://github.com/notofonts/noto-cjk"
+      }
+    },
+    {
+      "id": "misaki-gothic",
+      "kind": "font",
+      "description": "8x8 dot Japanese (Misaki Gothic)",
+      "install": {
+        "path": "runtime/assets/fonts/misaki_gothic.ttf"
+      },
+      "release": {
+        "url": "https://salsa.debian.org/fonts-team/fonts-misaki/-/raw/master/misaki_gothic.ttf",
+        "license_url": "https://salsa.debian.org/fonts-team/fonts-misaki/-/raw/master/debian/copyright",
+        "license_name": "Misaki Font License (free, no warranty)",
+        "copyright": "Copyright (C) 2002-2021 Num Kadoma",
+        "source_url": "https://littlelimit.net/misaki.htm"
+      }
+    },
+    {
+      "id": "pixelmplus12",
+      "kind": "font",
+      "description": "Pixel outline Japanese (PixelMplus12)",
+      "install": {
+        "path": "runtime/assets/fonts/PixelMplus12-Regular.ttf"
+      },
+      "release": {
+        "url": "https://raw.githubusercontent.com/itouhiro/PixelMplus/master/PixelMplus12-Regular.ttf",
+        "license_url": "https://raw.githubusercontent.com/itouhiro/PixelMplus/master/misc/mplus_bitmap_fonts/LICENSE_E",
+        "license_name": "M+ FONT LICENSE",
+        "copyright": "Copyright (C) 2013 itouhiro; Copyright (C) 2002-2013 M+ FONTS PROJECT",
+        "source_url": "https://github.com/itouhiro/PixelMplus"
+      }
+    },
+    {
+      "id": "inter",
+      "kind": "font",
+      "description": "UI sans (Inter, variable)",
+      "install": {
+        "path": "runtime/assets/fonts/InterVariable.ttf"
+      },
+      "release": {
+        "url": "https://raw.githubusercontent.com/rsms/inter/master/docs/font-files/InterVariable.ttf",
+        "license_url": "https://raw.githubusercontent.com/rsms/inter/master/LICENSE.txt",
+        "license_name": "SIL Open Font License 1.1",
+        "copyright": "Copyright (c) 2016-2020 The Inter Project Authors",
+        "source_url": "https://rsms.me/inter/"
+      }
+    },
+    {
+      "id": "roboto",
+      "kind": "font",
+      "description": "UI sans (Roboto Regular)",
+      "install": {
+        "path": "runtime/assets/fonts/Roboto-Regular.ttf"
+      },
+      "release": {
+        "url": "https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Regular.ttf",
+        "license_url": "https://raw.githubusercontent.com/googlefonts/roboto/main/LICENSE",
+        "license_name": "Apache License 2.0",
+        "copyright": "Copyright 2011 Google Inc.",
+        "source_url": "https://github.com/googlefonts/roboto"
+      }
+    },
+    {
+      "id": "source-sans-3",
+      "kind": "font",
+      "description": "UI sans (Source Sans 3 Regular)",
+      "install": {
+        "path": "runtime/assets/fonts/SourceSans3-Regular.ttf"
+      },
+      "release": {
+        "url": "https://raw.githubusercontent.com/adobe-fonts/source-sans/release/TTF/SourceSans3-Regular.ttf",
+        "license_name": "SIL Open Font License 1.1",
+        "copyright": "Copyright 2010-2022 Adobe. All rights reserved.",
+        "source_url": "https://github.com/adobe-fonts/source-sans"
+      }
+    },
+    {
+      "id": "meiryo",
+      "kind": "font",
+      "optional": true,
+      "description": "Windows Meiryo (system copy only, not redistributable)",
+      "install": {
+        "path": "runtime/assets/fonts/Meiryo.ttc"
+      },
+      "local_sources": {
+        "win64": [
+          "C:/Windows/Fonts/meiryo.ttc",
+          "C:/Windows/Fonts/Meiryo.ttc"
+        ]
+      },
+      "release": {
+        "license_name": "Proprietary (Microsoft Windows system font)",
+        "copyright": "Copyright (c) Microsoft Corporation. Not redistributable.",
+        "source_url": "C:/Windows/Fonts/ (local copy only)"
       }
     },
     {
