@@ -1,5 +1,5 @@
 ﻿---
-name: batch-runner
+name: ga-batch-runner
 description: Batch manifest（1 JSON・複数命令）を生成し graphassist run で順次実行する
 ---
 
@@ -14,8 +14,8 @@ mosaic（CharGrid）と ImageJob（レタッチ）を **同じファイルに混
 
 | 状況 | 使うコマンド |
 |------|--------------|
-| 1 枚への連続編集のみ | `graphassist job` → [image-job-runner](../image-job-runner/SKILL.md) |
-| CharGrid のみ 1 操作 | `graphassist mosaic` → [mosaic-art](../mosaic-art/SKILL.md) |
+| 1 枚への連続編集のみ | `graphassist job` → [ga-image-job-runner](../ga-image-job-runner/SKILL.md) |
+| CharGrid のみ 1 操作 | `graphassist mosaic` → [ga-mosaic-art](../ga-mosaic-art/SKILL.md) |
 | **複数種類・複数ステップ** | **`graphassist run`**（このスキル） |
 
 ## 手順
@@ -47,6 +47,12 @@ uv run graphassist run samples/jobs/pipeline.json
 | `mosaic.encode` | 画像 → MosaicArt JSON |
 | `mosaic.export` | MosaicArt JSON → JS / JSON テキスト |
 | `assets.materialize` | カタログ素材を fetch + mirror（`ids` 省略で全件） |
+
+## Batch 内の `generated/` → job 連鎖
+
+直前 command の **`output` と同一パス** を次の `job.input` に書くと、`generated/` 入力が許可されます（単体 `graphassist job` は `samples/source/` のみ）。
+
+例: [birds_on_trunk_pipeline.json](../../samples/jobs/birds_on_trunk_pipeline.json) — `mosaic.decode` → `job`（タイトル text）
 
 ## カタログ + Job パイプライン
 
@@ -146,7 +152,7 @@ uv run graphassist run samples/jobs/pipeline.json
 
 - [docs/ja/image/batch.md](../../docs/ja/image/batch.md)（編集正本）
 - [docs/en/image/batch.md](../../docs/en/image/batch.md)
-- カタログパイプライン → [catalog-assets スキル](../catalog-assets/SKILL.md)
+- カタログパイプライン → [ga-catalog-assets スキル](../ga-catalog-assets/SKILL.md)
 - [samples/jobs/README.md](../../samples/jobs/README.md) — Demo 一覧
 - [samples/jobs/mosaic_pipeline.json](../../samples/jobs/mosaic_pipeline.json)
 - [samples/jobs/demo_catalog_pipeline_asset_ids.json](../../samples/jobs/demo_catalog_pipeline_asset_ids.json) — **推奨** Batch

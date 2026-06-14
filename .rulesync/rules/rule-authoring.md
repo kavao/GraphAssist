@@ -26,6 +26,14 @@
 `concepts.md` を更新したら、関連するスキル・docs が参照リンクで済んでいるか確認する。
 スキルに同じ本文のコピーがある場合は削ってリンクに置き換える。
 
+## スキル名（GraphAssist ドメイン）
+
+GraphAssist 固有の画像処理スキルは `.rulesync/skills/ga-<role>/SKILL.md` とする（1 段フラット、サブディレクトリ不可）。
+
+- 例: `ga-image-processing`, `ga-batch-runner`, `ga-mosaic-art`
+- frontmatter の `name:` はディレクトリ名と一致させる
+- dna_kernel 汎用スキル（`code-testing` 等）はプレフィックスなし
+
 ## 査証ログへの記録
 
 ルールを追加・更新したら、その事実を査証ログへ追記する。

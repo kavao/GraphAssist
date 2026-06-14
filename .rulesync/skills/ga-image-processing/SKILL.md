@@ -1,5 +1,5 @@
 ﻿---
-name: image-processing
+name: ga-image-processing
 description: graphassist convert による一括変換・リサイズ・形式変換
 ---
 
@@ -39,7 +39,7 @@ uv run graphassist convert samples/source/icon.png generated/images/icon --long-
 
 ## レタッチ（1 枚編集）の場合
 
-一括 convert ではなく **ImageJob** を使う → [image-job-runner スキル](../image-job-runner/SKILL.md)
+一括 convert ではなく **ImageJob** を使う → [ga-image-job-runner スキル](../ga-image-job-runner/SKILL.md)
 
 ## ユーティリティ CLI
 
@@ -55,11 +55,11 @@ uv run graphassist convert samples/source/icon.png generated/images/icon --long-
 
 ## 複数ステップ（mosaic + job 混在）
 
-**Batch manifest** → [batch-runner スキル](../batch-runner/SKILL.md)
+**Batch manifest** → [ga-batch-runner スキル](../ga-batch-runner/SKILL.md)
 
 ## CharGrid（ピクセルアート）
 
-→ [mosaic-art スキル](../mosaic-art/SKILL.md)
+→ [ga-mosaic-art スキル](../ga-mosaic-art/SKILL.md)
 
 ## 参照
 

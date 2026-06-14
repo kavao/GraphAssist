@@ -1,5 +1,5 @@
 ﻿---
-name: mosaic-art
+name: ga-mosaic-art
 description: MosaicArt CharGrid JSON の生成・decode・encode・JS エクスポート
 ---
 
@@ -53,11 +53,23 @@ uv run graphassist mosaic export \
 
 - 略称を使う（`B`=body, `W`=window, `R`=red 等）と LLM が編集しやすい
 - 行の長さをすべて揃える（パディングは `transparent` 文字）
-- ImageJob レタッチは [image-job-runner スキル](../image-job-runner/SKILL.md)
+- ImageJob レタッチは [ga-image-job-runner スキル](../ga-image-job-runner/SKILL.md)
+- 日本語タイトル等の読みやすい文字は **ImageJob `text`** に委譲する（CharGrid 直埋めは非推奨）
+- 合成試行は [_workingspace/_scratch/](../../_workingspace/_scratch/README.md) → 正本へ昇格（[workspace-scratch スキル](../workspace-scratch/SKILL.md)）
+
+## Mosaic + Job（タイトル付き）
+
+絵本体は MosaicArt JSON、タイトル・装飾は Batch 内の `job` で重ねる。
+
+```bash
+uv run graphassist run samples/jobs/birds_on_trunk_pipeline.json
+```
+
+正本: `samples/mosaic/birds_on_trunk.json` + `samples/jobs/birds_on_trunk_pipeline.json`
 
 ## 複数命令（Batch manifest）
 
-複数ステップは [batch-runner スキル](../batch-runner/SKILL.md) を使う（詳細は [batch.md](../../docs/ja/image/batch.md)）。
+複数ステップは [ga-batch-runner スキル](../ga-batch-runner/SKILL.md) を使う（詳細は [batch.md](../../docs/ja/image/batch.md)）。
 
 ```bash
 uv run graphassist run samples/jobs/mosaic_pipeline.json --dry-run

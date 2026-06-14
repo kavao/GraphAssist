@@ -1,5 +1,5 @@
 ---
-name: catalog-assets
+name: ga-catalog-assets
 description: 権利フリー素材カタログの fetch・materialize と ImageJob/Batch での overlay_asset / input_asset 参照
 ---
 
@@ -97,5 +97,5 @@ materialize → job → `analyze` の Batch 例は [samples/jobs/_future/README.
 - [docs/ja/image/edit-job.md](../../docs/ja/image/edit-job.md)
 - [docs/ja/image/batch.md](../../docs/ja/image/batch.md)
 - [assets/catalog/README.md](../../assets/catalog/README.md)
-- [batch-runner スキル](../batch-runner/SKILL.md)
-- [image-job-runner スキル](../image-job-runner/SKILL.md)
+- [ga-batch-runner スキル](../ga-batch-runner/SKILL.md)
+- [ga-image-job-runner スキル](../ga-image-job-runner/SKILL.md)

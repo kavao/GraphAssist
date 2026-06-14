@@ -57,4 +57,4 @@ uv run graphassist job samples/jobs/demo_catalog_minimal.json
 uv run graphassist run samples/jobs/demo_catalog_pipeline_asset_ids.json
 ```
 
-Index: [samples/jobs/catalog/index.json](../../samples/jobs/catalog/index.json) · [samples/jobs/README.md](../../samples/jobs/README.md) · Skill: [catalog-assets](../../.rulesync/skills/catalog-assets/SKILL.md)
+Index: [samples/jobs/catalog/index.json](../../samples/jobs/catalog/index.json) · [samples/jobs/README.md](../../samples/jobs/README.md) · Skill: [ga-catalog-assets](../../.rulesync/skills/ga-catalog-assets/SKILL.md)

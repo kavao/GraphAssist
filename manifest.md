@@ -31,11 +31,12 @@ rulesync が各 LLM ツールのスキル設定へ変換します。
 | `.rulesync/skills/code-testing/SKILL.md` | コード変更時のテスト実行・デグレード防止 | `.rulesync/skills/code-testing/` |
 | `.rulesync/skills/user-locale/SKILL.md` | 会話言語と user-locale 副本 | `.rulesync/skills/user-locale/` |
 | `.rulesync/skills/content-placement/SKILL.md` | 執筆前の正本・副本判断 | `.rulesync/skills/content-placement/` |
-| `.rulesync/skills/image-processing/SKILL.md` | 一括 CLI | `.rulesync/skills/image-processing/` |
-| `.rulesync/skills/image-job-runner/SKILL.md` | ImageJob JSON | `.rulesync/skills/image-job-runner/` |
-| `.rulesync/skills/batch-runner/SKILL.md` | Batch manifest | `.rulesync/skills/batch-runner/` |
-| `.rulesync/skills/mosaic-art/SKILL.md` | CharGrid | `.rulesync/skills/mosaic-art/` |
-| `.rulesync/skills/catalog-assets/SKILL.md` | 素材カタログ fetch / id 参照 | `.rulesync/skills/catalog-assets/` |
+| `.rulesync/skills/ga-image-processing/SKILL.md` | 一括 CLI | `.rulesync/skills/ga-image-processing/` |
+| `.rulesync/skills/ga-image-job-runner/SKILL.md` | ImageJob JSON | `.rulesync/skills/ga-image-job-runner/` |
+| `.rulesync/skills/ga-image-analysis/SKILL.md` | analyze CLI / 品質確認 | `.rulesync/skills/ga-image-analysis/` |
+| `.rulesync/skills/ga-batch-runner/SKILL.md` | Batch manifest | `.rulesync/skills/ga-batch-runner/` |
+| `.rulesync/skills/ga-mosaic-art/SKILL.md` | CharGrid | `.rulesync/skills/ga-mosaic-art/` |
+| `.rulesync/skills/ga-catalog-assets/SKILL.md` | 素材カタログ fetch / id 参照 | `.rulesync/skills/ga-catalog-assets/` |
 | `.rulesync/metadata/graphassist.json` | GraphAssist バージョン正本 | `.rulesync/metadata/graphassist.json` |
 | `.rulesync/metadata/runtime-manifest.jsonc` | runtime 取得対象一覧 | 同左 |
 | `.rulesync/metadata/asset-catalog.jsonc` | 素材カタログ manifest | 同左 |
@@ -114,8 +115,19 @@ rulesync の管理外。人間が読む説明ドキュメント。
 | `tools/kernel/user_prefs.py` | 会話言語・user-locale 副本 sync | `tools/kernel/user_prefs.py` |
 | `tools/kernel/json_weighted_pick.py` | JSON 重み付き乱数選択 | `tools/kernel/json_weighted_pick.py` |
 
+## rulesync（正本 → 副本）
+
+| コマンド | 用途 |
+|----------|------|
+| `corepack pnpm dlx rulesync generate --dry-run` | 生成内容の確認 |
+| `corepack pnpm dlx rulesync generate` | `.rulesync/` から AGENTS.md / `.cursor/` / `.claude/` 等へ同期 |
+| `corepack pnpm dlx rulesync generate --check` | 副本が最新か検証 |
+
+`.rulesync/` を編集したあとは **上記 generate を基準**とする（`uv run rulesync` や `npx rulesync` は使わない）。  
+会話言語副本は generate **後**に `python tools/kernel/user_prefs.py sync`（[user-locale スキル](.rulesync/skills/user-locale/SKILL.md)）。
+
 ## 最小セット（どれか1つから始めるなら）
 
-- **ルールだけ**: `.rulesync/rules/concepts.md` + `rulesync.jsonc` + `npx rulesync generate` 実行
+- **ルールだけ**: `.rulesync/rules/concepts.md` + `rulesync.jsonc` + `corepack pnpm dlx rulesync generate` 実行
 - **ログまで**: 上記に `tools/kernel/workspace_audit_log.py` を追加
-- **画像処理まで**: 上記に `src/graphassist/graphassist.py` と `.rulesync/skills/image-processing/SKILL.md` を追加
+- **画像処理まで**: 上記に `src/graphassist/graphassist.py` と `.rulesync/skills/ga-image-processing/SKILL.md` を追加

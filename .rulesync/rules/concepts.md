@@ -75,6 +75,25 @@ description: "自己発展型ルールガバナンスの概念正本"
 
 - 実行手順: `skills/code-testing/SKILL.md`
 
+## 一時作業（scratch）
+
+定義:
+試行錯誤用の Python・データは `_workingspace/_scratch/` に置き、ツール中間出力は `generated/` に置く。
+
+必須:
+
+- 再現が必要になったら `scripts/gen_*.py` または `samples/jobs/`（Batch）へ昇格する。
+- セッション終了時に scratch を削除するか、査証ログに残す理由を書く。
+
+禁止:
+
+- 一時スクリプトを `_workingspace/` 直下や `scripts/` に ad hoc で置いて削除のみで完了扱いしない。
+- パイプライン中間を `samples/source/` にコピーして放置しない。
+
+参照:
+
+- 手順: `skills/workspace-scratch/SKILL.md`
+
 ## ルール配置の原則
 
 定義:
@@ -145,7 +164,7 @@ dna_kernel 自体を開発・修正する作業モード。このモードでは
 
 - ユーザーが dna_kernel 本体のルール・スキル・ツール・README の改善を依頼している場合、このモードとして扱う。
 - 既存ファイルを読み、必要な変更を直接行う。
-- 変更後は rulesync の dry-run または check など、影響範囲に応じた確認を行う。
+- 変更後は `corepack pnpm dlx rulesync generate --dry-run` または `--check` など、影響範囲に応じた確認を行う。
 
 禁止:
 
