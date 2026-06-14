@@ -15,6 +15,11 @@ from graphassist.engine.canvas import (
     resize_wh,
     save,
 )
+from graphassist.engine.ops_adjust import apply_adjust
+from graphassist.engine.ops_color import apply_grayscale, apply_sepia
+from graphassist.engine.ops_filter import apply_blur
+from graphassist.engine.ops_tone import apply_curve, apply_quantize
+from graphassist.schema.ops import AdjustOp, BlurOp, CurveOp, GrayscaleOp, QuantizeOp, SepiaOp
 
 
 @dataclass
@@ -29,6 +34,14 @@ class ConvertOptions:
     dpi: float | None = None
     strip_exif: bool = False
     numbered: bool = False
+    brightness: float | None = None
+    contrast: float | None = None
+    saturation: float | None = None
+    gamma: float | None = None
+    quantize_colors: int | None = None
+    blur_radius: float | None = None
+    grayscale: bool = False
+    sepia_strength: float | None = None
 
 
 def collect_inputs(path: Path) -> list[Path]:
@@ -58,6 +71,31 @@ def apply_transforms(img, opts: ConvertOptions):
     return out
 
 
+def apply_tone_transforms(img, opts: ConvertOptions):
+    out = img
+    if opts.brightness is not None or opts.contrast is not None or opts.saturation is not None:
+        out = apply_adjust(
+            out,
+            AdjustOp(
+                type="adjust",
+                brightness=opts.brightness if opts.brightness is not None else 1.0,
+                contrast=opts.contrast if opts.contrast is not None else 1.0,
+                saturation=opts.saturation if opts.saturation is not None else 1.0,
+            ),
+        )
+    if opts.gamma is not None:
+        out = apply_curve(out, CurveOp(type="curve", mode="gamma", gamma=opts.gamma))
+    if opts.grayscale:
+        out = apply_grayscale(out, GrayscaleOp(type="grayscale", mode="luminance"))
+    if opts.sepia_strength is not None:
+        out = apply_sepia(out, SepiaOp(type="sepia", strength=opts.sepia_strength))
+    if opts.quantize_colors is not None:
+        out = apply_quantize(out, QuantizeOp(type="quantize", colors=opts.quantize_colors))
+    if opts.blur_radius is not None and opts.blur_radius > 0:
+        out = apply_blur(out, BlurOp(type="blur", kind="gaussian", radius=opts.blur_radius))
+    return out
+
+
 def run_convert(input_path: Path, output_path: Path, opts: ConvertOptions) -> list[Path]:
     inputs = collect_inputs(input_path)
     input_is_dir = input_path.is_dir()
@@ -73,6 +111,7 @@ def run_convert(input_path: Path, output_path: Path, opts: ConvertOptions) -> li
     for i, src in enumerate(inputs, start=1):
         img = load(src)
         img = apply_transforms(img, opts)
+        img = apply_tone_transforms(img, opts)
         if input_is_dir or not output_path.suffix:
             dst = output_path_for(
                 src,

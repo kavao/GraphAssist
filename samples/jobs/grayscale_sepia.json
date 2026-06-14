@@ -1,0 +1,9 @@
+{
+  "version": "1.0",
+  "input": "samples/source/job_test_base.png",
+  "output": "generated/images/grayscale_sepia_out.png",
+  "operations": [
+    {"type": "grayscale", "mode": "luminance"},
+    {"type": "sepia", "strength": 0.85}
+  ]
+}

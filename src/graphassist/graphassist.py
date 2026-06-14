@@ -17,9 +17,11 @@ from graphassist.job_runner import run_job_file
 from graphassist.mosaic_cmd import (
     MosaicDecodeOptions,
     MosaicEncodeOptions,
+    run_compose_birds,
     run_decode,
     run_encode,
     run_export,
+    run_merge,
 )
 from graphassist.util_cmd import (
     TrimOptions,
@@ -69,6 +71,14 @@ def build_parser() -> argparse.ArgumentParser:
     convert.add_argument("--dpi", type=float, default=None, help="output DPI metadata")
     convert.add_argument("--strip-exif", action="store_true", help="strip EXIF on JPEG output")
     convert.add_argument("--numbered", action="store_true", help="use 0001, 0002, ... for batch output names")
+    convert.add_argument("--brightness", type=float, default=None, help="adjust brightness factor (0..3)")
+    convert.add_argument("--contrast", type=float, default=None, help="adjust contrast factor (0..3)")
+    convert.add_argument("--saturation", type=float, default=None, help="adjust saturation factor (0..3)")
+    convert.add_argument("--gamma", type=float, default=None, help="gamma curve (0.1..5)")
+    convert.add_argument("--quantize", type=int, default=None, metavar="N", help="reduce to N colors (2..256)")
+    convert.add_argument("--blur", type=float, default=None, metavar="R", help="gaussian blur radius (0..50)")
+    convert.add_argument("--grayscale", action="store_true", help="Rec.601 luminance grayscale (RGB only, alpha preserved)")
+    convert.add_argument("--sepia", type=float, default=None, metavar="S", help="sepia tone strength 0..1")
 
     job = sub.add_parser("job", help="run ImageJob JSON (Pillow edit pipeline)")
     job.add_argument("json_path", type=Path, help="path to ImageJob JSON file")
@@ -107,6 +117,29 @@ def build_parser() -> argparse.ArgumentParser:
     mosaic_export.add_argument("--format", default="js", choices=["js", "json"], help="export format")
     mosaic_export.add_argument("--output", type=Path, default=None, help="write to file under generated/mosaic/")
     mosaic_export.add_argument("--name", default=None, help="JS const base name")
+
+    mosaic_merge = mosaic_sub.add_parser("merge", help="merge MosaicArt JSON layers into one grid")
+    mosaic_merge.add_argument("output", type=Path, help="output JSON under generated/mosaic/")
+    mosaic_merge.add_argument("--canvas", required=True, help="canvas size WIDTHxHEIGHT")
+    mosaic_merge.add_argument(
+        "--layer",
+        action="append",
+        dest="layers",
+        required=True,
+        metavar="PATH@X,Y",
+        help="layer spec (repeatable): samples/mosaic/a.json@10,5",
+    )
+    mosaic_merge.add_argument("--title", default=None, help="meta.title for merged art")
+
+    mosaic_compose_birds = mosaic_sub.add_parser(
+        "compose-birds",
+        help="compose birds_on_trunk from parakeet + parrot + trunk preset",
+    )
+    mosaic_compose_birds.add_argument(
+        "output",
+        type=Path,
+        help="output JSON under generated/mosaic/",
+    )
 
     trim = sub.add_parser("trim", help="auto-trim margins")
     trim.add_argument("input", type=Path)
@@ -223,6 +256,14 @@ def main(argv: list[str] | None = None) -> int:
             dpi=args.dpi,
             strip_exif=args.strip_exif,
             numbered=args.numbered,
+            brightness=args.brightness,
+            contrast=args.contrast,
+            saturation=args.saturation,
+            gamma=args.gamma,
+            quantize_colors=args.quantize,
+            blur_radius=args.blur,
+            grayscale=args.grayscale,
+            sepia_strength=args.sepia,
         )
         created = run_convert(args.input, args.output, opts)
         for path in created:
@@ -265,6 +306,14 @@ def main(argv: list[str] | None = None) -> int:
                 print(text, end="" if text.endswith("\n") else "\n")
             else:
                 print(args.output)
+            return 0
+        if args.mosaic_command == "merge":
+            out = run_merge(args.output, canvas=args.canvas, layers=args.layers, title=args.title)
+            print(out)
+            return 0
+        if args.mosaic_command == "compose-birds":
+            out = run_compose_birds(args.output)
+            print(out)
             return 0
 
     if args.command == "trim":

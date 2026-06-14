@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 
 from graphassist.engine.colors import is_allowed_color
 from graphassist.schema.catalog import validate_catalog_id
-from graphassist.schema.paths import resolve_font, resolve_input
+from graphassist.schema.paths import resolve_font, resolve_input, resolve_mosaic_output
 
 
 def _validate_color(value: str) -> str:
@@ -153,6 +153,99 @@ class AdjustOp(BaseModel):
     saturation: float = Field(default=1.0, ge=0.0, le=3.0)
 
 
+class GrayscaleOp(BaseModel):
+    type: Literal["grayscale"]
+    mode: Literal["luminance"] = "luminance"
+
+
+class SepiaOp(BaseModel):
+    type: Literal["sepia"]
+    strength: float = Field(default=1.0, ge=0.0, le=1.0)
+
+
+class CurveOp(BaseModel):
+    type: Literal["curve"]
+    mode: Literal["gamma", "levels"]
+    gamma: float = Field(default=1.0, ge=0.1, le=5.0)
+    black: int = Field(default=0, ge=0, le=255)
+    white: int = Field(default=255, ge=0, le=255)
+
+    @model_validator(mode="after")
+    def validate_levels(self) -> CurveOp:
+        if self.mode == "levels" and self.black >= self.white:
+            raise ValueError("curve levels require black < white")
+        return self
+
+
+class QuantizeOp(BaseModel):
+    type: Literal["quantize"]
+    colors: int = Field(default=16, ge=2, le=256)
+    dither: bool = False
+    method: Literal["median_cut"] = "median_cut"
+
+
+class PosterizeOp(BaseModel):
+    type: Literal["posterize"]
+    bits: int = Field(default=4, ge=1, le=8)
+
+
+class BlurOp(BaseModel):
+    type: Literal["blur"]
+    kind: Literal["gaussian", "box"] = "gaussian"
+    radius: float = Field(default=0.0, ge=0.0, le=50.0)
+
+
+class SharpenOp(BaseModel):
+    type: Literal["sharpen"]
+    kind: Literal["enhance", "unsharp"] = "enhance"
+    amount: float = Field(default=1.0, ge=0.0, le=3.0)
+    radius: float = Field(default=2.0, ge=0.1, le=50.0)
+    percent: int = Field(default=150, ge=0, le=500)
+    threshold: int = Field(default=3, ge=0, le=255)
+
+
+class ToMosaicOp(BaseModel):
+    type: Literal["to_mosaic"]
+    grid: str
+    max_colors: int = Field(default=16, ge=1, le=32)
+    transparent: str = "."
+    alpha_threshold: int = Field(default=128, ge=0, le=255)
+    mosaic_output: str
+    title: str | None = None
+
+    @field_validator("grid", mode="before")
+    @classmethod
+    def normalize_grid(cls, value: object) -> str:
+        if isinstance(value, list):
+            if len(value) != 2:
+                raise ValueError("grid list must be [width, height]")
+            return f"{int(value[0])}x{int(value[1])}"
+        if isinstance(value, str):
+            return value
+        raise ValueError("grid must be WxH string or [width, height] list")
+
+    @field_validator("grid")
+    @classmethod
+    def validate_grid(cls, value: str) -> str:
+        from graphassist.engine.mosaic_encode import parse_grid
+
+        parse_grid(value)
+        return value
+
+    @field_validator("transparent")
+    @classmethod
+    def validate_transparent(cls, value: str) -> str:
+        if len(value) != 1 or not value.isprintable() or value.isspace():
+            raise ValueError("transparent must be a single printable non-space character")
+        return value
+
+    @field_validator("mosaic_output")
+    @classmethod
+    def validate_mosaic_output(cls, value: str) -> str:
+        resolve_mosaic_output(value)
+        return value
+
+
 Operation = Annotated[
     Union[
         ResizeOp,
@@ -165,6 +258,14 @@ Operation = Annotated[
         TrimOp,
         FlattenOp,
         AdjustOp,
+        GrayscaleOp,
+        SepiaOp,
+        CurveOp,
+        QuantizeOp,
+        PosterizeOp,
+        BlurOp,
+        SharpenOp,
+        ToMosaicOp,
     ],
     Field(discriminator="type"),
 ]

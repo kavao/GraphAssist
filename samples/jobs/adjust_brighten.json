@@ -1,0 +1,8 @@
+{
+  "version": "1.0",
+  "input": "samples/source/job_test_base.png",
+  "output": "generated/images/adjust_brighten.png",
+  "operations": [
+    {"type": "adjust", "brightness": 1.2, "contrast": 1.1}
+  ]
+}

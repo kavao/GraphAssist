@@ -8,7 +8,9 @@ from PIL import Image
 
 from graphassist.engine.canvas import load, save
 from graphassist.engine.ops_adjust import apply_adjust
+from graphassist.engine.ops_color import apply_grayscale, apply_sepia
 from graphassist.engine.ops_composite import apply_composite
+from graphassist.engine.ops_filter import apply_blur, apply_sharpen
 from graphassist.engine.ops_geometry import (
     apply_border,
     apply_crop,
@@ -16,21 +18,31 @@ from graphassist.engine.ops_geometry import (
     apply_resize,
     apply_rotate,
 )
+from graphassist.engine.ops_mosaic import apply_to_mosaic
 from graphassist.engine.ops_text import apply_text
+from graphassist.engine.ops_tone import apply_curve, apply_posterize, apply_quantize
 from graphassist.engine.ops_trim import apply_flatten, apply_trim
 from graphassist.schema.job import ImageJob
 from graphassist.schema.paths import normalize_manifest_path, resolve_batch_chained_input
 from graphassist.schema.ops import (
     AdjustOp,
+    BlurOp,
     BorderOp,
     CompositeOp,
     CropOp,
+    CurveOp,
     ExtendOp,
     FlattenOp,
+    GrayscaleOp,
     Operation,
+    PosterizeOp,
+    QuantizeOp,
     ResizeOp,
     RotateOp,
+    SepiaOp,
+    SharpenOp,
     TextOp,
+    ToMosaicOp,
     TrimOp,
 )
 
@@ -56,6 +68,22 @@ def apply_operation(img: Image.Image, op: Operation, *, root: Path) -> Image.Ima
         return apply_flatten(img, op)
     if isinstance(op, AdjustOp):
         return apply_adjust(img, op)
+    if isinstance(op, GrayscaleOp):
+        return apply_grayscale(img, op)
+    if isinstance(op, SepiaOp):
+        return apply_sepia(img, op)
+    if isinstance(op, CurveOp):
+        return apply_curve(img, op)
+    if isinstance(op, QuantizeOp):
+        return apply_quantize(img, op)
+    if isinstance(op, PosterizeOp):
+        return apply_posterize(img, op)
+    if isinstance(op, BlurOp):
+        return apply_blur(img, op)
+    if isinstance(op, SharpenOp):
+        return apply_sharpen(img, op)
+    if isinstance(op, ToMosaicOp):
+        return apply_to_mosaic(img, op, root=root)
     raise ValueError(f"unsupported operation: {op}")
 
 

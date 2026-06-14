@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "input": "samples/source/job_test_base.png",
+  "output": "generated/images/tone_pipeline_out.png",
+  "operations": [
+    {"type": "adjust", "brightness": 1.15, "contrast": 1.05},
+    {"type": "curve", "mode": "gamma", "gamma": 1.1},
+    {"type": "quantize", "colors": 16, "dither": false},
+    {"type": "blur", "kind": "gaussian", "radius": 0.5}
+  ]
+}
