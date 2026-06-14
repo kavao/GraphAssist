@@ -27,7 +27,7 @@ class BatchTest(unittest.TestCase):
         self.birds_batch = self.root / "samples/jobs/birds_on_trunk_pipeline.json"
         self.out_birds_base = self.root / "generated/images/birds_on_trunk_base.png"
         self.out_birds = self.root / "generated/images/birds_on_trunk.png"
-        self._bootstrapped_pixel_font: Path | None = None
+        self._bootstrapped_fonts: list[Path] = []
         for path in (
             self.out_file,
             self.out_inline,
@@ -50,18 +50,19 @@ class BatchTest(unittest.TestCase):
         ):
             if path.exists():
                 path.unlink()
-        if self._bootstrapped_pixel_font is not None and self._bootstrapped_pixel_font.exists():
-            self._bootstrapped_pixel_font.unlink()
+        for font_path in self._bootstrapped_fonts:
+            if font_path.exists():
+                font_path.unlink()
 
-    def _ensure_pixelmplus_font(self) -> None:
-        """birds_on_trunk_pipeline は PixelMplus を参照。CI では runtime/fonts が無いため bootstrap。"""
-        pixel = self.root / "assets/fonts/PixelMplus12-Regular.ttf"
-        if pixel.exists():
+    def _ensure_font(self, rel_path: str) -> None:
+        """CI には runtime/fonts が無いため、参照フォントをバンドル済みテストフォントで bootstrap する。"""
+        font_path = self.root / rel_path
+        if font_path.exists():
             return
         src = ensure_test_font(self.root)
-        pixel.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy(src, pixel)
-        self._bootstrapped_pixel_font = pixel
+        font_path.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy(src, font_path)
+        self._bootstrapped_fonts.append(font_path)
 
     def test_load_manifest(self) -> None:
         manifest = load_manifest(self.batch)
@@ -123,6 +124,7 @@ class BatchTest(unittest.TestCase):
         self.assertEqual(manifest.commands[1].type, "job")
 
     def test_run_catalog_pipeline(self) -> None:
+        self._ensure_font("assets/fonts/NotoSansJP-Regular.otf")
         run_batch_file(self.catalog_batch, dry_run=False)
         self.assertTrue(self.out_catalog.exists())
         self.assertGreater(self.out_catalog.stat().st_size, 0)
@@ -171,7 +173,7 @@ class BatchTest(unittest.TestCase):
             BatchManifest.model_validate(data)
 
     def test_run_birds_pipeline(self) -> None:
-        self._ensure_pixelmplus_font()
+        self._ensure_font("assets/fonts/PixelMplus12-Regular.ttf")
         run_batch_file(self.birds_batch, dry_run=False)
         self.assertTrue(self.out_birds_base.exists())
         self.assertTrue(self.out_birds.exists())
