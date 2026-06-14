@@ -1,5 +1,7 @@
 ﻿# GraphAssist — 画像処理 CLI
 
+![GraphAssist](image/title.webp)
+
 [English](README.md) · 日本語
 
 **GraphAssist** は、Cursor などの LLM エディタ向けに、**Pillow + NumPy 中心の画像処理 CLI** を提供するプロジェクトです。
