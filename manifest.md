@@ -33,6 +33,10 @@ rulesync が各 LLM ツールのスキル設定へ変換します。
 | `.rulesync/skills/content-placement/SKILL.md` | 執筆前の正本・副本判断 | `.rulesync/skills/content-placement/` |
 | `.rulesync/skills/image-processing/SKILL.md` | 一括 CLI | `.rulesync/skills/image-processing/` |
 | `.rulesync/skills/image-job-runner/SKILL.md` | ImageJob JSON | `.rulesync/skills/image-job-runner/` |
+| `.rulesync/skills/batch-runner/SKILL.md` | Batch manifest | `.rulesync/skills/batch-runner/` |
+| `.rulesync/skills/mosaic-art/SKILL.md` | CharGrid | `.rulesync/skills/mosaic-art/` |
+| `.rulesync/metadata/graphassist.json` | GraphAssist バージョン正本 | `.rulesync/metadata/graphassist.json` |
+| `.rulesync/metadata/runtime-manifest.jsonc` | runtime 取得対象一覧 | 同左 |
 
 ## rulesync.jsonc（rulesync 設定）
 
@@ -40,6 +44,25 @@ rulesync が各 LLM ツールのスキル設定へ変換します。
 |----------|------|--------------------------|
 | `rulesync.jsonc` | targets・features の指定 | プロジェクトルート |
 | `LICENSE` | MIT ライセンス正本 | プロジェクトルート |
+
+## scripts/（設置 bootstrap）
+
+| ファイル | 役割 |
+|----------|------|
+| `scripts/setup-runtime.ps1` | runtime 骨格作成（再実行可） |
+| `scripts/setup-runtime.sh` | 同上（Unix） |
+
+## runtime/（Git 管理外・設置先）
+
+| パス | 内容 |
+|------|------|
+| `runtime/bin/` | graphassist.exe |
+| `runtime/assets/fonts/` | 描画フォント |
+| `runtime/assets/weights/` | 将来: AI 重み |
+| `runtime/manifest.local.json` | インストール記録 |
+| `runtime/README.md` | 説明（Git に含める） |
+
+設計: [_workingspace/plans/deployment-design.md](_workingspace/plans/deployment-design.md) · [docs/ja/setup/runtime.md](docs/ja/setup/runtime.md)
 
 ## docs/（人間向けの説明）
 
@@ -58,14 +81,26 @@ rulesync の管理外。人間が読む説明ドキュメント。
 | `_workingspace/plans/overview.md` | プロジェクト文脈・方向性（ローカル計画） | `_workingspace/plans/` |
 | `_workingspace/plans/2026-06-14-work-plan.md` | フェーズ別作業計画 | `_workingspace/plans/` |
 
-## tools/graphassist/（GraphAssist 画像処理）
+## tools/graphassist/（GraphAssist ソース — 将来 `src/graphassist/`）
 
 | ファイル | 役割 | 導入先での配置先（例） |
 |----------|------|-------------------------------|
 | `tools/graphassist/graphassist.py` | CLI エントリ（Pillow のみ） | `tools/graphassist/graphassist.py` |
+| `tools/graphassist/version.py` | バージョン定数（組み込み・CLI 共用） | `tools/graphassist/version.py` |
 | `tools/graphassist/convert_cmd.py` | convert 処理 | `tools/graphassist/convert_cmd.py` |
 | `tools/graphassist/engine/canvas.py` | RGBA load/save・基本変換 | `tools/graphassist/engine/canvas.py` |
-| `tools/graphassist/README.md` | 画像ツールの配置・利用手順（Phase 1 以降） | `tools/graphassist/README.md` |
+| `tools/graphassist/README.md` | 画像ツールの配置・利用手順 | `tools/graphassist/README.md` |
+
+### バイナリ・runtime（Git 管理外）
+
+| 項目 | 方針 |
+|------|------|
+| 設置先 | **`runtime/`**（`setup-runtime` で初期化） |
+| 実行形式 | PyInstaller one-file exe（~35 MB） |
+| フォント・重み | `runtime/assets/` |
+| 取得 | Release / bootstrap（[runtime-manifest.jsonc](.rulesync/metadata/runtime-manifest.jsonc)） |
+| ソース | `tools/graphassist/`（将来 `src/graphassist/`） |
+| 非採用 | OpenCV / ImageMagick |
 
 ## tools/kernel/（実働コード）
 

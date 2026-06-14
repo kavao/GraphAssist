@@ -54,8 +54,11 @@ Logs (JSONL, Markdown, replay script) are written under `generated/logs/`.
 | `rotate` | `degrees`, `fill` |
 | `border` | `size`, `color` |
 | `composite` | `overlay`, `x`, `y`, `anchor` |
+| `text` | `content`, `font`, `size`, `color`, `x`, `y`, `stroke_color`, `stroke_width` |
+| `trim` | `background`, `padding`, `tolerance` |
+| `flatten` | `background` |
 
-Allowed `fill` / `color` names: `transparent`, `white`, `black`, `red`, `green`, `blue`, `gray`
+Allowed `fill` / `color` / `background`: name or `#RRGGBB` (`transparent`, `white`, `black`, `red`, `green`, `blue`, `gray`)
 
 ## Composite example
 
@@ -74,3 +77,8 @@ Allowed `fill` / `color` names: `transparent`, `white`, `black`, `red`, `green`,
 - Generating or running ImageMagick / raw shell commands
 - Read/write outside allowed paths
 - Undefined operation types
+
+## See also
+
+- [batch.md](batch.md) — Batch manifest (mosaic + job in one JSON)
+- [mosaic.md](mosaic.md) — CharGrid pixel art

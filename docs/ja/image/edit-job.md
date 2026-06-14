@@ -54,8 +54,11 @@ uv run python tools/graphassist/graphassist.py job samples/jobs/resize_border.js
 | `rotate` | `degrees`, `fill` |
 | `border` | `size`, `color` |
 | `composite` | `overlay`, `x`, `y`, `anchor` |
+| `text` | `content`, `font`, `size`, `color`, `x`, `y`, `stroke_color`, `stroke_width` |
+| `trim` | `background`, `padding`, `tolerance` |
+| `flatten` | `background` |
 
-`fill` / `color` で使える名前: `transparent`, `white`, `black`, `red`, `green`, `blue`, `gray`
+`fill` / `color` / `background`: 名前または `#RRGGBB`（`transparent`, `white`, `black`, `red`, `green`, `blue`, `gray`）
 
 ## 合成例
 
@@ -74,3 +77,8 @@ uv run python tools/graphassist/graphassist.py job samples/jobs/resize_border.js
 - ImageMagick / 生シェルコマンドの生成・実行
 - 許可外パスへの読み書き
 - 未定義の operation type
+
+## 関連
+
+- [batch.md](batch.md) — mosaic と job を 1 JSON にまとめる Batch manifest
+- [mosaic.md](mosaic.md) — CharGrid（ピクセルアート）

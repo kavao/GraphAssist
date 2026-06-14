@@ -1,0 +1,34 @@
+{
+  "version": "1.0",
+  "runtime_root": "runtime",
+  "components": [
+    {
+      "id": "graphassist",
+      "kind": "binary",
+      "description": "GraphAssist CLI (PyInstaller one-file)",
+      "metadata": ".rulesync/metadata/graphassist.json",
+      "install": {
+        "win64": "runtime/bin/graphassist.exe"
+      }
+    },
+    {
+      "id": "dejavu-sans",
+      "kind": "font",
+      "optional": true,
+      "description": "Default font for text operation",
+      "install": {
+        "path": "runtime/assets/fonts/DejaVuSans.ttf"
+      }
+    },
+    {
+      "id": "bg-removal",
+      "kind": "weights",
+      "optional": true,
+      "enabled": false,
+      "description": "Future: background removal model weights",
+      "install": {
+        "dir": "runtime/assets/weights/bg-removal"
+      }
+    }
+  ]
+}

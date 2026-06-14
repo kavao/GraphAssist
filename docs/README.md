@@ -7,9 +7,17 @@ User-facing guides for operating this project.
 ## GraphAssist (image CLI)
 
 - [English — Quickstart](en/quickstart.md)
+- [English — CLI reference](en/image/operations.md)
+- [English — Runtime setup](en/setup/runtime.md)
 - [English — ImageJob guide](en/image/edit-job.md)
+- [English — CharGrid / MosaicArt](en/image/mosaic.md)
+- [English — Batch manifest](en/image/batch.md)
 - [日本語 — クイックスタート](ja/quickstart.md)
+- [日本語 — CLI リファレンス](ja/image/operations.md)
+- [日本語 — 設置・runtime](ja/setup/runtime.md)
 - [日本語 — ImageJob 編集](ja/image/edit-job.md)
+- [日本語 — CharGrid / MosaicArt](ja/image/mosaic.md)
+- [日本語 — Batch manifest](ja/image/batch.md)
 
 ## dna_kernel (governance)
 

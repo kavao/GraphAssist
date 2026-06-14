@@ -1,6 +1,21 @@
 # ===== 生成物 =====
 generated/**
 
+# ===== runtime（設置・バイナリ・重み — Git 管理外） =====
+runtime/**
+!runtime/README.md
+
+# ===== ローカルビルド =====
+dist/
+build/
+*.spec
+*.exe
+
+# ===== レガシー資産（runtime/assets へ移行） =====
+assets/fonts/*.ttf
+assets/fonts/*.otf
+assets/fonts/*.ttc
+
 # ===== rulesync 生成物 =====
 # 正本は rulesync.jsonc と .rulesync/ に置き、各ツール向け生成物は除外する
 .claude/

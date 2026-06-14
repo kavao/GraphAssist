@@ -1,4 +1,4 @@
-"""ImageJob operation を順次適用。"""
+"""executor 更新。"""
 
 from __future__ import annotations
 
@@ -15,15 +15,20 @@ from tools.graphassist.engine.ops_geometry import (
     apply_resize,
     apply_rotate,
 )
+from tools.graphassist.engine.ops_text import apply_text
+from tools.graphassist.engine.ops_trim import apply_flatten, apply_trim
 from tools.graphassist.schema.job import ImageJob
 from tools.graphassist.schema.ops import (
     BorderOp,
     CompositeOp,
     CropOp,
     ExtendOp,
+    FlattenOp,
     Operation,
     ResizeOp,
     RotateOp,
+    TextOp,
+    TrimOp,
 )
 
 
@@ -40,6 +45,12 @@ def apply_operation(img: Image.Image, op: Operation, *, root: Path) -> Image.Ima
         return apply_border(img, op)
     if isinstance(op, CompositeOp):
         return apply_composite(img, op, root=root)
+    if isinstance(op, TextOp):
+        return apply_text(img, op, root=root)
+    if isinstance(op, TrimOp):
+        return apply_trim(img, op)
+    if isinstance(op, FlattenOp):
+        return apply_flatten(img, op)
     raise ValueError(f"unsupported operation: {op}")
 
 

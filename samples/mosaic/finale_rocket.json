@@ -1,0 +1,28 @@
+{
+  "version": "1.0",
+  "width": 8,
+  "height": 10,
+  "transparent": ".",
+  "palette": {
+    "B": "#d7c6eb",
+    "W": "#65d8ff",
+    "F": "#ffae42",
+    "R": "#ff5f4d"
+  },
+  "rows": [
+    "...BB...",
+    "..BBBB..",
+    ".BBWWBB.",
+    ".BBWWBB.",
+    ".BBBBBB.",
+    ".BBBBBB.",
+    "BBBBBBBB",
+    ".F....F.",
+    "..F.RF..",
+    "...RR..."
+  ],
+  "meta": {
+    "title": "finale_rocket",
+    "source": "llm"
+  }
+}

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from PIL import Image, ImageOps
 
-from tools.graphassist.engine.colors import color_to_rgba
+from tools.graphassist.engine.colors import parse_color
 from tools.graphassist.engine.canvas import resize_long_edge, resize_wh
 from tools.graphassist.schema.ops import BorderOp, CropOp, ExtendOp, ResizeOp, RotateOp
 
@@ -28,18 +28,18 @@ def apply_extend(img: Image.Image, op: ExtendOp) -> Image.Image:
     w, h = img.size
     new_w = w + op.left + op.right
     new_h = h + op.top + op.bottom
-    canvas = Image.new("RGBA", (new_w, new_h), color_to_rgba(op.fill))
+    canvas = Image.new("RGBA", (new_w, new_h), parse_color(op.fill))
     canvas.paste(img, (op.left, op.top), img if img.mode == "RGBA" else None)
     return canvas
 
 
 def apply_rotate(img: Image.Image, op: RotateOp) -> Image.Image:
-    fill = color_to_rgba(op.fill)
+    fill = parse_color(op.fill)
     return img.rotate(op.degrees, expand=True, resample=Image.Resampling.BICUBIC, fillcolor=fill)
 
 
 def apply_border(img: Image.Image, op: BorderOp) -> Image.Image:
-    rgba = color_to_rgba(op.color)
+    rgba = parse_color(op.color)
     if rgba[3] == 0:
         # transparent border via manual extend
         return apply_extend(

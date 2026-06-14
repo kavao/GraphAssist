@@ -16,6 +16,16 @@ Or:
 uv sync
 ```
 
+## Runtime (optional, recommended)
+
+Binaries and fonts live outside Git under `runtime/`.
+
+```powershell
+.\scripts\setup-runtime.ps1
+```
+
+See [setup/runtime.md](setup/runtime.md).
+
 ## Batch convert
 
 Convert PNG to WebP and resize so the long edge is 1024px.

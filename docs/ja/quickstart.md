@@ -16,6 +16,16 @@ pip install -r requirements.txt
 uv sync
 ```
 
+## ランタイム（任意・推奨）
+
+バイナリ・フォントは Git 外の `runtime/` に置きます。
+
+```powershell
+.\scripts\setup-runtime.ps1
+```
+
+[setup/runtime.md](setup/runtime.md)
+
 ## 一括変換（convert）
 
 PNG を WebP に変換し、長辺を 1024px に揃えます。

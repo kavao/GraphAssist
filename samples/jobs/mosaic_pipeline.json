@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "commands": [
+    {
+      "type": "mosaic.decode",
+      "input": "samples/mosaic/finale_rocket.json",
+      "output": "generated/images/finale_batch_file.png",
+      "cell_size": 8
+    },
+    {
+      "type": "mosaic.decode",
+      "art": {
+        "version": "1.0",
+        "width": 4,
+        "height": 2,
+        "transparent": ".",
+        "palette": {
+          "R": "#ff0000",
+          "B": "#0000ff"
+        },
+        "rows": [
+          "RR..",
+          "..BB"
+        ]
+      },
+      "output": "generated/images/finale_batch_inline.png",
+      "cell_size": 4
+    },
+    {
+      "type": "mosaic.export",
+      "input": "samples/mosaic/finale_rocket.json",
+      "format": "js",
+      "output": "generated/mosaic/finale_rocket.js",
+      "name": "FINALE_ROCKET"
+    }
+  ]
+}

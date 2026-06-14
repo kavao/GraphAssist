@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "input": "samples/source/sample.png",
+  "output": "generated/images/sample_text.png",
+  "operations": [
+    {
+      "type": "text",
+      "content": "GraphAssist",
+      "font": "assets/fonts/DejaVuSans.ttf",
+      "size": 36,
+      "color": "white",
+      "x": 20,
+      "y": 20,
+      "stroke_color": "#333333",
+      "stroke_width": 2
+    }
+  ]
+}
