@@ -1,12 +1,12 @@
-"""幾何変換 operation。"""
+﻿"""幾何変換 operation。"""
 
 from __future__ import annotations
 
 from PIL import Image, ImageOps
 
-from tools.graphassist.engine.colors import parse_color
-from tools.graphassist.engine.canvas import resize_long_edge, resize_wh
-from tools.graphassist.schema.ops import BorderOp, CropOp, ExtendOp, ResizeOp, RotateOp
+from graphassist.engine.colors import parse_color
+from graphassist.engine.canvas import resize_long_edge, resize_wh
+from graphassist.schema.ops import BorderOp, CropOp, ExtendOp, ResizeOp, RotateOp
 
 
 def apply_resize(img: Image.Image, op: ResizeOp) -> Image.Image:

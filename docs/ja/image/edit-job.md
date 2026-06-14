@@ -1,4 +1,4 @@
-# ImageJob 編集ガイド
+﻿# ImageJob 編集ガイド
 
 [English](../en/image/edit-job.md) · 日本語
 
@@ -33,13 +33,13 @@ LLM は ImageJob JSON を生成し、Python 側が Pydantic で検証して Pill
 まず dry-run で手順と出力先を確認します。
 
 ```bash
-uv run python tools/graphassist/graphassist.py job samples/jobs/resize_border.json --dry-run
+uv run graphassist job samples/jobs/resize_border.json --dry-run
 ```
 
 問題なければ本番実行します。
 
 ```bash
-uv run python tools/graphassist/graphassist.py job samples/jobs/resize_border.json
+uv run graphassist job samples/jobs/resize_border.json
 ```
 
 実行後、`generated/logs/` に JSONL / Markdown / replay スクリプトが保存されます。

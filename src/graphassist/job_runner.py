@@ -1,4 +1,4 @@
-"""ImageJob JSON の検証・実行・ログ。"""
+﻿"""ImageJob JSON の検証・実行・ログ。"""
 
 from __future__ import annotations
 
@@ -6,9 +6,9 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-from tools.graphassist.engine.executor import execute_job
-from tools.graphassist.schema.job import ImageJob
-from tools.graphassist.schema.paths import project_root
+from graphassist.engine.executor import execute_job
+from graphassist.schema.job import ImageJob
+from graphassist.schema.paths import project_root
 
 
 def load_job(json_path: Path) -> ImageJob:
@@ -20,8 +20,7 @@ def replay_command(json_path: Path) -> list[str]:
     return [
         "uv",
         "run",
-        "python",
-        "tools/graphassist/graphassist.py",
+        "graphassist",
         "job",
         str(json_path.as_posix()),
     ]

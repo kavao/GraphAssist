@@ -1,4 +1,4 @@
-# GraphAssist — 画像処理 CLI
+﻿# GraphAssist — 画像処理 CLI
 
 [English](README.md) · 日本語
 
@@ -23,9 +23,9 @@ uv sync
 ## 30秒クイックスタート
 
 ```bash
-uv run python tools/graphassist/graphassist.py convert samples/source/your.png generated/images/out --long-edge 1024 --format webp
-uv run python tools/graphassist/graphassist.py job samples/jobs/resize_border.json --dry-run
-uv run python tools/graphassist/graphassist.py mosaic decode samples/mosaic/finale_rocket.json generated/images/rocket.png --cell-size 8
+uv run graphassist convert samples/source/your.png generated/images/out --long-edge 1024 --format webp
+uv run graphassist job samples/jobs/resize_border.json --dry-run
+uv run graphassist mosaic decode samples/mosaic/finale_rocket.json generated/images/rocket.png --cell-size 8
 ```
 
 `runtime/` と `generated/` は gitignore 対象です。

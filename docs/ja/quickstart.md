@@ -1,4 +1,4 @@
-# クイックスタート
+﻿# クイックスタート
 
 [English](../en/quickstart.md) · 日本語
 
@@ -31,7 +31,7 @@ uv sync
 PNG を WebP に変換し、長辺を 1024px に揃えます。
 
 ```bash
-uv run python tools/graphassist/graphassist.py convert samples/source/your.png generated/images/out --long-edge 1024 --format webp
+uv run graphassist convert samples/source/your.png generated/images/out --long-edge 1024 --format webp
 ```
 
 成功時、`generated/images/out.webp` が作成されます。
@@ -41,8 +41,8 @@ uv run python tools/graphassist/graphassist.py convert samples/source/your.png g
 ImageJob JSON でリサイズと枠線を適用します。まず dry-run で確認します。
 
 ```bash
-uv run python tools/graphassist/graphassist.py job samples/jobs/resize_border.json --dry-run
-uv run python tools/graphassist/graphassist.py job samples/jobs/resize_border.json
+uv run graphassist job samples/jobs/resize_border.json --dry-run
+uv run graphassist job samples/jobs/resize_border.json
 ```
 
 詳細は [edit-job.md](image/edit-job.md) を参照してください。

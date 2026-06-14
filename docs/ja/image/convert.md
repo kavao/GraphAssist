@@ -1,11 +1,11 @@
-# convert ガイド
+﻿# convert ガイド
 
 [English](../en/image/convert.md) · 日本語
 
 ディレクトリまたは単一ファイルの一括変換。
 
 ```bash
-uv run python tools/graphassist/graphassist.py convert samples/source/ generated/images/batch \
+uv run graphassist convert samples/source/ generated/images/batch \
   --long-edge 1024 --format webp
 ```
 

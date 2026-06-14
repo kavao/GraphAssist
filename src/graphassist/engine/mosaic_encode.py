@@ -1,4 +1,4 @@
-"""RGBA 画像 → MosaicArt JSON。"""
+﻿"""RGBA 画像 → MosaicArt JSON。"""
 
 from __future__ import annotations
 
@@ -7,8 +7,8 @@ from pathlib import Path
 
 from PIL import Image
 
-from tools.graphassist.engine.canvas import load
-from tools.graphassist.schema.mosaic import DEFAULT_MAX_COLORS, MosaicArt, MosaicMeta, rgba_to_hex
+from graphassist.engine.canvas import load
+from graphassist.schema.mosaic import DEFAULT_MAX_COLORS, MosaicArt, MosaicMeta, rgba_to_hex
 
 SYMBOL_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 

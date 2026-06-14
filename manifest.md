@@ -1,4 +1,4 @@
-# GraphAssist dna_kernel manifest
+﻿# GraphAssist dna_kernel manifest
 
 このファイルは、各ファイルの役割と、導入先プロジェクトへ移植・注入するときの推奨配置先を示します。
 
@@ -81,15 +81,15 @@ rulesync の管理外。人間が読む説明ドキュメント。
 | `_workingspace/plans/overview.md` | プロジェクト文脈・方向性（ローカル計画） | `_workingspace/plans/` |
 | `_workingspace/plans/2026-06-14-work-plan.md` | フェーズ別作業計画 | `_workingspace/plans/` |
 
-## tools/graphassist/（GraphAssist ソース — 将来 `src/graphassist/`）
+## src/graphassist/（GraphAssist ソース）
 
 | ファイル | 役割 | 導入先での配置先（例） |
 |----------|------|-------------------------------|
-| `tools/graphassist/graphassist.py` | CLI エントリ（Pillow のみ） | `tools/graphassist/graphassist.py` |
-| `tools/graphassist/version.py` | バージョン定数（組み込み・CLI 共用） | `tools/graphassist/version.py` |
-| `tools/graphassist/convert_cmd.py` | convert 処理 | `tools/graphassist/convert_cmd.py` |
-| `tools/graphassist/engine/canvas.py` | RGBA load/save・基本変換 | `tools/graphassist/engine/canvas.py` |
-| `tools/graphassist/README.md` | 画像ツールの配置・利用手順 | `tools/graphassist/README.md` |
+| `src/graphassist/graphassist.py` | CLI エントリ（Pillow のみ） | `src/graphassist/graphassist.py` |
+| `src/graphassist/version.py` | バージョン定数（組み込み・CLI 共用） | `src/graphassist/version.py` |
+| `src/graphassist/convert_cmd.py` | convert 処理 | `src/graphassist/convert_cmd.py` |
+| `src/graphassist/engine/canvas.py` | RGBA load/save・基本変換 | `src/graphassist/engine/canvas.py` |
+| `src/graphassist/README.md` | 画像ツールの配置・利用手順 | `src/graphassist/README.md` |
 
 ### バイナリ・runtime（Git 管理外）
 
@@ -99,7 +99,7 @@ rulesync の管理外。人間が読む説明ドキュメント。
 | 実行形式 | PyInstaller one-file exe（~35 MB） |
 | フォント・重み | `runtime/assets/` |
 | 取得 | Release / bootstrap（[runtime-manifest.jsonc](.rulesync/metadata/runtime-manifest.jsonc)） |
-| ソース | `tools/graphassist/`（将来 `src/graphassist/`） |
+| ソース | `src/graphassist/` |
 | 非採用 | OpenCV / ImageMagick |
 
 ## tools/kernel/（実働コード）
@@ -116,4 +116,4 @@ rulesync の管理外。人間が読む説明ドキュメント。
 
 - **ルールだけ**: `.rulesync/rules/concepts.md` + `rulesync.jsonc` + `npx rulesync generate` 実行
 - **ログまで**: 上記に `tools/kernel/workspace_audit_log.py` を追加
-- **画像処理まで**: 上記に `tools/graphassist/graphassist.py` と `.rulesync/skills/image-processing/SKILL.md` を追加
+- **画像処理まで**: 上記に `src/graphassist/graphassist.py` と `.rulesync/skills/image-processing/SKILL.md` を追加

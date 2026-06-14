@@ -1,25 +1,20 @@
-"""MosaicArt（CharGrid）のテスト。"""
+﻿"""MosaicArt（CharGrid）のテスト。"""
 
 from __future__ import annotations
 
 import json
-import sys
 import tempfile
 import unittest
 from pathlib import Path
 
 from PIL import Image
 
-ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-from tools.graphassist.engine.mosaic_decode import render_mosaic  # noqa: E402
-from tools.graphassist.engine.mosaic_encode import encode_image, parse_grid  # noqa: E402
-from tools.graphassist.engine.mosaic_export import export_js  # noqa: E402
-from tools.graphassist.mosaic_cmd import MosaicDecodeOptions, MosaicEncodeOptions, run_decode, run_encode, run_export  # noqa: E402
-from tools.graphassist.schema.mosaic import MosaicArt  # noqa: E402
-from tools.graphassist.schema.paths import project_root  # noqa: E402
+from graphassist.engine.mosaic_decode import render_mosaic
+from graphassist.engine.mosaic_encode import encode_image, parse_grid
+from graphassist.engine.mosaic_export import export_js
+from graphassist.mosaic_cmd import MosaicDecodeOptions, MosaicEncodeOptions, run_decode, run_encode, run_export
+from graphassist.schema.mosaic import MosaicArt
+from graphassist.schema.paths import project_root
 
 
 class MosaicTest(unittest.TestCase):

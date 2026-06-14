@@ -1,21 +1,17 @@
-"""GraphAssist バージョン整合のテスト。"""
+﻿"""GraphAssist バージョン整合のテスト。"""
 
 from __future__ import annotations
 
 import json
 import re
-import sys
 import unittest
 from pathlib import Path
 
+from graphassist import __version__
+from graphassist.version import __version__ as version_module
+
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-from tools.graphassist import __version__  # noqa: E402
-from tools.graphassist.version import __version__ as version_module  # noqa: E402
-
-CANONICAL_PATH = ROOT / "tools/graphassist/graphassist.py"
+CANONICAL_PATH = ROOT / "src/graphassist/graphassist.py"
 METADATA_PATH = ROOT / ".rulesync/metadata/graphassist.json"
 PYPROJECT_PATH = ROOT / "pyproject.toml"
 

@@ -1,4 +1,4 @@
-"""スプライトシート・コンタクトシート。"""
+﻿"""スプライトシート・コンタクトシート。"""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from tools.graphassist.engine.canvas import load, save
+from graphassist.engine.canvas import load, save
 
 
 def contact_sheet(

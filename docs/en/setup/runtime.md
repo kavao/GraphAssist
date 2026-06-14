@@ -1,4 +1,4 @@
-# Runtime setup
+﻿# Runtime setup
 
 English · [日本語](../ja/setup/runtime.md)
 
@@ -6,7 +6,7 @@ GraphAssist separates **source (Git)** from **installation (runtime)**.
 
 | Layer | Path | Git |
 |-------|------|-----|
-| Source | `tools/graphassist/` (future: `src/graphassist/`) | Tracked |
+| Source | `src/graphassist/` | Tracked |
 | Runtime | `runtime/` | **Not tracked** |
 | Output | `generated/` | Not tracked |
 
@@ -24,12 +24,19 @@ chmod +x scripts/setup-runtime.sh
 This creates:
 
 - `runtime/bin/`, `runtime/assets/fonts/`, `runtime/assets/weights/`
+- Downloads binary from GitHub Releases when `runtime-manifest.jsonc` URLs are set (network required)
 - `runtime/manifest.local.json` (install record)
-- Falls back to source execution if no binary is present
+- Falls back to source execution if download fails
+
+Force re-download:
+
+```powershell
+.\scripts\setup-runtime.ps1 -Force
+```
 
 ## Binary placement
 
-Put `graphassist.exe` from Releases at:
+Normally `setup-runtime` fetches from [GitHub Releases](https://github.com/kavao/GraphAssist/releases). To install manually:
 
 ```text
 runtime/bin/graphassist.exe
@@ -61,7 +68,7 @@ Declared in `.rulesync/metadata/runtime-manifest.jsonc` as optional. Core Pillow
 
 1. `GRAPHASSIST_BIN` env var
 2. `runtime/bin/graphassist.exe` if present
-3. Dev: `uv run python tools/graphassist/graphassist.py`
+3. Dev: `uv run graphassist`
 
 ## Environment variables
 

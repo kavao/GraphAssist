@@ -1,0 +1,66 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            asset: graphassist-win64.exe
+            pyinstaller_name: graphassist-win64
+            dist_path: dist/graphassist-win64.exe
+          - os: ubuntu-latest
+            asset: graphassist-linux
+            pyinstaller_name: graphassist-linux
+            dist_path: dist/graphassist-linux
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install Python
+        run: uv python install 3.12
+
+      - name: Sync dependencies
+        run: uv sync --dev
+
+      - name: Build binary
+        run: |
+          uv run pyinstaller --onefile --name "${{ matrix.pyinstaller_name }}" \
+            --collect-submodules graphassist \
+            src/graphassist/graphassist.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset }}
+          path: ${{ matrix.dist_path }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            dist/graphassist-win64.exe
+            dist/graphassist-linux

@@ -1,4 +1,4 @@
-# Batch manifest（複数命令）
+﻿# Batch manifest（複数命令）
 
 [English](../en/image/batch.md) · 日本語
 
@@ -76,8 +76,8 @@ LLM はパイプライン全体を 1 ファイルに書けます。
 ## 実行
 
 ```bash
-uv run python tools/graphassist/graphassist.py run samples/jobs/mosaic_pipeline.json --dry-run
-uv run python tools/graphassist/graphassist.py run samples/jobs/mosaic_pipeline.json
+uv run graphassist run samples/jobs/mosaic_pipeline.json --dry-run
+uv run graphassist run samples/jobs/mosaic_pipeline.json
 ```
 
 ログは `generated/logs/` に JSONL で残ります。

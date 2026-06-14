@@ -1,10 +1,10 @@
-"""MosaicArt JSON → RGBA 画像。"""
+﻿"""MosaicArt JSON → RGBA 画像。"""
 
 from __future__ import annotations
 
 from PIL import Image
 
-from tools.graphassist.schema.mosaic import MosaicArt, parse_hex_color
+from graphassist.schema.mosaic import MosaicArt, parse_hex_color
 
 
 def render_mosaic(art: MosaicArt, *, cell_size: int = 1) -> Image.Image:

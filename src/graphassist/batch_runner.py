@@ -1,4 +1,4 @@
-"""Batch manifest の検証・順次実行。"""
+﻿"""Batch manifest の検証・順次実行。"""
 
 from __future__ import annotations
 
@@ -6,8 +6,8 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-from tools.graphassist.engine.executor import execute_job
-from tools.graphassist.mosaic_cmd import (
+from graphassist.engine.executor import execute_job
+from graphassist.mosaic_cmd import (
     MosaicDecodeOptions,
     MosaicEncodeOptions,
     load_mosaic_json,
@@ -15,7 +15,7 @@ from tools.graphassist.mosaic_cmd import (
     run_encode,
     run_export,
 )
-from tools.graphassist.schema.batch import (
+from graphassist.schema.batch import (
     BatchManifest,
     JobCommand,
     MosaicDecodeCommand,
@@ -23,8 +23,8 @@ from tools.graphassist.schema.batch import (
     MosaicExportCommand,
     is_batch_manifest,
 )
-from tools.graphassist.schema.job import ImageJob
-from tools.graphassist.schema.paths import project_root, resolve_batch_file
+from graphassist.schema.job import ImageJob
+from graphassist.schema.paths import project_root, resolve_batch_file
 
 
 def load_manifest(json_path: Path) -> BatchManifest | ImageJob:
@@ -152,8 +152,7 @@ def _write_batch_log(
         "replay": [
             "uv",
             "run",
-            "python",
-            "tools/graphassist/graphassist.py",
+            "graphassist",
             "run",
             str(json_path.as_posix()),
         ],

@@ -1,4 +1,4 @@
-# CLI reference (operations)
+﻿# CLI reference (operations)
 
 English · [日本語](../ja/image/operations.md)
 
@@ -39,11 +39,11 @@ Colors: names (`white`, etc.) or `#RRGGBB`
 ## Examples
 
 ```bash
-uv run python tools/graphassist/graphassist.py trim samples/source/icon.png generated/images/icon_trim.png
-uv run python tools/graphassist/graphassist.py diff before.png after.png generated/images/diff.png
-uv run python tools/graphassist/graphassist.py inspect samples/source/icon.png --format json
-uv run python tools/graphassist/graphassist.py contact-sheet samples/source generated/images/sheet.png --cols 4
-uv run python tools/graphassist/graphassist.py palette samples/source/icon.png --max-colors 8
+uv run graphassist trim samples/source/icon.png generated/images/icon_trim.png
+uv run graphassist diff before.png after.png generated/images/diff.png
+uv run graphassist inspect samples/source/icon.png --format json
+uv run graphassist contact-sheet samples/source generated/images/sheet.png --cols 4
+uv run graphassist palette samples/source/icon.png --max-colors 8
 ```
 
 ## See also

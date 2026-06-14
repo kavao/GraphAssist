@@ -1,25 +1,20 @@
-"""Phase 4–7 機能のテスト。"""
+﻿"""Phase 4–7 機能のテスト。"""
 
 from __future__ import annotations
 
 import json
-import sys
 import tempfile
 import unittest
 from pathlib import Path
 
 from PIL import Image
 
-ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-from tests.font_helper import ensure_test_font, test_font_rel  # noqa: E402
-from tools.graphassist.engine.executor import execute_job  # noqa: E402
-from tools.graphassist.engine.canvas import load  # noqa: E402
-from tools.graphassist.schema.job import ImageJob  # noqa: E402
-from tools.graphassist.schema.paths import project_root  # noqa: E402
-from tools.graphassist.util_cmd import (  # noqa: E402
+from tests.font_helper import ensure_test_font, test_font_rel
+from graphassist.engine.executor import execute_job
+from graphassist.engine.canvas import load
+from graphassist.schema.job import ImageJob
+from graphassist.schema.paths import project_root
+from graphassist.util_cmd import (
     TrimOptions,
     run_contact_sheet,
     run_diff,

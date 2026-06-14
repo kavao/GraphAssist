@@ -1,11 +1,11 @@
-"""一括 convert の処理本体。"""
+﻿"""一括 convert の処理本体。"""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
 
-from tools.graphassist.engine.canvas import (
+from graphassist.engine.canvas import (
     IMAGE_EXTENSIONS,
     is_image_path,
     load,

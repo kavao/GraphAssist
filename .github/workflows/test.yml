@@ -8,9 +8,27 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.11", "3.12"]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+
       - uses: astral-sh/setup-uv@v5
-      - run: uv sync
-      - run: uv run python -m unittest discover -s tests -v
+        with:
+          enable-cache: true
+
+      - name: Install Python
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Sync dependencies
+        run: uv sync --dev
+
+      - name: Run unit tests
+        run: uv run python -m unittest discover -s tests -v
+
+      - name: CLI smoke test
+        run: uv run graphassist --version

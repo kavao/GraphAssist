@@ -1,4 +1,4 @@
-"""executor 更新。"""
+﻿"""executor 更新。"""
 
 from __future__ import annotations
 
@@ -6,19 +6,19 @@ from pathlib import Path
 
 from PIL import Image
 
-from tools.graphassist.engine.canvas import load, save
-from tools.graphassist.engine.ops_composite import apply_composite
-from tools.graphassist.engine.ops_geometry import (
+from graphassist.engine.canvas import load, save
+from graphassist.engine.ops_composite import apply_composite
+from graphassist.engine.ops_geometry import (
     apply_border,
     apply_crop,
     apply_extend,
     apply_resize,
     apply_rotate,
 )
-from tools.graphassist.engine.ops_text import apply_text
-from tools.graphassist.engine.ops_trim import apply_flatten, apply_trim
-from tools.graphassist.schema.job import ImageJob
-from tools.graphassist.schema.ops import (
+from graphassist.engine.ops_text import apply_text
+from graphassist.engine.ops_trim import apply_flatten, apply_trim
+from graphassist.schema.job import ImageJob
+from graphassist.schema.ops import (
     BorderOp,
     CompositeOp,
     CropOp,

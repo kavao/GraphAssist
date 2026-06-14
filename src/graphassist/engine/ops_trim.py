@@ -1,11 +1,11 @@
-"""トリミング・flatten。"""
+﻿"""トリミング・flatten。"""
 
 from __future__ import annotations
 
 from PIL import Image
 
-from tools.graphassist.engine.colors import parse_color
-from tools.graphassist.schema.ops import FlattenOp, TrimOp
+from graphassist.engine.colors import parse_color
+from graphassist.schema.ops import FlattenOp, TrimOp
 
 
 def trim_image(img: Image.Image, op: TrimOp) -> Image.Image:

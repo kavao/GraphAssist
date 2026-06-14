@@ -1,4 +1,4 @@
-"""Batch manifest — 1 JSON に複数命令。"""
+﻿"""Batch manifest — 1 JSON に複数命令。"""
 
 from __future__ import annotations
 
@@ -6,10 +6,10 @@ from typing import Annotated, Literal, Union
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from tools.graphassist.schema.job import ImageJob
-from tools.graphassist.schema.mosaic import MosaicArt
-from tools.graphassist.schema.ops import Operation
-from tools.graphassist.schema.paths import (
+from graphassist.schema.job import ImageJob
+from graphassist.schema.mosaic import MosaicArt
+from graphassist.schema.ops import Operation
+from graphassist.schema.paths import (
     resolve_input,
     resolve_mosaic_json,
     resolve_mosaic_output,

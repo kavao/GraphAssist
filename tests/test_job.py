@@ -1,4 +1,4 @@
-"""ImageJob パイプラインのテスト。"""
+﻿"""ImageJob パイプラインのテスト。"""
 
 from __future__ import annotations
 
@@ -9,16 +9,10 @@ from pathlib import Path
 
 from PIL import Image
 
-ROOT = Path(__file__).resolve().parents[1]
-import sys
-
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-from tools.graphassist.engine.executor import execute_job  # noqa: E402
-from tools.graphassist.engine.canvas import load  # noqa: E402
-from tools.graphassist.schema.job import ImageJob  # noqa: E402
-from tools.graphassist.schema.paths import project_root  # noqa: E402
+from graphassist.engine.executor import execute_job
+from graphassist.engine.canvas import load
+from graphassist.schema.job import ImageJob
+from graphassist.schema.paths import project_root
 
 
 class JobTest(unittest.TestCase):

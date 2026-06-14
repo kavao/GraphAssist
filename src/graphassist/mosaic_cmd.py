@@ -1,4 +1,4 @@
-"""mosaic サブコマンド（encode / decode / export）。"""
+﻿"""mosaic サブコマンド（encode / decode / export）。"""
 
 from __future__ import annotations
 
@@ -6,12 +6,12 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
-from tools.graphassist.engine.canvas import save
-from tools.graphassist.engine.mosaic_decode import render_mosaic
-from tools.graphassist.engine.mosaic_encode import encode_image, parse_grid
-from tools.graphassist.engine.mosaic_export import export_js, export_json
-from tools.graphassist.schema.mosaic import MosaicArt
-from tools.graphassist.schema.paths import (
+from graphassist.engine.canvas import save
+from graphassist.engine.mosaic_decode import render_mosaic
+from graphassist.engine.mosaic_encode import encode_image, parse_grid
+from graphassist.engine.mosaic_export import export_js, export_json
+from graphassist.schema.mosaic import MosaicArt
+from graphassist.schema.paths import (
     project_root,
     resolve_input,
     resolve_mosaic_json,

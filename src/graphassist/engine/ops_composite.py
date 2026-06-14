@@ -1,4 +1,4 @@
-"""合成 operation。"""
+﻿"""合成 operation。"""
 
 from __future__ import annotations
 
@@ -6,9 +6,9 @@ from pathlib import Path
 
 from PIL import Image
 
-from tools.graphassist.engine.canvas import load
-from tools.graphassist.schema.paths import resolve_input
-from tools.graphassist.schema.ops import CompositeOp
+from graphassist.engine.canvas import load
+from graphassist.schema.paths import resolve_input
+from graphassist.schema.ops import CompositeOp
 
 
 def _anchor_offset(base: Image.Image, overlay: Image.Image, op: CompositeOp) -> tuple[int, int]:

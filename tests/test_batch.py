@@ -1,21 +1,16 @@
-"""Batch manifest のテスト。"""
+﻿"""Batch manifest のテスト。"""
 
 from __future__ import annotations
 
 import json
-import sys
 import unittest
 from pathlib import Path
 
 from PIL import Image
 
-ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-from tools.graphassist.batch_runner import load_manifest, run_batch_file  # noqa: E402
-from tools.graphassist.schema.batch import BatchManifest  # noqa: E402
-from tools.graphassist.schema.paths import project_root  # noqa: E402
+from graphassist.batch_runner import load_manifest, run_batch_file
+from graphassist.schema.batch import BatchManifest
+from graphassist.schema.paths import project_root
 
 
 class BatchTest(unittest.TestCase):

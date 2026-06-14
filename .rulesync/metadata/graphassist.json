@@ -1,6 +1,6 @@
 {
   "component": "graphassist",
-  "target": "tools/graphassist/graphassist.py",
+  "target": "src/graphassist/graphassist.py",
   "version": "0.1.0",
   "description": "GraphAssist 画像処理 CLI（Pillow + NumPy、ImageJob / MosaicArt / Batch）"
 }

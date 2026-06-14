@@ -1,11 +1,11 @@
-"""MosaicArt JSON のエクスポート。"""
+﻿"""MosaicArt JSON のエクスポート。"""
 
 from __future__ import annotations
 
 import json
 import re
 
-from tools.graphassist.schema.mosaic import MosaicArt, parse_hex_color
+from graphassist.schema.mosaic import MosaicArt, parse_hex_color
 
 
 def export_js(art: MosaicArt, *, name: str | None = None) -> str:

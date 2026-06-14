@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # Version: 0.1.0 (正本: .rulesync/metadata/graphassist.json)
 """GraphAssist 画像処理 CLI。"""
 
@@ -8,23 +8,18 @@ import argparse
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-from tools.graphassist.version import __version__  # noqa: E402
-
-from tools.graphassist.batch_runner import run_batch_file  # noqa: E402
-from tools.graphassist.convert_cmd import ConvertOptions, run_convert  # noqa: E402
-from tools.graphassist.job_runner import run_job_file  # noqa: E402
-from tools.graphassist.mosaic_cmd import (  # noqa: E402
+from graphassist.version import __version__
+from graphassist.batch_runner import run_batch_file
+from graphassist.convert_cmd import ConvertOptions, run_convert
+from graphassist.job_runner import run_job_file
+from graphassist.mosaic_cmd import (
     MosaicDecodeOptions,
     MosaicEncodeOptions,
     run_decode,
     run_encode,
     run_export,
 )
-from tools.graphassist.util_cmd import (  # noqa: E402
+from graphassist.util_cmd import (
     TrimOptions,
     run_contact_sheet,
     run_diff,

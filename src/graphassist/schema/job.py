@@ -1,4 +1,4 @@
-"""ImageJob モデル。"""
+﻿"""ImageJob モデル。"""
 
 from __future__ import annotations
 
@@ -6,8 +6,8 @@ from typing import Literal
 
 from pydantic import BaseModel, field_validator
 
-from tools.graphassist.schema.ops import Operation
-from tools.graphassist.schema.paths import resolve_input, resolve_output
+from graphassist.schema.ops import Operation
+from graphassist.schema.paths import resolve_input, resolve_output
 
 
 class ImageJob(BaseModel):

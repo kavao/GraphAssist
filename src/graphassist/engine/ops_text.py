@@ -1,4 +1,4 @@
-"""テキスト描画 operation。"""
+﻿"""テキスト描画 operation。"""
 
 from __future__ import annotations
 
@@ -6,9 +6,9 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-from tools.graphassist.engine.colors import parse_color
-from tools.graphassist.schema.ops import TextOp
-from tools.graphassist.schema.paths import resolve_font
+from graphassist.engine.colors import parse_color
+from graphassist.schema.ops import TextOp
+from graphassist.schema.paths import resolve_font
 
 
 def apply_text(img: Image.Image, op: TextOp, *, root: Path) -> Image.Image:

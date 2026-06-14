@@ -1,4 +1,4 @@
-# Image processing guides
+﻿# Image processing guides
 
 English · [日本語](../../ja/image/README.md)
 
@@ -11,4 +11,4 @@ English · [日本語](../../ja/image/README.md)
 | [mosaic.md](mosaic.md) | CharGrid (MosaicArt) convert |
 | [batch.md](batch.md) | Batch manifest (multi-command JSON) |
 
-Implementation: `tools/graphassist/` (Pillow only)
+Implementation: `src/graphassist/` (Pillow only)

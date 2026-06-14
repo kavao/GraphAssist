@@ -1,4 +1,4 @@
-# 画像処理ガイド
+﻿# 画像処理ガイド
 
 [English](../en/image/README.md) · 日本語
 
@@ -11,4 +11,4 @@
 | [mosaic.md](mosaic.md) | CharGrid（MosaicArt）相互コンバート |
 | [batch.md](batch.md) | Batch manifest（1 JSON・複数命令） |
 
-実装正本: `tools/graphassist/`（Pillow のみ）
+実装正本: `src/graphassist/`（Pillow のみ）

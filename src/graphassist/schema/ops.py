@@ -1,4 +1,4 @@
-"""ImageJob operation モデル。"""
+﻿"""ImageJob operation モデル。"""
 
 from __future__ import annotations
 
@@ -6,8 +6,8 @@ from typing import Annotated, Literal, Optional, Union
 
 from pydantic import BaseModel, Field, field_validator
 
-from tools.graphassist.engine.colors import is_allowed_color
-from tools.graphassist.schema.paths import resolve_font, resolve_input
+from graphassist.engine.colors import is_allowed_color
+from graphassist.schema.paths import resolve_font, resolve_input
 
 
 def _validate_color(value: str) -> str:

@@ -1,4 +1,4 @@
-# Edit Job Guide
+﻿# Edit Job Guide
 
 English · [日本語](../../ja/image/edit-job.md)
 
@@ -33,13 +33,13 @@ Absolute paths and `..` parent traversal are rejected.
 Confirm steps and output path with dry-run first.
 
 ```bash
-uv run python tools/graphassist/graphassist.py job samples/jobs/resize_border.json --dry-run
+uv run graphassist job samples/jobs/resize_border.json --dry-run
 ```
 
 Then run for real.
 
 ```bash
-uv run python tools/graphassist/graphassist.py job samples/jobs/resize_border.json
+uv run graphassist job samples/jobs/resize_border.json
 ```
 
 Logs (JSONL, Markdown, replay script) are written under `generated/logs/`.

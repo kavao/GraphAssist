@@ -1,4 +1,4 @@
-"""trim / diff / inspect / sheet / palette CLI。"""
+﻿"""trim / diff / inspect / sheet / palette CLI。"""
 
 from __future__ import annotations
 
@@ -6,14 +6,14 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
-from tools.graphassist.convert_cmd import collect_inputs
-from tools.graphassist.engine.canvas import load, save
-from tools.graphassist.engine.diff import diff_images
-from tools.graphassist.engine.inspect import inspect_image, inspect_many
-from tools.graphassist.engine.palette import extract_palette
-from tools.graphassist.engine.ops_trim import trim_image
-from tools.graphassist.engine.sheet import contact_sheet, sheet_pack, sheet_split
-from tools.graphassist.schema.ops import TrimOp
+from graphassist.convert_cmd import collect_inputs
+from graphassist.engine.canvas import load, save
+from graphassist.engine.diff import diff_images
+from graphassist.engine.inspect import inspect_image, inspect_many
+from graphassist.engine.palette import extract_palette
+from graphassist.engine.ops_trim import trim_image
+from graphassist.engine.sheet import contact_sheet, sheet_pack, sheet_split
+from graphassist.schema.ops import TrimOp
 
 
 @dataclass

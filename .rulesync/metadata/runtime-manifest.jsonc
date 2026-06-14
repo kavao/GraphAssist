@@ -8,7 +8,18 @@
       "description": "GraphAssist CLI (PyInstaller one-file)",
       "metadata": ".rulesync/metadata/graphassist.json",
       "install": {
-        "win64": "runtime/bin/graphassist.exe"
+        "win64": "runtime/bin/graphassist.exe",
+        "linux": "runtime/bin/graphassist"
+      },
+      "release": {
+        "win64": {
+          "asset": "graphassist-win64.exe",
+          "url_template": "https://github.com/kavao/GraphAssist/releases/download/v{version}/{asset}"
+        },
+        "linux": {
+          "asset": "graphassist-linux",
+          "url_template": "https://github.com/kavao/GraphAssist/releases/download/v{version}/{asset}"
+        }
       }
     },
     {

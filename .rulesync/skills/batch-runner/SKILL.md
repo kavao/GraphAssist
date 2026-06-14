@@ -1,4 +1,4 @@
----
+﻿---
 name: batch-runner
 description: Batch manifest（1 JSON・複数命令）を生成し graphassist run で順次実行する
 ---
@@ -26,13 +26,13 @@ mosaic（CharGrid）と ImageJob（レタッチ）を **同じファイルに混
 4. dry-run で確認する。
 
 ```bash
-uv run python tools/graphassist/graphassist.py run samples/jobs/pipeline.json --dry-run
+uv run graphassist run samples/jobs/pipeline.json --dry-run
 ```
 
 5. 問題なければ本番実行する。
 
 ```bash
-uv run python tools/graphassist/graphassist.py run samples/jobs/pipeline.json
+uv run graphassist run samples/jobs/pipeline.json
 ```
 
 6. `generated/logs/` の JSONL を確認する。

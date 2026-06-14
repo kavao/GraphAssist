@@ -1,4 +1,4 @@
-# Batch manifest (multiple commands)
+﻿# Batch manifest (multiple commands)
 
 English · [日本語](../ja/image/batch.md)
 
@@ -62,8 +62,8 @@ Single ImageJob files (no `commands` key) still use `graphassist job`.
 ## Run
 
 ```bash
-uv run python tools/graphassist/graphassist.py run samples/jobs/mosaic_pipeline.json --dry-run
-uv run python tools/graphassist/graphassist.py run samples/jobs/mosaic_pipeline.json
+uv run graphassist run samples/jobs/mosaic_pipeline.json --dry-run
+uv run graphassist run samples/jobs/mosaic_pipeline.json
 ```
 
 Logs are written to `generated/logs/` as JSONL.

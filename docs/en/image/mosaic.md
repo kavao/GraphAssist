@@ -1,4 +1,4 @@
-# CharGrid (MosaicArt) guide
+﻿# CharGrid (MosaicArt) guide
 
 English · [日本語](../ja/image/mosaic.md)
 
@@ -40,7 +40,7 @@ Use `graphassist mosaic` for **JSON ↔ image** conversion and **JS snippet** ex
 ## decode (JSON → image)
 
 ```bash
-uv run python tools/graphassist/graphassist.py mosaic decode \
+uv run graphassist mosaic decode \
   samples/mosaic/finale_rocket.json \
   generated/images/finale_rocket.png \
   --cell-size 8
@@ -51,7 +51,7 @@ uv run python tools/graphassist/graphassist.py mosaic decode \
 ## encode (image → JSON)
 
 ```bash
-uv run python tools/graphassist/graphassist.py mosaic encode \
+uv run graphassist mosaic encode \
   samples/source/icon.png \
   generated/mosaic/icon.json \
   --grid 32x32 \
@@ -63,7 +63,7 @@ Uses nearest-neighbor downscale and quantization — **lossy**; do not expect a 
 ## export (JS snippet)
 
 ```bash
-uv run python tools/graphassist/graphassist.py mosaic export \
+uv run graphassist mosaic export \
   samples/mosaic/finale_rocket.json \
   --format js \
   --name FINALE_ROCKET

@@ -1,11 +1,11 @@
-# convert guide
+﻿# convert guide
 
 English · [日本語](../ja/image/convert.md)
 
 Batch conversion for files or directories.
 
 ```bash
-uv run python tools/graphassist/graphassist.py convert samples/source/ generated/images/batch \
+uv run graphassist convert samples/source/ generated/images/batch \
   --long-edge 1024 --format webp
 ```
 

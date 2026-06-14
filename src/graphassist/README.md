@@ -1,6 +1,6 @@
-# GraphAssist 画像 CLI
+﻿# GraphAssist 画像 CLI
 
-配置: `tools/graphassist/`（OnGen の `tools/sound/` と同型。肥大化に備え CLI・engine・schema をここに集約）
+配置: `src/graphassist/`（OnGen の `tools/sound/` と同型。肥大化に備え CLI・engine・schema をここに集約）
 
 エントリ: `graphassist.py`（Pillow のみ。ImageMagick は使用しない）
 
@@ -8,7 +8,7 @@
 
 ```bash
 # プロジェクトルートから
-uv run python tools/graphassist/graphassist.py convert samples/source/input.png generated/images/out --long-edge 1024 --format webp
+uv run graphassist convert samples/source/input.png generated/images/out --long-edge 1024 --format webp
 ```
 
 ## モジュール

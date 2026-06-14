@@ -1,4 +1,4 @@
-# CharGrid（MosaicArt）ガイド
+﻿# CharGrid（MosaicArt）ガイド
 
 [English](../en/image/mosaic.md) · 日本語
 
@@ -40,7 +40,7 @@
 ## decode（JSON → 画像）
 
 ```bash
-uv run python tools/graphassist/graphassist.py mosaic decode \
+uv run graphassist mosaic decode \
   samples/mosaic/finale_rocket.json \
   generated/images/finale_rocket.png \
   --cell-size 8
@@ -51,7 +51,7 @@ uv run python tools/graphassist/graphassist.py mosaic decode \
 ## encode（画像 → JSON）
 
 ```bash
-uv run python tools/graphassist/graphassist.py mosaic encode \
+uv run graphassist mosaic encode \
   samples/source/icon.png \
   generated/mosaic/icon.json \
   --grid 32x32 \
@@ -63,7 +63,7 @@ nearest-neighbor 縮小 + 量子化のため **ロスあり** です。ラウン
 ## export（JS スニペット）
 
 ```bash
-uv run python tools/graphassist/graphassist.py mosaic export \
+uv run graphassist mosaic export \
   samples/mosaic/finale_rocket.json \
   --format js \
   --name FINALE_ROCKET
