@@ -33,13 +33,36 @@ def encode_image(
     alpha_threshold: int = 128,
     title: str | None = None,
 ) -> MosaicArt:
+    img = load(path)
+    return encode_rgba_image(
+        img,
+        grid_width=grid_width,
+        grid_height=grid_height,
+        max_colors=max_colors,
+        transparent=transparent,
+        alpha_threshold=alpha_threshold,
+        title=title,
+        source=path.name,
+    )
+
+
+def encode_rgba_image(
+    img: Image.Image,
+    *,
+    grid_width: int,
+    grid_height: int,
+    max_colors: int = DEFAULT_MAX_COLORS,
+    transparent: str = ".",
+    alpha_threshold: int = 128,
+    title: str | None = None,
+    source: str | None = None,
+) -> MosaicArt:
     if max_colors < 1 or max_colors > 32:
         raise ValueError("max_colors must be between 1 and 32")
     if len(transparent) != 1 or transparent.isspace():
         raise ValueError("transparent must be a single non-space character")
 
-    img = load(path).resize((grid_width, grid_height), Image.Resampling.NEAREST)
-    rgba = img.convert("RGBA")
+    rgba = img.convert("RGBA").resize((grid_width, grid_height), Image.Resampling.NEAREST)
     pixels = rgba.load()
     assert pixels is not None
 
@@ -71,7 +94,7 @@ def encode_image(
             transparent=transparent,
             palette={"X": "#000000"},
             rows=[transparent * grid_width for _ in range(grid_height)],
-            meta=MosaicMeta(title=title, source=str(path.name)),
+            meta=MosaicMeta(title=title, source=source),
         )
 
     color_map = _build_color_map(opaque_pixels, max_colors=max_colors)
@@ -98,7 +121,7 @@ def encode_image(
         transparent=transparent,
         palette=palette,
         rows=rows,
-        meta=MosaicMeta(title=title, source=str(path.name)),
+        meta=MosaicMeta(title=title, source=source),
     )
 
 

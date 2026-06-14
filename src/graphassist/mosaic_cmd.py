@@ -10,6 +10,7 @@ from graphassist.engine.canvas import save
 from graphassist.engine.mosaic_decode import render_mosaic
 from graphassist.engine.mosaic_encode import encode_image, parse_grid
 from graphassist.engine.mosaic_export import export_js, export_json
+from graphassist.engine.mosaic_merge import MergeLayer, compose_birds_on_trunk, merge_mosaics
 from graphassist.schema.mosaic import MosaicArt
 from graphassist.schema.paths import (
     project_root,
@@ -92,6 +93,54 @@ def run_encode(
         alpha_threshold=opts.alpha_threshold,
         title=src.stem,
     )
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(export_json(art), encoding="utf-8")
+    return out
+
+
+def parse_layer_spec(spec: str) -> tuple[str, int, int]:
+    if "@" not in spec:
+        raise ValueError(f"layer spec must be PATH@X,Y: {spec!r}")
+    path, coords = spec.split("@", 1)
+    if "," not in coords:
+        raise ValueError(f"layer offset must be X,Y: {spec!r}")
+    x_str, y_str = coords.split(",", 1)
+    return path.strip(), int(x_str), int(y_str)
+
+
+def run_merge(
+    output_path: Path,
+    *,
+    canvas: str,
+    layers: list[str],
+    title: str | None = None,
+    root: Path | None = None,
+) -> Path:
+    base = root or project_root()
+    if "x" not in canvas.lower():
+        raise ValueError("canvas must be WIDTHxHEIGHT")
+    w_str, h_str = canvas.lower().split("x", 1)
+    width, height = int(w_str), int(h_str)
+    merge_layers: list[MergeLayer] = []
+    for spec in layers:
+        rel, x, y = parse_layer_spec(spec)
+        art = load_mosaic_json(Path(rel), root=base)
+        merge_layers.append(MergeLayer(art, x=x, y=y))
+    art = merge_mosaics(width=width, height=height, layers=merge_layers, title=title)
+    rel_out = _relative_path(output_path, base)
+    out = resolve_mosaic_output(rel_out, root=base)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(export_json(art), encoding="utf-8")
+    return out
+
+
+def run_compose_birds(output_path: Path, *, root: Path | None = None) -> Path:
+    base = root or project_root()
+    parakeet = load_mosaic_json(base / "samples/mosaic/parakeet.json", root=base)
+    parrot = load_mosaic_json(base / "samples/mosaic/parrot.json", root=base)
+    art = compose_birds_on_trunk(parakeet, parrot)
+    rel_out = _relative_path(output_path, base)
+    out = resolve_mosaic_output(rel_out, root=base)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(export_json(art), encoding="utf-8")
     return out

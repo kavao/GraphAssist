@@ -97,6 +97,77 @@ class MosaicTest(unittest.TestCase):
             self.assertTrue(rel_out.exists())
             rel_out.unlink()
 
+    def test_encode_rgba_image(self) -> None:
+        from graphassist.engine.mosaic_encode import encode_rgba_image
+
+        img = Image.new("RGBA", (20, 20), (255, 95, 77, 255))
+        art = encode_rgba_image(img, grid_width=4, grid_height=4, max_colors=4)
+        self.assertEqual(art.width, 4)
+        self.assertEqual(art.height, 4)
+        self.assertLessEqual(len(art.palette), 4)
+
+    def test_to_mosaic_op_schema(self) -> None:
+        from graphassist.schema.ops import ToMosaicOp
+
+        op = ToMosaicOp.model_validate(
+            {
+                "type": "to_mosaic",
+                "grid": [16, 16],
+                "mosaic_output": "generated/mosaic/out.json",
+            }
+        )
+        self.assertEqual(op.grid, "16x16")
+
+    def test_to_mosaic_must_be_last(self) -> None:
+        from graphassist.schema.job import ImageJob
+
+        with self.assertRaises(ValueError):
+            ImageJob.model_validate(
+                {
+                    "version": "1.0",
+                    "input": "samples/source/mosaic_test_src.png",
+                    "output": "generated/images/out.png",
+                    "operations": [
+                        {"type": "to_mosaic", "grid": "8x8", "mosaic_output": "generated/mosaic/x.json"},
+                        {"type": "resize", "long_edge": 32},
+                    ],
+                }
+            )
+
+    def test_to_mosaic_job(self) -> None:
+        from graphassist.engine.executor import execute_job
+        from graphassist.schema.job import ImageJob
+
+        out_png = self.root / "generated/images/to_mosaic_preview.png"
+        out_json = self.root / "generated/mosaic/to_mosaic_job.json"
+        for path in (out_png, out_json):
+            if path.exists():
+                path.unlink()
+        job = ImageJob.model_validate(
+            {
+                "version": "1.0",
+                "input": "samples/source/mosaic_test_src.png",
+                "output": "generated/images/to_mosaic_preview.png",
+                "operations": [
+                    {"type": "resize", "long_edge": 64},
+                    {
+                        "type": "to_mosaic",
+                        "grid": "8x8",
+                        "max_colors": 8,
+                        "mosaic_output": "generated/mosaic/to_mosaic_job.json",
+                    },
+                ],
+            }
+        )
+        execute_job(job, root=self.root, dry_run=False)
+        self.assertTrue(out_png.exists())
+        self.assertTrue(out_json.exists())
+        art = MosaicArt.model_validate(json.loads(out_json.read_text(encoding="utf-8")))
+        self.assertEqual(art.width, 8)
+        self.assertEqual(art.height, 8)
+        out_png.unlink(missing_ok=True)
+        out_json.unlink(missing_ok=True)
+
 
 if __name__ == "__main__":
     unittest.main()

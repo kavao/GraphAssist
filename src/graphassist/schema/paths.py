@@ -67,7 +67,7 @@ def resolve_batch_chained_input(
     root: Path | None = None,
     must_exist: bool = False,
 ) -> Path:
-    """Batch 内で直前 command の output と一致する job input（generated/ 可）。"""
+    """Batch 内で generated/ 配下の画像入力（連鎖検証済み manifest 用）。"""
     if not is_under_output(path_str):
         return resolve_input(path_str, root=root, must_exist=must_exist)
     base = root or project_root()
@@ -75,6 +75,16 @@ def resolve_batch_chained_input(
     if must_exist and not resolved.exists():
         raise FileNotFoundError(resolved)
     return resolved
+
+
+def resolve_batch_image_input(
+    path_str: str,
+    *,
+    root: Path | None = None,
+    must_exist: bool = False,
+) -> Path:
+    """Batch analyze / job 用: samples/source/ または generated/（連鎖検証済み）。"""
+    return resolve_batch_chained_input(path_str, root=root, must_exist=must_exist)
 
 
 def resolve_mosaic_json(path_str: str, *, root: Path | None = None, must_exist: bool = False) -> Path:

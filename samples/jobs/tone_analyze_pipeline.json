@@ -1,0 +1,25 @@
+{
+  "version": "1.0",
+  "commands": [
+    {
+      "type": "job",
+      "input": "samples/source/job_test_base.png",
+      "output": "generated/images/tone_before.png",
+      "operations": []
+    },
+    {
+      "type": "job",
+      "input": "generated/images/tone_before.png",
+      "output": "generated/images/tone_after.png",
+      "operations": [
+        {"type": "adjust", "brightness": 1.5}
+      ]
+    },
+    {
+      "type": "analyze",
+      "input": "generated/images/tone_after.png",
+      "compare": "generated/images/tone_before.png",
+      "output": "generated/logs/tone_compare.json"
+    }
+  ]
+}

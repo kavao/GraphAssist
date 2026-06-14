@@ -45,6 +45,9 @@ class ImageJob(BaseModel):
     def validate_input_source(self) -> ImageJob:
         if (self.input is None) == (self.input_asset is None):
             raise ValueError("ImageJob requires exactly one of 'input' or 'input_asset'")
+        for index, op in enumerate(self.operations):
+            if op.type == "to_mosaic" and index != len(self.operations) - 1:
+                raise ValueError("to_mosaic must be the last operation in the chain")
         return self
 
     @property

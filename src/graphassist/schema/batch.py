@@ -192,7 +192,10 @@ class AnalyzeCommand(BaseModel):
     def validate_input_paths(cls, value: str | None) -> str | None:
         if value is None:
             return None
-        resolve_input(value, must_exist=False)
+        if is_under_output(value):
+            resolve_output(value)
+        else:
+            resolve_input(value, must_exist=False)
         return value
 
     @field_validator("output")
@@ -223,25 +226,53 @@ def command_output_path(command: BatchCommand) -> str | None:
     return None
 
 
+def _require_matches_prev_output(
+    index: int,
+    path: str,
+    prev_output: str | None,
+    *,
+    label: str,
+) -> None:
+    if prev_output is None:
+        raise ValueError(
+            f"commands[{index}]: {label} under generated/ requires a preceding command output"
+        )
+    if normalize_manifest_path(path) != normalize_manifest_path(prev_output):
+        raise ValueError(
+            f"commands[{index}]: {label} {path!r} must match "
+            f"previous command output {prev_output!r}"
+        )
+
+
 class BatchManifest(BaseModel):
     version: Literal["1.0"]
     commands: list[BatchCommand] = Field(min_length=1)
 
     @model_validator(mode="after")
-    def validate_job_input_chain(self) -> BatchManifest:
+    def validate_generated_input_chain(self) -> BatchManifest:
+        prior_outputs: set[str] = set()
         prev_output: str | None = None
         for index, command in enumerate(self.commands):
             if isinstance(command, JobCommand) and command.input and is_under_output(command.input):
-                if prev_output is None:
-                    raise ValueError(
-                        f"commands[{index}]: job input under generated/ requires a preceding command output"
+                _require_matches_prev_output(
+                    index, command.input, prev_output, label="job input"
+                )
+            if isinstance(command, AnalyzeCommand):
+                if is_under_output(command.input):
+                    _require_matches_prev_output(
+                        index, command.input, prev_output, label="analyze input"
                     )
-                if normalize_manifest_path(command.input) != normalize_manifest_path(prev_output):
-                    raise ValueError(
-                        f"commands[{index}]: job input {command.input!r} must match "
-                        f"previous command output {prev_output!r}"
-                    )
-            prev_output = command_output_path(command)
+                if command.compare and is_under_output(command.compare):
+                    normalized = normalize_manifest_path(command.compare)
+                    if normalized not in prior_outputs:
+                        raise ValueError(
+                            f"commands[{index}]: analyze compare {command.compare!r} must match "
+                            "a prior command output under generated/"
+                        )
+            out = command_output_path(command)
+            if out is not None:
+                prior_outputs.add(normalize_manifest_path(out))
+            prev_output = out
         return self
 
 

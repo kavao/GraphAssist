@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import shutil
 import unittest
 from pathlib import Path
 
@@ -12,7 +11,7 @@ from PIL import Image
 from graphassist.batch_runner import load_manifest, run_batch_file
 from graphassist.schema.batch import BatchManifest
 from graphassist.schema.paths import project_root
-from tests.font_helper import ensure_test_font
+from tests.font_helper import ensure_job_font
 
 
 class BatchTest(unittest.TestCase):
@@ -55,14 +54,8 @@ class BatchTest(unittest.TestCase):
                 font_path.unlink()
 
     def _ensure_font(self, rel_path: str) -> None:
-        """CI には runtime/fonts が無いため、参照フォントをバンドル済みテストフォントで bootstrap する。"""
-        font_path = self.root / rel_path
-        if font_path.exists():
-            return
-        src = ensure_test_font(self.root)
-        font_path.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy(src, font_path)
-        self._bootstrapped_fonts.append(font_path)
+        """Git 同梱またはテスト用フォントで Job 参照パスを用意する。"""
+        ensure_job_font(self.root, rel_path, bootstrapped=self._bootstrapped_fonts)
 
     def test_load_manifest(self) -> None:
         manifest = load_manifest(self.batch)
@@ -173,12 +166,76 @@ class BatchTest(unittest.TestCase):
             BatchManifest.model_validate(data)
 
     def test_run_birds_pipeline(self) -> None:
-        self._ensure_font("assets/fonts/PixelMplus12-Regular.ttf")
         run_batch_file(self.birds_batch, dry_run=False)
         self.assertTrue(self.out_birds_base.exists())
         self.assertTrue(self.out_birds.exists())
         self.assertEqual(Image.open(self.out_birds_base).size, (400, 208))
         self.assertEqual(Image.open(self.out_birds).size, (400, 264))
+
+    def test_validate_generated_analyze_input_without_chain(self) -> None:
+        data = {
+            "version": "1.0",
+            "commands": [
+                {
+                    "type": "analyze",
+                    "input": "generated/images/orphan.png",
+                    "output": "generated/logs/orphan.json",
+                }
+            ],
+        }
+        with self.assertRaises(ValueError):
+            BatchManifest.model_validate(data)
+
+    def test_validate_analyze_compare_not_in_prior(self) -> None:
+        data = {
+            "version": "1.0",
+            "commands": [
+                {
+                    "type": "job",
+                    "input": "samples/source/job_test_base.png",
+                    "output": "generated/images/step_a.png",
+                    "operations": [],
+                },
+                {
+                    "type": "analyze",
+                    "input": "generated/images/step_a.png",
+                    "compare": "generated/images/missing.png",
+                    "output": "generated/logs/bad_compare.json",
+                },
+            ],
+        }
+        with self.assertRaises(ValueError):
+            BatchManifest.model_validate(data)
+
+    def test_run_analyze_chain_after_job(self) -> None:
+        src = self.root / "samples/source/job_test_base.png"
+        before = self.root / "generated/images/tone_before.png"
+        after = self.root / "generated/images/tone_after.png"
+        log = self.root / "generated/logs/tone_compare.json"
+        src.parent.mkdir(parents=True, exist_ok=True)
+        Image.new("RGBA", (32, 32), (80, 80, 80, 255)).save(src)
+        for path in (before, after, log):
+            if path.exists():
+                path.unlink()
+        batch = self.root / "samples/jobs/tone_analyze_pipeline.json"
+        run_batch_file(batch, dry_run=False)
+        self.assertTrue(before.exists())
+        self.assertTrue(after.exists())
+        self.assertTrue(log.exists())
+        payload = json.loads(log.read_text(encoding="utf-8"))
+        self.assertEqual(payload["kind"], "compare")
+        self.assertTrue(payload["ok"])
+        self.assertTrue(payload["verdict"]["brightness_significantly_different"])
+        src.unlink(missing_ok=True)
+        before.unlink(missing_ok=True)
+        after.unlink(missing_ok=True)
+        log.unlink(missing_ok=True)
+
+    def test_dry_run_analyze_chain(self) -> None:
+        batch = self.root / "samples/jobs/tone_analyze_pipeline.json"
+        results = run_batch_file(batch, dry_run=True)
+        self.assertEqual(len(results), 3)
+        self.assertEqual(results[-1], "generated/logs/tone_compare.json")
 
 
 if __name__ == "__main__":

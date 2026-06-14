@@ -29,7 +29,13 @@ from graphassist.schema.batch import (
     is_batch_manifest,
 )
 from graphassist.schema.job import ImageJob
-from graphassist.schema.paths import normalize_manifest_path, project_root, resolve_batch_file
+from graphassist.schema.paths import (
+    normalize_manifest_path,
+    project_root,
+    resolve_batch_file,
+    resolve_batch_image_input,
+    resolve_output,
+)
 
 
 def load_manifest(json_path: Path) -> BatchManifest | ImageJob:
@@ -143,9 +149,13 @@ def _execute_command(command, *, root: Path, prev_output: str | None = None) -> 
         return f"materialized: {', '.join(installed)}"
 
     if isinstance(command, AnalyzeCommand):
-        input_path = root / command.input
-        compare_path = root / command.compare if command.compare else None
-        output_path = root / command.output
+        input_path = resolve_batch_image_input(command.input, root=root, must_exist=True)
+        compare_path = (
+            resolve_batch_image_input(command.compare, root=root, must_exist=True)
+            if command.compare
+            else None
+        )
+        output_path = resolve_output(command.output, root=root)
         roi_specs = command.rois or []
         run_analyze(
             input_path,

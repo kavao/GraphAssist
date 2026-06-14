@@ -1,0 +1,14 @@
+{
+  "version": "1.0",
+  "input": "samples/source/mosaic_test_src.png",
+  "output": "generated/images/to_mosaic_preview.png",
+  "operations": [
+    {"type": "resize", "long_edge": 64},
+    {
+      "type": "to_mosaic",
+      "grid": "8x8",
+      "max_colors": 8,
+      "mosaic_output": "generated/mosaic/to_mosaic_job.json"
+    }
+  ]
+}
