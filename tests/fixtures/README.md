@@ -1,8 +1,8 @@
 # Test fixtures
 
-## DejaVuSans.ttf
+Font binaries are no longer stored here. Git-bundled fonts live under `assets/fonts/`:
 
-Bundled for unit tests (text / batch pipeline) on CI runners without system fonts.
+- `assets/fonts/DejaVuSans.ttf`
+- `assets/fonts/PixelMplus12-Regular.ttf`
 
-- License: DejaVu Fonts License (see [dejavu-fonts](https://github.com/dejavu-fonts/dejavu-fonts))
-- Source: DejaVu Sans 2.37
+See [assets/fonts/README.md](../../assets/fonts/README.md) for license and setup details.

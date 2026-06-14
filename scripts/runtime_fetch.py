@@ -116,6 +116,16 @@ def fetch_font(root: Path, component: dict, *, force: bool = False) -> dict:
         print(f"  font ({component['id']}): up to date ({dest.name})")
         return record
 
+    bundled = root / "assets/fonts" / dest.name
+    if bundled.is_file() and bundled.resolve() != dest.resolve():
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(bundled, dest)
+        mirror_font_to_legacy(root, dest)
+        record["present"] = True
+        record["source"] = "bundled"
+        print(f"  font ({component['id']}): copied from git bundle ({bundled.name})")
+        return record
+
     release = component.get("release", {})
     if release.get("url"):
         print(f"  font ({component['id']}): downloading {dest.name}")

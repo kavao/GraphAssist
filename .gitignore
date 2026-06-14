@@ -27,6 +27,8 @@ build/
 
 # ===== レガシー資産（runtime/assets へ移行） =====
 assets/fonts/*.ttf
+!assets/fonts/DejaVuSans.ttf
+!assets/fonts/PixelMplus12-Regular.ttf
 assets/fonts/*.otf
 assets/fonts/*.ttc
 assets/fonts/*-LICENSE
