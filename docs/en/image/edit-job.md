@@ -57,8 +57,34 @@ Logs (JSONL, Markdown, replay script) are written under `generated/logs/`.
 | `text` | `content`, `font`, `size`, `color`, `x`, `y`, `stroke_color`, `stroke_width` |
 | `trim` | `background`, `padding`, `tolerance` |
 | `flatten` | `background` |
+| `adjust` | `brightness`, `contrast`, `saturation` (0..3, 1.0 = no change) |
+| `grayscale` | `mode`: `luminance` (Rec.601, aligned with `analyze`) |
+| `sepia` | `strength` (0..1) |
+| `curve` | `mode`: `gamma` (`gamma` 0.1..5) or `levels` (`black`, `white`) |
+| `quantize` | `colors` (2..256), `dither` (bool) |
+| `posterize` | `bits` (1..8) |
+| `blur` | `kind`: `gaussian` / `box`, `radius` (0..50) |
+| `sharpen` | `kind`: `enhance` (`amount`) or `unsharp` (`radius`, `percent`, `threshold`) |
+| `to_mosaic` | `grid` (`WxH` or `[w,h]`), `max_colors`, `mosaic_output` (**last op only**) |
 
 Allowed `fill` / `color` / `background`: name or `#RRGGBB` (`transparent`, `white`, `black`, `red`, `green`, `blue`, `gray`)
+
+## Tone adjustment example
+
+```json
+{
+  "version": "1.0",
+  "input": "samples/source/job_test_base.png",
+  "output": "generated/images/tone_pipeline_out.png",
+  "operations": [
+    {"type": "adjust", "brightness": 1.15, "contrast": 1.05},
+    {"type": "curve", "mode": "gamma", "gamma": 1.1},
+    {"type": "quantize", "colors": 16, "dither": false}
+  ]
+}
+```
+
+Use `analyze --compare` for before/after checks. Samples: `samples/jobs/adjust_brighten.json`, `samples/jobs/tone_pipeline.json`
 
 ## Composite example
 

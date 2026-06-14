@@ -43,6 +43,7 @@ uv run graphassist mosaic decode samples/mosaic/finale_rocket.json generated/ima
 | [Docs index](docs/README.md) | Entry point |
 | [CLI reference](docs/en/image/operations.md) | All subcommands |
 | [Runtime setup](docs/en/setup/runtime.md) | Binaries, fonts, weights |
+| [Adoption (source injection)](docs/en/setup/adoption.md) | Ship source + rulesync in another repo (pattern B) |
 | [ImageJob](docs/en/image/edit-job.md) | JSON pipeline |
 | [CharGrid](docs/en/image/mosaic.md) | Pixel art |
 | [Work plan](_workingspace/plans/work-plan.md) | Phases |

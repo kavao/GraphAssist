@@ -60,6 +60,35 @@ uv run graphassist mosaic encode \
 
 nearest-neighbor 縮小 + 量子化のため **ロスあり** です。ラウンドトリップ完全一致は期待しないでください。
 
+## ImageJob `to_mosaic`（ラスタ → CharGrid）
+
+ImageJob の **最終 operation** として、編集済みキャンバスを MosaicArt JSON にエンコードできます（`mosaic encode` のラッパー）。
+
+```json
+{
+  "version": "1.0",
+  "input": "samples/source/icon.png",
+  "output": "generated/images/icon_edited.png",
+  "operations": [
+    {"type": "resize", "long_edge": 128},
+    {
+      "type": "to_mosaic",
+      "grid": "16x16",
+      "max_colors": 16,
+      "mosaic_output": "generated/mosaic/icon.json"
+    }
+  ]
+}
+```
+
+- `to_mosaic` は **operations の末尾のみ**（以降に op を置けない）
+- `grid` は `"WxH"` または `[width, height]`
+- Job の `output` は従来どおり **PNG**、`mosaic_output` が **JSON** 先
+
+```bash
+uv run graphassist job samples/jobs/to_mosaic_pipeline.json
+```
+
 ## export（JS スニペット）
 
 ```bash
@@ -92,6 +121,24 @@ uv run graphassist run samples/jobs/birds_on_trunk_pipeline.json
 ```
 
 詳細は [batch.md](batch.md) の「直前 command の output を job input に」節を参照してください。
+
+## 複数 JSON の合成（merge）
+
+部品 Mosaic（`parakeet.json` / `parrot.json` 等）を 1 グリッドに重ねるときは merge を使います。
+
+```bash
+uv run graphassist mosaic compose-birds generated/mosaic/birds_on_trunk_merged.json
+uv run python scripts/merge_birds_on_trunk.py
+```
+
+汎用 merge:
+
+```bash
+uv run graphassist mosaic merge generated/mosaic/merged.json \
+  --canvas 50x26 \
+  --layer samples/mosaic/parakeet.json@8,6 \
+  --layer samples/mosaic/parrot.json@24,3
+```
 
 ## 参照
 

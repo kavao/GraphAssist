@@ -43,24 +43,27 @@ uv run graphassist analyze generated/images/out.png --spatial \
 
 ## Batch 例
 
+`input` が `generated/` のときは **直前 command の `output` と同一**、`compare` が `generated/` のときは **それ以前の command output** と一致させる（[ga-batch-runner](../ga-batch-runner/SKILL.md)）。
+
+job 後の profile:
+
 ```json
 {
   "type": "analyze",
-  "input": "generated/images/demo_catalog_card.png",
-  "output": "generated/logs/demo_catalog_card.json",
+  "input": "generated/images/tone_after.png",
+  "output": "generated/logs/tone_after_profile.json",
   "spatial": true
 }
 ```
 
-compare 付き:
+before/after compare（[tone_analyze_pipeline.json](../../samples/jobs/tone_analyze_pipeline.json)）:
 
 ```json
 {
   "type": "analyze",
-  "input": "samples/source/before.png",
-  "compare": "generated/images/after.png",
-  "output": "generated/logs/compare.json",
-  "spatial": true
+  "input": "generated/images/tone_after.png",
+  "compare": "generated/images/tone_before.png",
+  "output": "generated/logs/tone_compare.json"
 }
 ```
 

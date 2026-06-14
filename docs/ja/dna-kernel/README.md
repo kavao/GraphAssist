@@ -71,5 +71,6 @@ uv run python tools/kernel/workspace_audit_log.py append "作業内容"
 ## 詳細
 
 - 導入・注入フロー: [onboarding.md](onboarding.md)
+- **GraphAssist 取り込み（パターン B）**: [../setup/adoption.md](../setup/adoption.md)
 - ガバナンスの考え方: [self-evolving-governance.md](self-evolving-governance.md)
 - ファイル一覧: [../../../manifest.md](../../../manifest.md)

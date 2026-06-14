@@ -60,6 +60,35 @@ uv run graphassist mosaic encode \
 
 Uses nearest-neighbor downscale and quantization — **lossy**; do not expect a perfect round trip.
 
+## ImageJob `to_mosaic` (raster → CharGrid)
+
+As the **last operation** in an ImageJob, encode the edited canvas to MosaicArt JSON (wrapper around `mosaic encode`).
+
+```json
+{
+  "version": "1.0",
+  "input": "samples/source/icon.png",
+  "output": "generated/images/icon_edited.png",
+  "operations": [
+    {"type": "resize", "long_edge": 128},
+    {
+      "type": "to_mosaic",
+      "grid": "16x16",
+      "max_colors": 16,
+      "mosaic_output": "generated/mosaic/icon.json"
+    }
+  ]
+}
+```
+
+- `to_mosaic` must be the **final** operation
+- `grid`: `"WxH"` or `[width, height]`
+- Job `output` is still the **PNG**; `mosaic_output` is the **JSON** path
+
+```bash
+uv run graphassist job samples/jobs/to_mosaic_pipeline.json
+```
+
 ## export (JS snippet)
 
 ```bash
@@ -92,6 +121,24 @@ uv run graphassist run samples/jobs/birds_on_trunk_pipeline.json
 ```
 
 See [batch.md](batch.md) — “Previous command output as job input”.
+
+## Merging multiple JSON files
+
+Compose part mosaics (e.g. `parakeet.json` + `parrot.json`) with merge:
+
+```bash
+uv run graphassist mosaic compose-birds generated/mosaic/birds_on_trunk_merged.json
+uv run python scripts/merge_birds_on_trunk.py
+```
+
+Generic merge:
+
+```bash
+uv run graphassist mosaic merge generated/mosaic/merged.json \
+  --canvas 50x26 \
+  --layer samples/mosaic/parakeet.json@8,6 \
+  --layer samples/mosaic/parrot.json@24,3
+```
 
 ## See also
 

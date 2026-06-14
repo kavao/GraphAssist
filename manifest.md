@@ -12,6 +12,7 @@ rulesync が各 LLM ツールの設定ファイルへ変換します。
 | `.rulesync/rules/rule-authoring.md` | ルール追加時の分類・置き場の作法 | `.rulesync/rules/rule-authoring.md` |
 | `.rulesync/rules/docs-writing.md` | docs/ ドキュメント記述ルール（`docs/**/*.md` に適用） | `.rulesync/rules/docs-writing.md` |
 | `.rulesync/rules/git.md` | git コミットメッセージ・ブランチ運用ルール | `.rulesync/rules/git.md` |
+| `.rulesync/rules/graphassist.md` | GraphAssist LLM 向け JSON パイプライン・スキル導線 | `.rulesync/rules/graphassist.md` |
 
 ## .rulesync/skills/（LLM 向けの実行手順）
 
@@ -128,6 +129,8 @@ rulesync の管理外。人間が読む説明ドキュメント。
 
 ## 最小セット（どれか1つから始めるなら）
 
-- **ルールだけ**: `.rulesync/rules/concepts.md` + `rulesync.jsonc` + `corepack pnpm dlx rulesync generate` 実行
-- **ログまで**: 上記に `tools/kernel/workspace_audit_log.py` を追加
-- **画像処理まで**: 上記に `src/graphassist/graphassist.py` と `.rulesync/skills/ga-image-processing/SKILL.md` を追加
+- **ルールだけ（dna_kernel）**: `.rulesync/rules/concepts.md` + `rulesync.jsonc` + `corepack pnpm dlx rulesync generate`
+- **ログまで**: 上記 + `tools/kernel/workspace_audit_log.py`
+- **GraphAssist（推奨・パターン B）**: 上記 + **`src/graphassist/` ディレクトリ全体** + `.rulesync/rules/graphassist.md` + **ga-* スキル一式** + `.rulesync/metadata/` + `samples/jobs/`（+ 必要なら `samples/mosaic/`）+ `scripts/setup-runtime.*` + 同梱フォント 2 件 + `pyproject.toml` マージ
+
+手順の正本: [docs/ja/setup/adoption.md](docs/ja/setup/adoption.md) · [docs/en/setup/adoption.md](docs/en/setup/adoption.md)

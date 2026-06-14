@@ -47,12 +47,23 @@ uv run graphassist run samples/jobs/pipeline.json
 | `mosaic.encode` | 画像 → MosaicArt JSON |
 | `mosaic.export` | MosaicArt JSON → JS / JSON テキスト |
 | `assets.materialize` | カタログ素材を fetch + mirror（`ids` 省略で全件） |
+| `analyze` | 画像 metrics（profile / compare）。`--spatial` 等は command フィールドで指定 |
 
 ## Batch 内の `generated/` → job 連鎖
 
 直前 command の **`output` と同一パス** を次の `job.input` に書くと、`generated/` 入力が許可されます（単体 `graphassist job` は `samples/source/` のみ）。
 
 例: [birds_on_trunk_pipeline.json](../../samples/jobs/birds_on_trunk_pipeline.json) — `mosaic.decode` → `job`（タイトル text）
+
+## Batch 内の `generated/` → analyze 連鎖
+
+| フィールド | ルール |
+|------------|--------|
+| `analyze.input` | `generated/` のとき **直前 command の `output` と同一** |
+| `analyze.compare` | `generated/` のとき **それ以前のいずれかの command `output`** |
+| `analyze.output` | `generated/logs/` 等 |
+
+例: [tone_analyze_pipeline.json](../../samples/jobs/tone_analyze_pipeline.json) — job → adjust → analyze compare（before/after QA）
 
 ## カタログ + Job パイプライン
 
@@ -137,7 +148,8 @@ uv run graphassist run samples/jobs/pipeline.json
 | 種別 | 許可パス |
 |------|----------|
 | Batch ファイル | `samples/jobs/` |
-| job / mosaic.encode 入力 | `samples/source/`（catalog materialize 後の `samples/source/catalog/` 含む） |
+| job / mosaic.encode 入力 | `samples/source/`（Batch 連鎖時は `generated/` 可 — 下記） |
+| analyze `input` / `compare` | 通常 `samples/source/`。Batch 連鎖時 `generated/` 可 |
 | mosaic.decode 入力 | `samples/mosaic/`, `generated/mosaic/` |
 | mosaic.encode / export 出力 JSON | `generated/mosaic/` |
 | 画像出力 | `generated/` |

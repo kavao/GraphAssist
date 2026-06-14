@@ -58,9 +58,8 @@ Single ImageJob files (no `commands` key) still use `graphassist job`.
 | `mosaic.decode` | CharGrid → image. Use **either** `input` (JSON path) **or** inline `art` |
 | `mosaic.encode` | Image → MosaicArt JSON |
 | `mosaic.export` | MosaicArt JSON → JS / JSON text |
-
-| `mosaic.export` | MosaicArt JSON → JS / JSON text |
 | `assets.materialize` | Fetch and mirror catalog assets (`ids` omitted = all enabled) |
+| `analyze` | Image metrics (profile or compare when `compare` is set) |
 
 ## Catalog + Job
 
@@ -93,6 +92,44 @@ When **`job.input` equals the previous command’s `output` path** in a Batch ma
 
 See [birds_on_trunk_pipeline.json](../../../samples/jobs/birds_on_trunk_pipeline.json) for a `mosaic.decode` → `job` example with title text.
 
+## Previous command output as analyze input
+
+Batch **`analyze`** also supports `generated/` chaining:
+
+| Field | Rule |
+|-------|------|
+| `input` | When under `generated/`, must **match the previous command’s `output`** |
+| `compare` | When under `generated/`, must match **any earlier command output** in the same manifest |
+| `output` | Under `generated/` (e.g. `generated/logs/`) |
+
+```json
+{
+  "version": "1.0",
+  "commands": [
+    {
+      "type": "job",
+      "input": "samples/source/job_test_base.png",
+      "output": "generated/images/tone_before.png",
+      "operations": []
+    },
+    {
+      "type": "job",
+      "input": "generated/images/tone_before.png",
+      "output": "generated/images/tone_after.png",
+      "operations": [{"type": "adjust", "brightness": 1.5}]
+    },
+    {
+      "type": "analyze",
+      "input": "generated/images/tone_after.png",
+      "compare": "generated/images/tone_before.png",
+      "output": "generated/logs/tone_compare.json"
+    }
+  ]
+}
+```
+
+For before/after QA after tone ops. Standalone CLI: [operations.md](operations.md#analyze).
+
 ## Run
 
 ```bash
@@ -107,6 +144,7 @@ Logs are written to `generated/logs/` as JSONL.
 - [samples/jobs/README.md](../../../samples/jobs/README.md) — Demo index
 - [samples/jobs/mosaic_pipeline.json](../../../samples/jobs/mosaic_pipeline.json)
 - [samples/jobs/birds_on_trunk_pipeline.json](../../../samples/jobs/birds_on_trunk_pipeline.json) — mosaic.decode → job (titled)
+- [samples/jobs/tone_analyze_pipeline.json](../../../samples/jobs/tone_analyze_pipeline.json) — job → adjust → analyze compare
 - [samples/jobs/demo_catalog_pipeline_asset_ids.json](../../../samples/jobs/demo_catalog_pipeline_asset_ids.json) — recommended (materialize + overlay_asset)
 - [samples/jobs/demo_catalog_pipeline.json](../../../samples/jobs/demo_catalog_pipeline.json)
 

@@ -25,7 +25,7 @@ This creates:
 
 - `runtime/bin/`, `runtime/assets/fonts/`, `runtime/assets/weights/`
 - Downloads the CLI binary from GitHub Releases (network required)
-- **Fetches fonts** — Japanese (Noto / Misaki / PixelMplus), English (Inter / Roboto / Source Sans 3 / DejaVu); Meiryo copied from Windows when available (mirrored to `assets/fonts/`, `NOTICES.md` generated)
+- **Fetches fonts** — copies Git-bundled DejaVu / PixelMplus12 into runtime, then downloads Japanese (Noto / Misaki), English (Inter / Roboto / Source Sans 3); Meiryo copied from Windows when available (mirrored to `assets/fonts/`, `NOTICES.md` generated)
 - `runtime/manifest.local.json` (install record)
 - Falls back to source execution if the binary download fails; optional fonts are skipped when unavailable
 
@@ -47,14 +47,16 @@ Do not commit it to Git.
 
 ## Fonts
 
-`setup-runtime` installs ImageJob `text` fonts under **`runtime/assets/fonts/`** and mirrors them to `assets/fonts/`.
+**Git bundle (minimum):** `assets/fonts/DejaVuSans.ttf` and `PixelMplus12-Regular.ttf` are available immediately after clone (birds demo, basic tests).
+
+`setup-runtime` installs additional ImageJob `text` fonts under **`runtime/assets/fonts/`** and mirrors them to `assets/fonts/`.
 
 | Font | Use | Source |
 |------|-----|--------|
+| `DejaVuSans.ttf` | Latin, etc. | **Git bundle** / setup |
+| `PixelMplus12-Regular.ttf` | Pixel-style Japanese | **Git bundle** / setup |
 | `NotoSansJP-Regular.otf` | Japanese (recommended) | Download (OFL) |
 | `misaki_gothic.ttf` | 8×8 dot Japanese | Download |
-| `PixelMplus12-Regular.ttf` | Pixel-style Japanese | Download (M+ LICENSE) |
-| `DejaVuSans.ttf` | Latin, etc. | Download |
 | `InterVariable.ttf` | English UI | Download (OFL) |
 | `Roboto-Regular.ttf` | English UI | Download (Apache 2.0) |
 | `SourceSans3-Regular.ttf` | English UI | Download (OFL) |
@@ -101,6 +103,19 @@ Declared in `.rulesync/metadata/runtime-manifest.jsonc` as optional. Core Pillow
 |----------|-------------|
 | `GRAPHASSIST_RUNTIME` | Runtime root (default `<project>/runtime`) |
 | `GRAPHASSIST_BIN` | Full path to CLI binary |
+
+## Adopting in another project
+
+**Default: pattern B (source injection)** — ship `src/graphassist/` + rulesync + samples in the same repo. CLI-only adoption loses most LLM JSON pipeline value; **include rulesync (`graphassist.md` + ga-* skills)**.
+
+Full checklist, merge steps, and GitHub references: **[Adoption guide](adoption.md)**
+
+After adoption:
+
+1. Add `runtime/**`, `generated/**`, and rulesync outputs to the adoptee `.gitignore`
+2. `uv sync` → `corepack pnpm dlx rulesync generate` (when using dna_kernel)
+3. Run **First setup** on this page (`setup-runtime`)
+4. Skills prefer `runtime/bin`, then `uv run graphassist`
 
 ## Design details
 

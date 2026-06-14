@@ -25,7 +25,7 @@ chmod +x scripts/setup-runtime.sh
 
 - `runtime/bin/`, `runtime/assets/fonts/`, `runtime/assets/weights/` を作成
 - GitHub Releases から CLI バイナリを取得（ネットワーク必須）
-- **フォントを取得** — 日本語（Noto / 美咲 / PixelMplus）、英語（Inter / Roboto / Source Sans 3 / DejaVu）、Windows では Meiryo をシステムからコピー（`assets/fonts/` にもミラー、`NOTICES.md` 自動生成）
+- **フォントを取得** — Git 同梱済み（DejaVu / PixelMplus12）を runtime へコピーし、追加で日本語（Noto / 美咲）、英語（Inter / Roboto / Source Sans 3）、Windows では Meiryo をシステムからコピー（`assets/fonts/` にもミラー、`NOTICES.md` 自動生成）
 - `runtime/manifest.local.json` にインストール状態を記録
 - 取得失敗時は **ソース実行** へフォールバック（バイナリ）、フォント optional はスキップ可
 
@@ -47,14 +47,16 @@ runtime/bin/graphassist.exe
 
 ## フォント
 
-`setup-runtime` が ImageJob `text` 用フォントを **`runtime/assets/fonts/`** に配置し、`assets/fonts/` へミラーします。
+**Git 同梱（最小）:** `assets/fonts/DejaVuSans.ttf` と `PixelMplus12-Regular.ttf` は clone 直後から利用可能です（birds デモ・基本テスト向け）。
+
+`setup-runtime` が ImageJob `text` 用の追加フォントを **`runtime/assets/fonts/`** に配置し、`assets/fonts/` へミラーします。
 
 | フォント | 用途 | 取得 |
 |----------|------|------|
+| `DejaVuSans.ttf` | Latin 等 | **Git 同梱** / setup |
+| `PixelMplus12-Regular.ttf` | ピクセル風日本語 | **Git 同梱** / setup |
 | `NotoSansJP-Regular.otf` | 日本語（推奨） | ダウンロード（OFL） |
 | `misaki_gothic.ttf` | 8×8 ドット日本語 | ダウンロード |
-| `PixelMplus12-Regular.ttf` | ピクセル風日本語 | ダウンロード（M+ LICENSE） |
-| `DejaVuSans.ttf` | Latin 等 | ダウンロード |
 | `InterVariable.ttf` | 英語 UI | ダウンロード（OFL） |
 | `Roboto-Regular.ttf` | 英語 UI | ダウンロード（Apache 2.0） |
 | `SourceSans3-Regular.ttf` | 英語 UI | ダウンロード（OFL） |
@@ -106,10 +108,16 @@ runtime/assets/weights/<component-id>/
 
 ## 取り込みプロジェクト
 
-1. GraphAssist の rulesync / ソースを注入
-2. 取り込み先 `.gitignore` に `runtime/**` を追加
-3. `setup-runtime` を実行
-4. スキルは runtime バイナリを優先
+**原則はパターン B（ソース注入）** — `src/graphassist/` + rulesync + samples を同リポジトリに載せます。CLI だけでは LLM 連携の価値が出にくいため、**rulesync（`graphassist.md` + ga-* スキル）をセットで取り込んでください**。
+
+詳細チェックリスト・統合手順・GitHub 参照: **[他プロジェクトへの取り込み](adoption.md)**
+
+取り込み後の共通ステップ:
+
+1. 取り込み先 `.gitignore` に `runtime/**`, `generated/**`, rulesync 生成物を追加
+2. `uv sync` → `corepack pnpm dlx rulesync generate`（dna_kernel 導入時）
+3. 本ページの **初回セットアップ**（`setup-runtime`）を実行
+4. スキルは `runtime/bin` → `uv run graphassist` の優先順位で CLI を参照
 
 ## 設計詳細
 

@@ -42,6 +42,7 @@ uv run graphassist mosaic decode samples/mosaic/finale_rocket.json generated/ima
 | [ドキュメント索引](docs/README.md) | 入口 |
 | [CLI リファレンス](docs/ja/image/operations.md) | 全サブコマンド |
 | [設置・runtime](docs/ja/setup/runtime.md) | バイナリ・フォント・重み |
+| [他プロジェクトへの取り込み](docs/ja/setup/adoption.md) | ソース + rulesync 注入（原則パターン B） |
 | [ImageJob](docs/ja/image/edit-job.md) | JSON 編集 |
 | [CharGrid](docs/ja/image/mosaic.md) | ピクセルアート |
 | [作業計画](_workingspace/plans/work-plan.md) | Phase 計画 |

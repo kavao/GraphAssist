@@ -70,5 +70,6 @@ uv run python tools/kernel/workspace_audit_log.py append "work summary"
 ## Further reading
 
 - Onboarding and injection: [onboarding.md](onboarding.md)
+- **GraphAssist adoption (pattern B)**: [../setup/adoption.md](../setup/adoption.md)
 - Governance pattern: [self-evolving-governance.md](self-evolving-governance.md)
 - File manifest: [../../../manifest.md](../../../manifest.md)

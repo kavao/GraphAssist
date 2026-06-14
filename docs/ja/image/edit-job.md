@@ -59,8 +59,34 @@ uv run graphassist job samples/jobs/resize_border.json
 | `text` | `content`, `font`, `size`, `color`, `x`, `y`, `stroke_color`, `stroke_width` |
 | `trim` | `background`, `padding`, `tolerance` |
 | `flatten` | `background` |
+| `adjust` | `brightness`, `contrast`, `saturation`（各 0..3、1.0 = 変更なし） |
+| `grayscale` | `mode`: `luminance`（Rec.601、**analyze と同系**） |
+| `sepia` | `strength`（0..1、1.0 = フルセピア） |
+| `curve` | `mode`: `gamma`（`gamma` 0.1..5）または `levels`（`black`, `white`） |
+| `quantize` | `colors`（2..256）, `dither`（bool） |
+| `posterize` | `bits`（1..8） |
+| `blur` | `kind`: `gaussian` / `box`, `radius`（0..50） |
+| `sharpen` | `kind`: `enhance`（`amount`）または `unsharp`（`radius`, `percent`, `threshold`） |
+| `to_mosaic` | `grid`（`WxH` または `[w,h]`）, `max_colors`, `mosaic_output`（**末尾のみ**） |
 
 `fill` / `color` / `background`: 名前または `#RRGGBB`（`transparent`, `white`, `black`, `red`, `green`, `blue`, `gray`）
+
+## トーン調整例（adjust / curve / quantize）
+
+```json
+{
+  "version": "1.0",
+  "input": "samples/source/job_test_base.png",
+  "output": "generated/images/tone_pipeline_out.png",
+  "operations": [
+    {"type": "adjust", "brightness": 1.15, "contrast": 1.05},
+    {"type": "curve", "mode": "gamma", "gamma": 1.1},
+    {"type": "quantize", "colors": 16, "dither": false}
+  ]
+}
+```
+
+実行前後の明るさ確認には [analyze](operations.md#analyze) の `--compare` を使います。サンプル: `samples/jobs/adjust_brighten.json`, `samples/jobs/tone_pipeline.json`
 
 ## 合成例
 

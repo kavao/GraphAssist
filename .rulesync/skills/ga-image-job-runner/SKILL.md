@@ -70,6 +70,26 @@ uv run graphassist job samples/jobs/task.json
 
 **新規 URL / id の追加は LLM 禁止** — manifest は人間が更新。
 
+## トーン調整 operations（Phase T）
+
+明るさ・減色・ぼかし等は ImageJob `operations` に載せる。一括フォルダ変換は [ga-image-processing スキル](../ga-image-processing/SKILL.md) の `convert --brightness` 等。
+
+| type | 用途 |
+|------|------|
+| `adjust` | brightness / contrast / saturation |
+| `curve` | gamma または levels |
+| `quantize` | 色数削減 |
+| `posterize` | 階調削減 |
+| `grayscale` | Rec.601 輝度（`analyze` と同系） |
+| `sepia` | strength 0..1 |
+| `blur` | gaussian / box |
+| `sharpen` | enhance / unsharp |
+| `to_mosaic` | ラスタ → MosaicArt JSON（**末尾のみ**）→ [ga-mosaic-art スキル](../ga-mosaic-art/SKILL.md) |
+
+before/after 確認 → [ga-image-analysis スキル](../ga-image-analysis/SKILL.md) の `analyze --compare`
+
+サンプル: `samples/jobs/adjust_brighten.json`, `samples/jobs/tone_pipeline.json`
+
 複数ステップは [ga-batch-runner スキル](../ga-batch-runner/SKILL.md) を使う。
 
 ## 参照
