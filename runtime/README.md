@@ -29,7 +29,7 @@ runtime/
 
 | 変数 | 説明 |
 |------|------|
-| `GRAPHASSIST_RUNTIME` | runtime ルート（默认: プロジェクト直下の `runtime/`） |
+| `GRAPHASSIST_RUNTIME` | runtime ルート（デフォルト: プロジェクト直下の `runtime/`） |
 | `GRAPHASSIST_BIN` | CLI バイナリを直接指定 |
 
 ## Git

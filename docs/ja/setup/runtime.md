@@ -103,7 +103,7 @@ runtime/assets/weights/<component-id>/
 
 | 変数 | 説明 |
 |------|------|
-| `GRAPHASSIST_RUNTIME` | runtime ルート（默认 `<project>/runtime`） |
+| `GRAPHASSIST_RUNTIME` | runtime ルート（デフォルト: `<project>/runtime`） |
 | `GRAPHASSIST_BIN` | CLI バイナリのフルパス |
 
 ## 取り込みプロジェクト
