@@ -85,7 +85,7 @@ def merge_mosaics(
         raise ValueError(f"merged palette exceeds {MAX_PALETTE_SIZE} colors ({len(palette)})")
 
     rows = ["".join(row) for row in grid]
-    meta = MosaicMeta(title=title, source="merge") if title else MosaicMeta(source="merge")
+    meta = MosaicMeta(title=title, source="merge", description=description)
     art = MosaicArt(
         version="1.0",
         width=width,
@@ -255,19 +255,8 @@ def _paint_trunk_bar(grid: list[list[str]], y: int, width: int) -> None:
 
 def _paint_trunk_texture(grid: list[list[str]], y: int, width: int) -> None:
     pattern = ("h", "h", "D")
-    inner_start = 4
-    inner_end = width - 4
-    idx = 0
-    for x in range(inner_start, inner_end):
-        if x in (3, width - 4):
-            grid[y][x] = "E"
-        elif x == 3:
-            grid[y][x] = "E"
-        elif x == width - 4:
-            grid[y][x] = "E"
-        else:
-            grid[y][x] = pattern[idx % len(pattern)]
-            idx += 1
+    for idx, x in enumerate(range(4, width - 4)):
+        grid[y][x] = pattern[idx % len(pattern)]
     if width >= 8:
         grid[y][3] = "E"
         grid[y][width - 4] = "E"

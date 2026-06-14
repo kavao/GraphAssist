@@ -15,6 +15,7 @@ DEFAULT_MAX_COLORS = 16
 class MosaicMeta(BaseModel):
     title: str | None = None
     source: str | None = None
+    description: str | None = None
 
 
 class MosaicArt(BaseModel):
