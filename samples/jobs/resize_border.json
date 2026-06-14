@@ -1,0 +1,9 @@
+{
+  "version": "1.0",
+  "input": "samples/source/your.png",
+  "output": "generated/images/your_out.png",
+  "operations": [
+    {"type": "resize", "width": 1024},
+    {"type": "border", "size": 20, "color": "white"}
+  ]
+}

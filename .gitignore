@@ -1,0 +1,42 @@
+# ===== 生成物 =====
+generated/**
+
+# ===== rulesync 生成物 =====
+# 正本は rulesync.jsonc と .rulesync/ に置き、各ツール向け生成物は除外する
+.claude/
+.cursor/
+.codex/
+.kilo/
+.agents/
+AGENTS.md
+CLAUDE.md
+
+# ===== ワークスペース（ローカル作業ファイル） =====
+# ディレクトリ構造（.gitkeep）は残し、中身のファイルだけ除外する
+_workingspace/**
+!_workingspace/**/
+!_workingspace/**/.gitkeep
+_backup/
+_old/
+
+# ===== Python =====
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.pytest_cache/
+*.egg-info/
+
+# ===== Node.js =====
+node_modules/
+
+# ===== 環境変数 =====
+.env
+.env.local
+
+# ===== user-locale（プロジェクト local 上書き） =====
+.dna-kernel.local.toml
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
