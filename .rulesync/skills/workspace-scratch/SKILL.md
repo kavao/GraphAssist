@@ -40,4 +40,4 @@ README 正本: [_workingspace/_scratch/README.md](../../_workingspace/_scratch/R
 
 - [ga-mosaic-art スキル](../ga-mosaic-art/SKILL.md)
 - [ga-image-job-runner スキル](../ga-image-job-runner/SKILL.md)
-- [mosaic-pipeline-plan.md](../../_workingspace/plans/mosaic-pipeline-plan.md)
+- [20260615-mosaic-pipeline-plan.md](../../_workingspace/plans/20260615-mosaic-pipeline-plan.md)

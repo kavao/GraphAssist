@@ -8,7 +8,7 @@
 
 ## コンセプト
 
-**繰り返しの、創造性のない画像作業はツールに任せる** — リサイズ・形式変換・余白除去・サイズ揃えなど、手順は決まっているが地味でミスしやすい作業を CLI と ImageJob JSON に寄せます。やりたいことは JSON や引数で渡し、検証と実行は Python が担当します。詳細は [概要（plans）](_workingspace/plans/overview.md#コンセプト)。
+**繰り返しの、創造性のない画像作業はツールに任せる** — リサイズ・形式変換・余白除去・サイズ揃えなど、手順は決まっているが地味でミスしやすい作業を CLI と ImageJob JSON に寄せます。やりたいことは JSON や引数で渡し、検証と実行は Python が担当します。
 
 ## セットアップ
 ### 1. Python 依存
@@ -45,8 +45,6 @@ uv run graphassist mosaic decode samples/mosaic/finale_rocket.json generated/ima
 | [他プロジェクトへの取り込み](docs/ja/setup/adoption.md) | ソース + rulesync 注入（原則パターン B） |
 | [ImageJob](docs/ja/image/edit-job.md) | JSON 編集 |
 | [CharGrid](docs/ja/image/mosaic.md) | ピクセルアート |
-| [作業計画](_workingspace/plans/work-plan.md) | Phase 計画 |
-| [設置設計](_workingspace/plans/deployment-design.md) | ソース vs runtime |
 
 ## 開発状況
 

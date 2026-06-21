@@ -19,7 +19,27 @@ globs: ["docs/**/*.md"]
 | 対訳 | `docs/en/`（`docs/ja/` から翻訳・同期する） |
 | 表示 | 索引・入口・デフォルトリンクは **英語（`docs/en/`）を先** に並べる |
 | ハーネス | `.rulesync/` 等のルール・スキル正本は日本語のまま（本節の対象外） |
-| 計画・査証 | `_workingspace/plans/` は引き続き日本語可（開発者向け） |
+| 計画・査証 | `_workingspace/plans/` は引き続き日本語可（開発者向け・**Git 外**）。ファイル名は `YYYYMMDD-<slug>.md`（[graphassist.md](../rules/graphassist.md) §計画ファイル） |
+
+### 計画書へのリンク禁止（公開ドキュメント）
+
+`_workingspace/plans/` は **非公開**（gitignore・clone 先に存在しない）。次の **公開ドキュメント** から計画書への Markdown リンクを張らない。
+
+| 対象 | 例 |
+|------|-----|
+| `docs/**` | `[設計](.../_workingspace/plans/...md)` |
+| ルート `README.md` / `README.ja.md` | 同上 |
+| `samples/**/README.md` | 同上 |
+| `assets/**/README.md` | 同上 |
+
+**禁止**: 上記から `_workingspace/plans/` への **クリック可能なリンク**（相対パス・絶対パスを問わない）。
+
+**許可**:
+
+- `.rulesync/` のルール・スキル（LLM ハーネス向け）からのパス記載・リンク
+- `manifest.md` 等での **バッククォート列挙**（リンクなしのパス文字列のみ）
+
+**代替**: 読者に必要な概念・手順は `docs/ja/` 正本へ書き、`docs/en/` に同期する。ローカル計画は `.rulesync/rules/graphassist.md` §計画ファイル を参照。
 
 ### ルート README（dna_kernel 本体リポジトリ）
 

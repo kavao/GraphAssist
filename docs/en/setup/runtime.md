@@ -119,7 +119,7 @@ After adoption:
 
 ## Design details
 
-See [_workingspace/plans/deployment-design.md](../../../_workingspace/plans/deployment-design.md)
+Runtime design choices (source vs binary, fonts) are covered on this page and in [adoption.md](adoption.md). Extended local design notes live under `_workingspace/plans/` (gitignored; do not link from public docs).
 
 ## See also
 

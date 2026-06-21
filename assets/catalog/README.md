@@ -33,4 +33,5 @@ LLM は `samples/jobs/catalog/index.json` を参照してください。
 
 ## 参照
 
-- [asset-catalog-design.md](../../_workingspace/plans/asset-catalog-design.md)
+- manifest: `.rulesync/metadata/asset-catalog.jsonc`
+- 操作: [docs/ja/image/operations.md](../../docs/ja/image/operations.md)

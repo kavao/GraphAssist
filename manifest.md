@@ -28,7 +28,7 @@ rulesync が各 LLM ツールのスキル設定へ変換します。
 | `.rulesync/skills/approval-flow/SKILL.md` | dry-run→承認→実行→確認の承認フロー | `.rulesync/skills/approval-flow/` |
 | `.rulesync/skills/weighted-pick/SKILL.md` | JSON 重み付き乱数選択の手順 | `.rulesync/skills/weighted-pick/` |
 | `.rulesync/skills/project-context/SKILL.md` | プロジェクト文脈の要約・引き継ぎ | `.rulesync/skills/project-context/` |
-| `.rulesync/skills/project-onboarding/SKILL.md` | 新規作成・既存注入と overview.md 作成フロー | `.rulesync/skills/project-onboarding/` |
+| `.rulesync/skills/project-onboarding/SKILL.md` | 新規作成・既存注入と 20260614-overview.md 作成フロー | `.rulesync/skills/project-onboarding/` |
 | `.rulesync/skills/code-testing/SKILL.md` | コード変更時のテスト実行・デグレード防止 | `.rulesync/skills/code-testing/` |
 | `.rulesync/skills/user-locale/SKILL.md` | 会話言語と user-locale 副本 | `.rulesync/skills/user-locale/` |
 | `.rulesync/skills/content-placement/SKILL.md` | 執筆前の正本・副本判断 | `.rulesync/skills/content-placement/` |
@@ -66,7 +66,7 @@ rulesync が各 LLM ツールのスキル設定へ変換します。
 | `runtime/manifest.local.json` | インストール記録 |
 | `runtime/README.md` | 説明（Git に含める） |
 
-設計: [_workingspace/plans/deployment-design.md](_workingspace/plans/deployment-design.md) · [docs/ja/setup/runtime.md](docs/ja/setup/runtime.md)
+設計: `docs/ja/setup/runtime.md` · ローカル計画は `_workingspace/plans/`（Git 外）
 
 ## docs/（人間向けの説明）
 
@@ -82,8 +82,9 @@ rulesync の管理外。人間が読む説明ドキュメント。
 | `docs/en/dna-kernel/` | dna_kernel 詳細（英訳） | `docs/en/dna-kernel/` |
 | `README.md` | 入口（英語・表示デフォルト） | プロジェクトルート |
 | `README.ja.md` | 入口（日本語・編集正本） | プロジェクトルート |
-| `_workingspace/plans/overview.md` | プロジェクト文脈・方向性（ローカル計画） | `_workingspace/plans/` |
-| `_workingspace/plans/2026-06-14-work-plan.md` | フェーズ別作業計画 | `_workingspace/plans/` |
+| `_workingspace/plans/README.md` | 計画ファイル命名規則 | `_workingspace/plans/` |
+| `_workingspace/plans/20260614-overview.md` | プロジェクト文脈・方向性（ローカル計画） | `_workingspace/plans/` |
+| `_workingspace/plans/20260614-work-plan.md` | フェーズ別作業計画（正本） | `_workingspace/plans/` |
 
 ## src/graphassist/（GraphAssist ソース）
 

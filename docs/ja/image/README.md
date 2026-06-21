@@ -2,7 +2,7 @@
 
 [English](../en/image/README.md) · 日本語
 
-GraphAssist は **繰り返しの、創造性のない画像作業をツールに任せる** ことをコンセプトに、CLI と ImageJob / Batch でパイプラインを再実行可能にします（[overview.md](../../../_workingspace/plans/overview.md#コンセプト)）。
+GraphAssist は **繰り返しの、創造性のない画像作業をツールに任せる** ことをコンセプトに、CLI と ImageJob / Batch でパイプラインを再実行可能にします。
 
 | ガイド | 内容 |
 |--------|------|

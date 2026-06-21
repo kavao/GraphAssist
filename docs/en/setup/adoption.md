@@ -152,4 +152,3 @@ You often **do not need to copy all of `docs/`** — bookmark upstream docs inst
 - [Runtime setup](runtime.md) — binary, fonts, environment variables
 - [Quickstart](../quickstart.md)
 - [dna_kernel onboarding](../dna-kernel/onboarding.md)
-- Developer design notes: [_workingspace/plans/deployment-design.md](../../../_workingspace/plans/deployment-design.md) (local plans)

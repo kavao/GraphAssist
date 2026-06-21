@@ -42,7 +42,7 @@ targets: ["*"]
 
 1. `_workingspace/plans/` と `_workingspace/log/` を確認し、現状を把握する。
 2. 要約を作り、チャットへ提示する。
-3. 必要なら `_workingspace/plans/` に「現状スナップショット」として保存する。
+3. 必要なら `_workingspace/plans/` に「現状スナップショット」として保存する（命名: `YYYYMMDD-<slug>.md` — [graphassist ルール](../rules/graphassist.md) §計画ファイル）。
 4. 「次にすべきこと」を明確に提示する。
 
 ## 関連

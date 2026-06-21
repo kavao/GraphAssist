@@ -37,4 +37,4 @@
 }
 ```
 
-設計: `_workingspace/plans/image-metrics-design.md`
+設計・CLI: [docs/ja/image/operations.md](../../../docs/ja/image/operations.md#analyze)

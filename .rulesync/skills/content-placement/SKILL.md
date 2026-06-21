@@ -58,6 +58,14 @@ targets: ["*"]
 | 設計メモ | 計画 | `_workingspace/plans/` | なし |
 | 本体 README | 入口 | `README.ja.md` | `README.md` |
 
+### 計画ファイル命名
+
+`_workingspace/plans/` に新規ファイルを置くとき、名前は **[graphassist ルール](../rules/graphassist.md) §計画ファイル** の `YYYYMMDD-<slug>.md` に従う。
+
+- **起票日** = 新規作成した日（JST）。既存ファイルの大改訂のみではリネームしない（必要なら `-v1` 等で別ファイル化）。
+- 詳細・入口一覧: `_workingspace/plans/README.md`
+- **公開 docs へリンクしない**: 計画の内容を読者向けに出す場合は `docs/ja/` 正本へ書く（[docs-writing](../rules/docs-writing.md) §計画書へのリンク禁止）
+
 英語話者でも **docs 編集正本は `docs/ja/`**。会話が en でも EN 同期が必要なら `content-placement` の完了条件に含める。
 
 ## 適用する場面

@@ -89,6 +89,6 @@ before/after compare（[tone_analyze_pipeline.json](../../samples/jobs/tone_anal
 
 ## 関連
 
-- 設計: `_workingspace/plans/image-metrics-design.md`
-- 変換: `_workingspace/plans/image-transform-design.md`
+- 設計: `_workingspace/plans/20260614-image-metrics-design.md`
+- 変換: `_workingspace/plans/20260614-image-transform-design.md`
 - Batch: [ga-batch-runner スキル](../ga-batch-runner/SKILL.md)

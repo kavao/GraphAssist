@@ -121,7 +121,7 @@ runtime/assets/weights/<component-id>/
 
 ## 設計詳細
 
-開発者向け: [_workingspace/plans/deployment-design.md](../../../_workingspace/plans/deployment-design.md)
+runtime の設計判断（ソース vs バイナリ・フォント方針）は本ページおよび [adoption.md](adoption.md) を参照。詳細なローカル設計メモは `_workingspace/plans/`（Git 外・リンク不可）に置く。
 
 ## 参照
 

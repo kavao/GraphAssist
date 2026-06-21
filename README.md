@@ -8,7 +8,7 @@ English · [日本語](README.ja.md)
 
 ## Concept
 
-**Offload repetitive, uncreative image work to the tool** — resizing, format conversion, trimming, alignment, and similar chores with fixed steps but little room for creativity belong in the CLI and ImageJob JSON. You describe *what* you want via JSON or flags; Python validates and runs it. See [overview (plans)](_workingspace/plans/overview.md#コンセプト).
+**Offload repetitive, uncreative image work to the tool** — resizing, format conversion, trimming, alignment, and similar chores with fixed steps but little room for creativity belong in the CLI and ImageJob JSON. You describe *what* you want via JSON or flags; Python validates and runs it.
 
 ## Setup
 
@@ -46,8 +46,6 @@ uv run graphassist mosaic decode samples/mosaic/finale_rocket.json generated/ima
 | [Adoption (source injection)](docs/en/setup/adoption.md) | Ship source + rulesync in another repo (pattern B) |
 | [ImageJob](docs/en/image/edit-job.md) | JSON pipeline |
 | [CharGrid](docs/en/image/mosaic.md) | Pixel art |
-| [Work plan](_workingspace/plans/work-plan.md) | Phases |
-| [Deployment design](_workingspace/plans/deployment-design.md) | Source vs runtime |
 
 ## Status
 

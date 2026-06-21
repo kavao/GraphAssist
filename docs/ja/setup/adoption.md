@@ -156,4 +156,3 @@ uv run python -m unittest discover -s tests -q
 - [設置・runtime](runtime.md) — バイナリ・フォント・環境変数
 - [クイックスタート](../quickstart.md)
 - [dna-kernel 導入・注入](../dna-kernel/onboarding.md)
-- 開発者向け設計: [_workingspace/plans/deployment-design.md](../../../_workingspace/plans/deployment-design.md)（ローカル計画）
