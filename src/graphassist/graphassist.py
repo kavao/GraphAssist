@@ -14,6 +14,7 @@ from graphassist.assets_cmd import run_assets_fetch, run_assets_list, run_assets
 from graphassist.batch_runner import run_batch_file
 from graphassist.convert_cmd import ConvertOptions, run_convert
 from graphassist.job_runner import run_job_file
+from graphassist.lineart_cmd import run_lineart_render
 from graphassist.mosaic_cmd import (
     MosaicDecodeOptions,
     MosaicEncodeOptions,
@@ -140,6 +141,13 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         help="output JSON under generated/mosaic/",
     )
+
+    lineart = sub.add_parser("lineart", help="LineArt vector JSON render / validate")
+    lineart_sub = lineart.add_subparsers(dest="lineart_command", required=True)
+    lineart_render = lineart_sub.add_parser("render", help="render LineArt JSON to SVG")
+    lineart_render.add_argument("json_path", type=Path, help="LineArt JSON under samples/lineart/ or generated/lineart/")
+    lineart_render.add_argument("output", type=Path, help="output SVG under generated/vector/")
+    lineart_render.add_argument("--dry-run", action="store_true", help="validate without writing output")
 
     trim = sub.add_parser("trim", help="auto-trim margins")
     trim.add_argument("input", type=Path)
@@ -313,6 +321,12 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.mosaic_command == "compose-birds":
             out = run_compose_birds(args.output)
+            print(out)
+            return 0
+
+    if args.command == "lineart":
+        if args.lineart_command == "render":
+            out = run_lineart_render(args.json_path, args.output, dry_run=args.dry_run)
             print(out)
             return 0
 

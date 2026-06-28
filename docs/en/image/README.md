@@ -12,5 +12,8 @@ GraphAssist is built around **offloading repetitive, uncreative image work to th
 | [edit-job.md](edit-job.md) | ImageJob edit pipeline |
 | [mosaic.md](mosaic.md) | CharGrid (MosaicArt) convert |
 | [batch.md](batch.md) | Batch manifest (multi-command JSON) |
+| [lineart.md](lineart.md) | LineArt JSON to SVG rendering |
+| [lineart-metadata.md](lineart-metadata.md) | LineArt shape metadata |
+| [lineart-validation.md](lineart-validation.md) | LineArt validation report and repair loop |
 
 Implementation: `src/graphassist/` (Pillow only)

@@ -1,0 +1,62 @@
+{
+  "version": "1.0",
+  "canvas": {
+    "width": 128,
+    "height": 128,
+    "background": "transparent"
+  },
+  "layers": [
+    {
+      "id": "main_layer",
+      "shapes": [
+        {
+          "id": "panel_01",
+          "type": "path",
+          "role": "container",
+          "tags": ["demo"],
+          "commands": [
+            ["M", 20, 20],
+            ["L", 108, 20],
+            ["L", 108, 108],
+            ["L", 20, 108],
+            ["Z"]
+          ],
+          "closed": true,
+          "fill": {
+            "type": "solid",
+            "color": "#f6f8fa"
+          },
+          "stroke": {
+            "color": "#1f2328",
+            "width": 3,
+            "join": "round",
+            "cap": "round"
+          }
+        },
+        {
+          "id": "wave_01",
+          "type": "smooth_path",
+          "role": "annotation",
+          "tags": ["demo", "curve"],
+          "container_id": "panel_01",
+          "allow_overlap": false,
+          "validation": {
+            "expected": {
+              "inside": "panel_01"
+            },
+            "severity": "warning"
+          },
+          "points": [[32, 72], [52, 48], [76, 80], [96, 56]],
+          "interpolation": "catmull_rom",
+          "closed": false,
+          "stroke": {
+            "color": "#3a86ff",
+            "width": 5,
+            "join": "round",
+            "cap": "round"
+          }
+        }
+      ]
+    }
+  ]
+}

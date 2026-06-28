@@ -13,6 +13,9 @@ User-facing guides for operating this project.
 - [English — ImageJob guide](en/image/edit-job.md)
 - [English — CharGrid / MosaicArt](en/image/mosaic.md)
 - [English — Batch manifest](en/image/batch.md)
+- [English — LineArt rendering](en/image/lineart.md)
+- [English — LineArt metadata](en/image/lineart-metadata.md)
+- [English — LineArt validation report](en/image/lineart-validation.md)
 - [日本語 — クイックスタート](ja/quickstart.md)
 - [日本語 — CLI リファレンス](ja/image/operations.md)
 - [日本語 — 設置・runtime](ja/setup/runtime.md)
@@ -20,6 +23,9 @@ User-facing guides for operating this project.
 - [日本語 — ImageJob 編集](ja/image/edit-job.md)
 - [日本語 — CharGrid / MosaicArt](ja/image/mosaic.md)
 - [日本語 — Batch manifest](ja/image/batch.md)
+- [日本語 — LineArt レンダリング](ja/image/lineart.md)
+- [日本語 — LineArt メタデータ](ja/image/lineart-metadata.md)
+- [日本語 — LineArt 検証レポート](ja/image/lineart-validation.md)
 
 ## dna_kernel (governance)
 

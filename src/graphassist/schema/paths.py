@@ -14,6 +14,8 @@ RUNTIME_FONT_ROOT = "runtime/assets/fonts"
 MOSAIC_JSON_ROOTS = ("samples/mosaic", "generated/mosaic")
 MOSAIC_OUTPUT_ROOT = "generated/mosaic"
 JOB_ROOT = "samples/jobs"
+LINEART_JSON_ROOTS = ("samples/lineart", "generated/lineart")
+LINEART_OUTPUT_ROOT = "generated/vector"
 
 
 def project_root() -> Path:
@@ -105,6 +107,27 @@ def resolve_mosaic_output(path_str: str, *, root: Path | None = None) -> Path:
     safe = _under(base, MOSAIC_OUTPUT_ROOT)
     if not str(resolved).startswith(str(safe)):
         raise ValueError(f"mosaic output must be under {MOSAIC_OUTPUT_ROOT}/: {path_str}")
+    return resolved
+
+
+def resolve_lineart_input(path_str: str, *, root: Path | None = None, must_exist: bool = False) -> Path:
+    base = root or project_root()
+    resolved = _resolve_relative(path_str, base)
+    safe_roots = [_under(base, name) for name in LINEART_JSON_ROOTS]
+    if not any(str(resolved).startswith(str(safe)) for safe in safe_roots):
+        allowed = ", ".join(f"{name}/" for name in LINEART_JSON_ROOTS)
+        raise ValueError(f"lineart JSON must be under {allowed}: {path_str}")
+    if must_exist and not resolved.exists():
+        raise FileNotFoundError(resolved)
+    return resolved
+
+
+def resolve_lineart_output(path_str: str, *, root: Path | None = None) -> Path:
+    base = root or project_root()
+    resolved = _resolve_relative(path_str, base)
+    safe = _under(base, LINEART_OUTPUT_ROOT)
+    if not str(resolved).startswith(str(safe)):
+        raise ValueError(f"lineart output must be under {LINEART_OUTPUT_ROOT}/: {path_str}")
     return resolved
 
 
