@@ -14,6 +14,21 @@ from graphassist.schema.paths import project_root
 from tests.font_helper import ensure_job_font
 
 
+def _has_svg_raster_backend() -> bool:
+    try:
+        import resvg_py  # noqa: F401
+
+        return True
+    except ImportError:
+        pass
+    try:
+        import cairosvg  # noqa: F401
+
+        return True
+    except ImportError:
+        return False
+
+
 class BatchTest(unittest.TestCase):
     def setUp(self) -> None:
         self.root = project_root()
@@ -26,6 +41,10 @@ class BatchTest(unittest.TestCase):
         self.birds_batch = self.root / "samples/jobs/birds_on_trunk_pipeline.json"
         self.out_birds_base = self.root / "generated/images/birds_on_trunk_base.png"
         self.out_birds = self.root / "generated/images/birds_on_trunk.png"
+        self.lineart_batch = self.root / "samples/jobs/lineart_icon_pipeline.json"
+        self.out_lineart_svg = self.root / "generated/vector/lineart_icon_pipeline.svg"
+        self.out_lineart_base = self.root / "generated/images/lineart_icon_pipeline_base.png"
+        self.out_lineart = self.root / "generated/images/lineart_icon_pipeline.png"
         self._bootstrapped_fonts: list[Path] = []
         for path in (
             self.out_file,
@@ -34,6 +53,9 @@ class BatchTest(unittest.TestCase):
             self.out_catalog,
             self.out_birds_base,
             self.out_birds,
+            self.out_lineart_svg,
+            self.out_lineart_base,
+            self.out_lineart,
         ):
             if path.exists():
                 path.unlink()
@@ -46,6 +68,9 @@ class BatchTest(unittest.TestCase):
             self.out_catalog,
             self.out_birds_base,
             self.out_birds,
+            self.out_lineart_svg,
+            self.out_lineart_base,
+            self.out_lineart,
         ):
             if path.exists():
                 path.unlink()
@@ -128,6 +153,57 @@ class BatchTest(unittest.TestCase):
         self.assertEqual(len(manifest.commands), 2)
         self.assertEqual(manifest.commands[0].type, "mosaic.decode")
         self.assertEqual(manifest.commands[1].type, "job")
+
+    def test_lineart_pipeline_schema(self) -> None:
+        manifest = load_manifest(self.lineart_batch)
+        self.assertIsInstance(manifest, BatchManifest)
+        self.assertEqual(len(manifest.commands), 2)
+        self.assertEqual(manifest.commands[0].type, "lineart.render")
+        self.assertEqual(manifest.commands[1].type, "job")
+
+    def test_lineart_pipeline_dry_run(self) -> None:
+        results = run_batch_file(self.lineart_batch, dry_run=True)
+        self.assertEqual(
+            results,
+            [
+                "generated/images/lineart_icon_pipeline_base.png",
+                "generated/images/lineart_icon_pipeline.png",
+            ],
+        )
+        self.assertFalse(self.out_lineart_base.exists())
+        self.assertFalse(self.out_lineart.exists())
+
+    @unittest.skipUnless(_has_svg_raster_backend(), "resvg-py or cairosvg is not installed")
+    def test_run_lineart_pipeline(self) -> None:
+        run_batch_file(self.lineart_batch, dry_run=False)
+        self.assertTrue(self.out_lineart_svg.exists())
+        self.assertTrue(self.out_lineart_base.exists())
+        self.assertTrue(self.out_lineart.exists())
+        with Image.open(self.out_lineart_base) as image:
+            self.assertEqual(image.size[0], 128)
+        with Image.open(self.out_lineart) as image:
+            self.assertEqual(image.size, (148, 148))
+
+    def test_validate_generated_job_input_after_lineart_mismatch(self) -> None:
+        data = {
+            "version": "1.0",
+            "commands": [
+                {
+                    "type": "lineart.render",
+                    "input": "samples/lineart/icon_minimal.json",
+                    "output": "generated/vector/step.svg",
+                    "png_output": "generated/images/step.png",
+                },
+                {
+                    "type": "job",
+                    "input": "generated/images/wrong.png",
+                    "output": "generated/images/out.png",
+                    "operations": [{"type": "resize", "long_edge": 64}],
+                },
+            ],
+        }
+        with self.assertRaises(ValueError):
+            BatchManifest.model_validate(data)
 
     def test_validate_generated_job_input_without_chain(self) -> None:
         data = {

@@ -9,6 +9,7 @@ from pathlib import Path
 from graphassist.analyze_cmd import run_analyze
 from graphassist.assets_cmd import materialize_catalog
 from graphassist.engine.executor import execute_job
+from graphassist.lineart_cmd import run_lineart_render
 from graphassist.mosaic_cmd import (
     MosaicDecodeOptions,
     MosaicEncodeOptions,
@@ -22,6 +23,7 @@ from graphassist.schema.batch import (
     AssetsMaterializeCommand,
     BatchManifest,
     JobCommand,
+    LineArtRenderCommand,
     MosaicDecodeCommand,
     MosaicEncodeCommand,
     MosaicExportCommand,
@@ -142,6 +144,17 @@ def _execute_command(command, *, root: Path, prev_output: str | None = None) -> 
         )
         return command.output or f"stdout ({command.format})"
 
+    if isinstance(command, LineArtRenderCommand):
+        run_lineart_render(
+            Path(command.input),
+            Path(command.output),
+            root=root,
+            dry_run=False,
+            png_output=Path(command.png_output) if command.png_output else None,
+            png_width=command.png_width,
+        )
+        return command.png_output or command.output
+
     if isinstance(command, AssetsMaterializeCommand):
         installed, missing = materialize_catalog(force=command.force, ids=command.ids)
         if missing:
@@ -195,6 +208,8 @@ def _describe_command(command) -> str:
         return command.output
     if isinstance(command, MosaicExportCommand):
         return command.output or "stdout"
+    if isinstance(command, LineArtRenderCommand):
+        return command.png_output or command.output
     if isinstance(command, AssetsMaterializeCommand):
         if command.ids:
             return f"materialized: {', '.join(command.ids)}"

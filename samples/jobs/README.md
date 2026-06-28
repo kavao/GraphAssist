@@ -54,6 +54,20 @@ uv run graphassist run samples/jobs/birds_on_trunk_pipeline.json
 - 部品（単体 decode）: [parakeet.json](../mosaic/parakeet.json) · [parrot.json](../mosaic/parrot.json)
 - 中間 PNG は pipeline 内で `generated/` に出力（`samples/source/` へ置かない）
 
+## LineArt + Job（ベクター → PNG → 後処理）
+
+| ファイル | コマンド | 出力 |
+|----------|----------|------|
+| [lineart_icon_pipeline.json](lineart_icon_pipeline.json) | `run` | `generated/images/lineart_icon_pipeline.png` |
+
+```bash
+uv run graphassist run samples/jobs/lineart_icon_pipeline.json
+```
+
+- LineArt 正本: [samples/lineart/icon_minimal.json](../lineart/icon_minimal.json)
+- 中間 SVG: `generated/vector/lineart_icon_pipeline.svg`
+- 中間 PNG: `generated/images/lineart_icon_pipeline_base.png`
+
 ## その他
 
 | ファイル | コマンド | 用途 |

@@ -50,6 +50,21 @@ class SolidFill(BaseModel):
         raise ValueError("fill color must be #RRGGBB or #RRGGBBAA")
 
 
+class GradientFill(BaseModel):
+    type: Literal["gradient"] = "gradient"
+    ref: str
+
+    @field_validator("ref")
+    @classmethod
+    def validate_ref(cls, value: str) -> str:
+        if SAFE_ID_RE.match(value):
+            return value
+        raise ValueError("gradient ref must start with a letter and contain letters, digits, _ or -")
+
+
+LineArtFill = Literal["none"] | SolidFill | GradientFill
+
+
 class Stroke(BaseModel):
     color: str
     width: float = Field(gt=0)
@@ -59,9 +74,9 @@ class Stroke(BaseModel):
     @field_validator("color")
     @classmethod
     def validate_color(cls, value: str) -> str:
-        if HEX_COLOR_RE.match(value):
+        if HEX_COLOR_RE.match(value) or _is_gradient_url(value):
             return value
-        raise ValueError("stroke color must be #RRGGBB or #RRGGBBAA")
+        raise ValueError("stroke color must be #RRGGBB/#RRGGBBAA or url(#gradient_id)")
 
 
 class NearExpectation(BaseModel):
@@ -103,10 +118,36 @@ class LineArtMetadata(BaseModel):
     validation: ShapeValidation | None = None
 
 
+Point = Annotated[list[float], Field(min_length=2, max_length=2)]
+
+
+class Transform(BaseModel):
+    translate: Point | None = None
+    rotate: float | None = None
+    rotate_origin: Point | None = None
+    scale: float | Point | None = None
+
+    @field_validator("scale")
+    @classmethod
+    def validate_scale(cls, value: float | Point | None) -> float | Point | None:
+        if value is None:
+            return value
+        if isinstance(value, int | float):
+            if value <= 0:
+                raise ValueError("scale must be greater than 0")
+            return float(value)
+        if len(value) != 2 or value[0] <= 0 or value[1] <= 0:
+            raise ValueError("scale point values must be greater than 0")
+        return value
+
+
 class ShapeBase(LineArtMetadata):
     id: str
-    fill: SolidFill | None = None
+    fill: LineArtFill | None = None
     stroke: Stroke | None = None
+    transform: Transform | None = None
+    opacity: float | None = Field(default=None, ge=0, le=1)
+    clip_path: str | None = None
 
     @field_validator("id")
     @classmethod
@@ -114,6 +155,13 @@ class ShapeBase(LineArtMetadata):
         if SAFE_ID_RE.match(value):
             return value
         raise ValueError("id must start with a letter and contain letters, digits, _ or -")
+
+    @field_validator("clip_path")
+    @classmethod
+    def validate_clip_path(cls, value: str | None) -> str | None:
+        if value is None or SAFE_ID_RE.match(value):
+            return value
+        raise ValueError("clip_path must start with a letter and contain letters, digits, _ or -")
 
 
 class PathCommand(BaseModel):
@@ -161,9 +209,6 @@ class PathShape(ShapeBase):
         return self
 
 
-Point = Annotated[list[float], Field(min_length=2, max_length=2)]
-
-
 class SmoothPathShape(ShapeBase):
     type: Literal["smooth_path"]
     points: list[Point]
@@ -178,7 +223,74 @@ class SmoothPathShape(ShapeBase):
         return value
 
 
-LineArtShape = Annotated[PathShape | SmoothPathShape, Field(discriminator="type")]
+class RectShape(ShapeBase):
+    type: Literal["rect"]
+    x: float
+    y: float
+    width: float = Field(gt=0)
+    height: float = Field(gt=0)
+    rx: float = Field(default=0, ge=0)
+    ry: float = Field(default=0, ge=0)
+
+
+class EllipseShape(ShapeBase):
+    type: Literal["ellipse"]
+    cx: float
+    cy: float
+    rx: float = Field(gt=0)
+    ry: float = Field(gt=0)
+
+
+class PolygonShape(ShapeBase):
+    type: Literal["polygon"]
+    points: list[Point]
+
+    @field_validator("points")
+    @classmethod
+    def validate_points(cls, value: list[Point]) -> list[Point]:
+        if len(value) < 3:
+            raise ValueError("polygon requires at least 3 points")
+        return value
+
+
+class StarShape(ShapeBase):
+    type: Literal["star"]
+    cx: float
+    cy: float
+    points: int = Field(ge=3, le=64)
+    outer_radius: float = Field(gt=0)
+    inner_radius: float | None = Field(default=None, gt=0)
+    rotation: float = 0
+
+    @model_validator(mode="after")
+    def validate_inner_radius(self) -> StarShape:
+        if self.inner_radius is not None and self.inner_radius >= self.outer_radius:
+            raise ValueError("inner_radius must be smaller than outer_radius")
+        return self
+
+
+ClipShape = Annotated[
+    PathShape | SmoothPathShape | RectShape | EllipseShape | PolygonShape | StarShape,
+    Field(discriminator="type"),
+]
+
+
+class GroupShape(ShapeBase):
+    type: Literal["group"]
+    shapes: list["LineArtShape"] = Field(default_factory=list)
+
+    @field_validator("shapes")
+    @classmethod
+    def validate_shapes(cls, value: list["LineArtShape"]) -> list["LineArtShape"]:
+        if not value:
+            raise ValueError("group requires at least one child shape")
+        return value
+
+
+LineArtShape = Annotated[
+    PathShape | SmoothPathShape | RectShape | EllipseShape | PolygonShape | StarShape | GroupShape,
+    Field(discriminator="type"),
+]
 
 
 class LineArtLayer(BaseModel):
@@ -194,9 +306,81 @@ class LineArtLayer(BaseModel):
         raise ValueError("layer id must start with a letter and contain letters, digits, _ or -")
 
 
+class GradientStop(BaseModel):
+    offset: float = Field(ge=0, le=1)
+    color: str
+    opacity: float | None = Field(default=None, ge=0, le=1)
+
+    @field_validator("color")
+    @classmethod
+    def validate_color(cls, value: str) -> str:
+        if HEX_COLOR_RE.match(value):
+            return value
+        raise ValueError("gradient stop color must be #RRGGBB or #RRGGBBAA")
+
+
+class LinearGradient(BaseModel):
+    type: Literal["linear"]
+    from_: Point = Field(alias="from")
+    to: Point
+    stops: list[GradientStop]
+    units: Literal["userSpaceOnUse", "objectBoundingBox"] = "userSpaceOnUse"
+
+    model_config = {"populate_by_name": True}
+
+    @field_validator("stops")
+    @classmethod
+    def validate_stops(cls, value: list[GradientStop]) -> list[GradientStop]:
+        return _validate_gradient_stops(value)
+
+
+class RadialGradient(BaseModel):
+    type: Literal["radial"]
+    center: Point
+    radius: float = Field(gt=0)
+    focal: Point | None = None
+    stops: list[GradientStop]
+    units: Literal["userSpaceOnUse", "objectBoundingBox"] = "userSpaceOnUse"
+
+    @field_validator("stops")
+    @classmethod
+    def validate_stops(cls, value: list[GradientStop]) -> list[GradientStop]:
+        return _validate_gradient_stops(value)
+
+
+LineArtGradient = Annotated[LinearGradient | RadialGradient, Field(discriminator="type")]
+
+
+class ClipPathDefinition(BaseModel):
+    shapes: list[ClipShape]
+
+    @field_validator("shapes")
+    @classmethod
+    def validate_shapes(cls, value: list[ClipShape]) -> list[ClipShape]:
+        if not value:
+            raise ValueError("clip_path requires at least one shape")
+        return value
+
+
 class LineArtDefinitions(BaseModel):
-    gradients: dict[str, object] = Field(default_factory=dict)
-    clip_paths: dict[str, object] = Field(default_factory=dict)
+    gradients: dict[str, LineArtGradient] = Field(default_factory=dict)
+    clip_paths: dict[str, ClipPathDefinition] = Field(default_factory=dict)
+
+    @field_validator("gradients")
+    @classmethod
+    def validate_gradient_ids(cls, value: dict[str, LineArtGradient]) -> dict[str, LineArtGradient]:
+        for gradient_id in value:
+            if not SAFE_ID_RE.match(gradient_id):
+                raise ValueError("gradient id must start with a letter and contain letters, digits, _ or -")
+        return value
+
+    @field_validator("clip_paths")
+    @classmethod
+    def validate_clip_path_ids(cls, value: dict[str, ClipPathDefinition]) -> dict[str, ClipPathDefinition]:
+        for clip_path_id in value:
+            if not SAFE_ID_RE.match(clip_path_id):
+                raise ValueError("clip_path id must start with a letter and contain letters, digits, _ or -")
+        return value
 
 
 class LineArtDocument(BaseModel):
@@ -208,12 +392,51 @@ class LineArtDocument(BaseModel):
     @model_validator(mode="after")
     def validate_unique_ids(self) -> LineArtDocument:
         seen: set[str] = set()
+        gradient_ids = set(self.definitions.gradients)
+        clip_path_ids = set(self.definitions.clip_paths)
         for layer in self.layers:
             if layer.id in seen:
                 raise ValueError(f"duplicate id: {layer.id}")
             seen.add(layer.id)
             for shape in layer.shapes:
-                if shape.id in seen:
-                    raise ValueError(f"duplicate id: {shape.id}")
-                seen.add(shape.id)
+                _validate_shape_refs(shape, seen, gradient_ids, clip_path_ids)
         return self
+
+
+def _validate_gradient_stops(stops: list[GradientStop]) -> list[GradientStop]:
+    if len(stops) < 2:
+        raise ValueError("gradient requires at least two stops")
+    offsets = [stop.offset for stop in stops]
+    if offsets != sorted(offsets):
+        raise ValueError("gradient stop offsets must be sorted")
+    return stops
+
+
+def _validate_shape_refs(
+    shape: LineArtShape,
+    seen: set[str],
+    gradient_ids: set[str],
+    clip_path_ids: set[str],
+) -> None:
+    if shape.id in seen:
+        raise ValueError(f"duplicate id: {shape.id}")
+    seen.add(shape.id)
+    _validate_shape_gradient_refs(shape, gradient_ids)
+    if shape.clip_path is not None and shape.clip_path not in clip_path_ids:
+        raise ValueError(f"undefined clip_path: {shape.clip_path}")
+    if isinstance(shape, GroupShape):
+        for child in shape.shapes:
+            _validate_shape_refs(child, seen, gradient_ids, clip_path_ids)
+
+
+def _validate_shape_gradient_refs(shape: LineArtShape, gradient_ids: set[str]) -> None:
+    if isinstance(shape.fill, GradientFill) and shape.fill.ref not in gradient_ids:
+        raise ValueError(f"undefined gradient: {shape.fill.ref}")
+    if shape.stroke is not None and _is_gradient_url(shape.stroke.color):
+        ref = shape.stroke.color[5:-1]
+        if ref not in gradient_ids:
+            raise ValueError(f"undefined gradient: {ref}")
+
+
+def _is_gradient_url(value: str) -> bool:
+    return value.startswith("url(#") and value.endswith(")") and SAFE_ID_RE.match(value[5:-1]) is not None

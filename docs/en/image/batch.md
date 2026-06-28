@@ -58,6 +58,7 @@ Single ImageJob files (no `commands` key) still use `graphassist job`.
 | `mosaic.decode` | CharGrid → image. Use **either** `input` (JSON path) **or** inline `art` |
 | `mosaic.encode` | Image → MosaicArt JSON |
 | `mosaic.export` | MosaicArt JSON → JS / JSON text |
+| `lineart.render` | LineArt JSON → SVG, and optionally PNG |
 | `assets.materialize` | Fetch and mirror catalog assets (`ids` omitted = all enabled) |
 | `analyze` | Image metrics (profile or compare when `compare` is set) |
 
@@ -91,6 +92,35 @@ Single ImageJob files (no `commands` key) still use `graphassist job`.
 When **`job.input` equals the previous command’s `output` path** in a Batch manifest, inputs under `generated/` are allowed (standalone `graphassist job` still requires `samples/source/` only).
 
 See [birds_on_trunk_pipeline.json](../../../samples/jobs/birds_on_trunk_pipeline.json) for a `mosaic.decode` → `job` example with title text.
+
+## LineArt To Job
+
+`lineart.render` generates SVG from LineArt JSON. When `png_output` is set, it also writes a PNG, which can be used as the next `job.input`.
+
+```json
+{
+  "version": "1.0",
+  "commands": [
+    {
+      "type": "lineart.render",
+      "input": "samples/lineart/icon_minimal.json",
+      "output": "generated/vector/lineart_icon.svg",
+      "png_output": "generated/images/lineart_icon_base.png",
+      "png_width": 128
+    },
+    {
+      "type": "job",
+      "input": "generated/images/lineart_icon_base.png",
+      "output": "generated/images/lineart_icon.png",
+      "operations": [
+        {"type": "extend", "left": 8, "right": 8, "top": 8, "bottom": 8, "fill": "transparent"}
+      ]
+    }
+  ]
+}
+```
+
+When `png_output` is used as a downstream `job.input`, it must match the previous command output path.
 
 ## Previous command output as analyze input
 
@@ -144,6 +174,7 @@ Logs are written to `generated/logs/` as JSONL.
 - [samples/jobs/README.md](../../../samples/jobs/README.md) — Demo index
 - [samples/jobs/mosaic_pipeline.json](../../../samples/jobs/mosaic_pipeline.json)
 - [samples/jobs/birds_on_trunk_pipeline.json](../../../samples/jobs/birds_on_trunk_pipeline.json) — mosaic.decode → job (titled)
+- [samples/jobs/lineart_icon_pipeline.json](../../../samples/jobs/lineart_icon_pipeline.json) — lineart.render → job
 - [samples/jobs/tone_analyze_pipeline.json](../../../samples/jobs/tone_analyze_pipeline.json) — job → adjust → analyze compare
 - [samples/jobs/demo_catalog_pipeline_asset_ids.json](../../../samples/jobs/demo_catalog_pipeline_asset_ids.json) — recommended (materialize + overlay_asset)
 - [samples/jobs/demo_catalog_pipeline.json](../../../samples/jobs/demo_catalog_pipeline.json)

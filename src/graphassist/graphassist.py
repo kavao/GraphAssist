@@ -13,6 +13,7 @@ from graphassist.analyze_cmd import run_analyze
 from graphassist.assets_cmd import run_assets_fetch, run_assets_list, run_assets_materialize
 from graphassist.batch_runner import run_batch_file
 from graphassist.convert_cmd import ConvertOptions, run_convert
+from graphassist.font_cmd import run_font_outline
 from graphassist.job_runner import run_job_file
 from graphassist.lineart_cmd import run_lineart_render
 from graphassist.mosaic_cmd import (
@@ -148,6 +149,18 @@ def build_parser() -> argparse.ArgumentParser:
     lineart_render.add_argument("json_path", type=Path, help="LineArt JSON under samples/lineart/ or generated/lineart/")
     lineart_render.add_argument("output", type=Path, help="output SVG under generated/vector/")
     lineart_render.add_argument("--dry-run", action="store_true", help="validate without writing output")
+    lineart_render.add_argument("--png", type=Path, default=None, help="also rasterize to PNG under generated/images/")
+    lineart_render.add_argument("--png-width", type=int, default=None, help="PNG output width; defaults to canvas width")
+
+    font = sub.add_parser("font", help="FontVector outline extraction")
+    font_sub = font.add_subparsers(dest="font_command", required=True)
+    font_outline = font_sub.add_parser("outline", help="extract text glyph outlines to JSON")
+    font_outline.add_argument("--text", required=True, help="text to outline")
+    font_outline.add_argument("--font", required=True, type=Path, help="font path under assets/fonts/")
+    font_outline.add_argument("--size", type=float, default=48, help="font size in px")
+    font_outline.add_argument("--output", required=True, type=Path, help="output JSON under generated/vector/")
+    font_outline.add_argument("--dry-run", action="store_true", help="validate without writing output")
+    font_outline.add_argument("--strict", action="store_true", help="fail when a glyph is missing or empty")
 
     trim = sub.add_parser("trim", help="auto-trim margins")
     trim.add_argument("input", type=Path)
@@ -326,7 +339,26 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "lineart":
         if args.lineart_command == "render":
-            out = run_lineart_render(args.json_path, args.output, dry_run=args.dry_run)
+            out = run_lineart_render(
+                args.json_path,
+                args.output,
+                dry_run=args.dry_run,
+                png_output=args.png,
+                png_width=args.png_width,
+            )
+            print(out)
+            return 0
+
+    if args.command == "font":
+        if args.font_command == "outline":
+            out = run_font_outline(
+                text=args.text,
+                font=args.font,
+                size=args.size,
+                output=args.output,
+                dry_run=args.dry_run,
+                strict=args.strict,
+            )
             print(out)
             return 0
 

@@ -5,30 +5,85 @@
     "height": 128,
     "background": "transparent"
   },
+  "definitions": {
+    "gradients": {
+      "panel_gradient": {
+        "type": "linear",
+        "from": [20, 20],
+        "to": [108, 108],
+        "stops": [
+          {
+            "offset": 0,
+            "color": "#ffffff"
+          },
+          {
+            "offset": 1,
+            "color": "#dbeafe"
+          }
+        ]
+      }
+    },
+    "clip_paths": {
+      "badge_clip": {
+        "shapes": [
+          {
+            "id": "badge_clip_rect",
+            "type": "rect",
+            "x": 70,
+            "y": 78,
+            "width": 28,
+            "height": 24,
+            "rx": 4,
+            "ry": 4
+          }
+        ]
+      }
+    }
+  },
   "layers": [
     {
       "id": "main_layer",
       "shapes": [
         {
           "id": "panel_01",
-          "type": "path",
+          "type": "rect",
           "role": "container",
           "tags": ["demo"],
-          "commands": [
-            ["M", 20, 20],
-            ["L", 108, 20],
-            ["L", 108, 108],
-            ["L", 20, 108],
-            ["Z"]
-          ],
-          "closed": true,
+          "x": 20,
+          "y": 20,
+          "width": 88,
+          "height": 88,
+          "rx": 8,
+          "ry": 8,
           "fill": {
-            "type": "solid",
-            "color": "#f6f8fa"
+            "type": "gradient",
+            "ref": "panel_gradient"
           },
           "stroke": {
             "color": "#1f2328",
             "width": 3,
+            "join": "round",
+            "cap": "round"
+          }
+        },
+        {
+          "id": "badge_01",
+          "type": "star",
+          "role": "decorative",
+          "tags": ["demo", "badge"],
+          "cx": 94,
+          "cy": 34,
+          "points": 5,
+          "outer_radius": 12,
+          "inner_radius": 5,
+          "rotation": 18,
+          "fill": {
+            "type": "solid",
+            "color": "#ffcc00"
+          },
+          "stroke": {
+            "color": "#1f2328",
+            "width": 1.5,
             "join": "round",
             "cap": "round"
           }
@@ -55,6 +110,77 @@
             "join": "round",
             "cap": "round"
           }
+        },
+        {
+          "id": "dot_01",
+          "type": "ellipse",
+          "role": "node",
+          "tags": ["demo"],
+          "cx": 40,
+          "cy": 40,
+          "rx": 7,
+          "ry": 7,
+          "fill": {
+            "type": "solid",
+            "color": "#2da44e"
+          }
+        },
+        {
+          "id": "triangle_01",
+          "type": "polygon",
+          "role": "annotation",
+          "tags": ["demo"],
+          "points": [[60, 92], [74, 92], [67, 78]],
+          "fill": "none",
+          "stroke": {
+            "color": "#cf222e",
+            "width": 2,
+            "join": "round",
+            "cap": "round"
+          }
+        },
+        {
+          "id": "group_01",
+          "type": "group",
+          "role": "decorative",
+          "opacity": 0.85,
+          "clip_path": "badge_clip",
+          "transform": {
+            "translate": [0, 0],
+            "rotate": -8,
+            "rotate_origin": [84, 90],
+            "scale": 1
+          },
+          "shapes": [
+            {
+              "id": "group_bar_01",
+              "type": "rect",
+              "x": 72,
+              "y": 84,
+              "width": 24,
+              "height": 6,
+              "rx": 3,
+              "ry": 3,
+              "fill": {
+                "type": "solid",
+                "color": "#8250df"
+              }
+            },
+            {
+              "id": "group_bar_02",
+              "type": "rect",
+              "x": 72,
+              "y": 94,
+              "width": 24,
+              "height": 6,
+              "rx": 3,
+              "ry": 3,
+              "fill": {
+                "type": "solid",
+                "color": "#0969da"
+              }
+            }
+          ]
         }
       ]
     }

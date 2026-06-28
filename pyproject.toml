@@ -26,6 +26,9 @@ dev = [
 catalog = [
   "resvg-py>=0.3",
 ]
+font = [
+  "fonttools>=4.0",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/graphassist"]

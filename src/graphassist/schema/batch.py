@@ -13,6 +13,9 @@ from graphassist.schema.ops import Operation
 from graphassist.schema.paths import (
     is_under_output,
     normalize_manifest_path,
+    resolve_lineart_input,
+    resolve_lineart_output,
+    resolve_lineart_raster_output,
     resolve_input,
     resolve_mosaic_json,
     resolve_mosaic_output,
@@ -144,6 +147,34 @@ class MosaicExportCommand(BaseModel):
         return value
 
 
+class LineArtRenderCommand(BaseModel):
+    type: Literal["lineart.render"]
+    input: str
+    output: str
+    png_output: str | None = None
+    png_width: int | None = Field(default=None, ge=1, le=8000)
+
+    @field_validator("input")
+    @classmethod
+    def validate_input(cls, value: str) -> str:
+        resolve_lineart_input(value, must_exist=False)
+        return value
+
+    @field_validator("output")
+    @classmethod
+    def validate_output(cls, value: str) -> str:
+        resolve_lineart_output(value)
+        return value
+
+    @field_validator("png_output")
+    @classmethod
+    def validate_png_output(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        resolve_lineart_raster_output(value)
+        return value
+
+
 class AssetsMaterializeCommand(BaseModel):
     type: Literal["assets.materialize"]
     ids: list[str] | None = None
@@ -211,6 +242,7 @@ BatchCommand = Annotated[
         MosaicDecodeCommand,
         MosaicEncodeCommand,
         MosaicExportCommand,
+        LineArtRenderCommand,
         AssetsMaterializeCommand,
         AnalyzeCommand,
     ],
@@ -221,6 +253,8 @@ BatchCommand = Annotated[
 def command_output_path(command: BatchCommand) -> str | None:
     if isinstance(command, MosaicExportCommand):
         return command.output
+    if isinstance(command, LineArtRenderCommand):
+        return command.png_output or command.output
     if isinstance(command, (JobCommand, MosaicDecodeCommand, MosaicEncodeCommand, AnalyzeCommand)):
         return command.output
     return None

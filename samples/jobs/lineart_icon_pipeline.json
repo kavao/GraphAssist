@@ -1,0 +1,32 @@
+{
+  "version": "1.0",
+  "commands": [
+    {
+      "type": "lineart.render",
+      "input": "samples/lineart/icon_minimal.json",
+      "output": "generated/vector/lineart_icon_pipeline.svg",
+      "png_output": "generated/images/lineart_icon_pipeline_base.png",
+      "png_width": 128
+    },
+    {
+      "type": "job",
+      "input": "generated/images/lineart_icon_pipeline_base.png",
+      "output": "generated/images/lineart_icon_pipeline.png",
+      "operations": [
+        {
+          "type": "extend",
+          "left": 8,
+          "right": 8,
+          "top": 8,
+          "bottom": 8,
+          "fill": "transparent"
+        },
+        {
+          "type": "border",
+          "size": 2,
+          "color": "#111111"
+        }
+      ]
+    }
+  ]
+}
