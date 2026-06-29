@@ -14,7 +14,19 @@ The minimal prompt can be:
 Validate this LineArt JSON and create a repair-loop report.
 ```
 
-With that prompt, the assistant prepares a validation flow and stores issues as Validation Report JSON. After implementation, `lineart validate --report` should emit this format.
+With that prompt, the assistant prepares a validation flow and stores issues as Validation Report JSON. The current `lineart validate --report` command emits the same format for metadata reference checks and geometry normalization results.
+
+Validate a LineArt JSON file and save a report.
+
+```bash
+# Check (dry-run) — validate the input JSON and report destination
+uv run graphassist lineart validate samples/lineart/icon_minimal.json --report generated/logs/icon_minimal_validation.json --dry-run
+
+# Run — save Validation Report JSON v0.1
+uv run graphassist lineart validate samples/lineart/icon_minimal.json --report generated/logs/icon_minimal_validation.json
+```
+
+After the command runs, the validation report is saved under `generated/logs/`.
 
 ## Overall Flow
 
@@ -79,7 +91,7 @@ The report stores validation results in a form both humans and LLMs can read. It
 | `version` | Report format version. The initial value is `"0.1"`. |
 | `validation_result` | One of `passed`, `failed`, or `warning_only`. |
 | `source` | Identity of the validated LineArt JSON. |
-| `summary` | Counts of errors, warnings, and info items. |
+| `summary` | Counts of errors, warnings, info items, and normalized geometries. |
 | `issues[]` | List of detected issues. |
 
 ## Issue Fields
@@ -147,6 +159,21 @@ metadata: label_01 should be inside panel_01
 validation: label_01 is outside panel_01
 repair: move label_01 into panel_01
 ```
+
+## Current Implementation Scope
+
+LV0.1-LV2.4 currently provides the checks below.
+
+- Reads `role`, `container_id`, `connects_to`, and `validation.expected`, then checks that referenced shape ids exist.
+- Normalizes `rect`, `ellipse`, `polygon`, `star`, `path`, `smooth_path`, and `group` into point / polyline / polygon / bbox geometry.
+- Samples `smooth_path`, `Q`, and `C` curves into polylines.
+- Reports unintended segment crossings as `line_intersection` when a shape has `validation.expected.no_intersections: true`.
+- Reports bbox-based overlap as `overlap` when a closed shape has `allow_overlap: false`.
+- Reports `outside_container` when a shape with `container_id` or `validation.expected.inside` is not fully inside its container bbox.
+- Reports `connector_misaligned` when a connector with `connects_to` has endpoints too far from the target bboxes.
+- Saves Validation Report JSON v0.1 under `generated/logs/` with `lineart validate --report`.
+
+Layer-order checks will be added in LV2.5 or later.
 
 ## Update Policy
 

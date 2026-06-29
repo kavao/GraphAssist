@@ -1,6 +1,6 @@
 ---
 name: ga-lineart
-description: LineArt JSON を生成し、graphassist lineart render / Batch lineart.render で SVG・PNG にレンダリングする
+description: LineArt JSON を生成・検証し、graphassist lineart render / validate / Batch lineart.render で SVG・PNG・検証レポートを扱う
 ---
 
 # LineArt
@@ -16,6 +16,7 @@ SVG 全文を LLM が手書きせず、shape / layer / metadata / gradient / gro
 |------|--------------|
 | LineArt JSON 1 件を SVG にする | `graphassist lineart render` |
 | SVG と PNG を同時に作る | `graphassist lineart render --png` |
+| metadata 参照と geometry 正規化を検証する | `graphassist lineart validate --report` |
 | LineArt PNG を ImageJob で後処理する | `graphassist run` の `lineart.render` → `job` |
 | 複数種類の処理を混ぜる | [ga-batch-runner](../ga-batch-runner/SKILL.md) |
 
@@ -33,26 +34,33 @@ SVG 全文を LLM が手書きせず、shape / layer / metadata / gradient / gro
 uv run graphassist lineart render samples/lineart/icon_minimal.json generated/vector/icon_minimal.svg --dry-run
 ```
 
-6. 問題なければ SVG を生成する。
+6. metadata 参照と geometry 正規化を検証する。
+
+```bash
+uv run graphassist lineart validate samples/lineart/icon_minimal.json --report generated/logs/icon_minimal_validation.json --dry-run
+uv run graphassist lineart validate samples/lineart/icon_minimal.json --report generated/logs/icon_minimal_validation.json
+```
+
+7. 問題なければ SVG を生成する。
 
 ```bash
 uv run graphassist lineart render samples/lineart/icon_minimal.json generated/vector/icon_minimal.svg
 ```
 
-7. PNG が必要な場合は `--png` を指定する。
+8. PNG が必要な場合は `--png` を指定する。
 
 ```bash
 uv run graphassist lineart render samples/lineart/icon_minimal.json generated/vector/icon_minimal.svg --png generated/images/icon_minimal.png --png-width 512
 ```
 
-8. 複数ステップでは Batch manifest を使う。
+9. 複数ステップでは Batch manifest を使う。
 
 ```bash
 uv run graphassist run samples/jobs/lineart_icon_pipeline.json --dry-run
 uv run graphassist run samples/jobs/lineart_icon_pipeline.json
 ```
 
-9. `generated/vector/`, `generated/images/`, `generated/logs/` を確認し、査証ログに追記する。
+10. `generated/vector/`, `generated/images/`, `generated/logs/` を確認し、査証ログに追記する。
 
 ## LineArt JSON の最小構造
 
@@ -110,6 +118,15 @@ uv run graphassist run samples/jobs/lineart_icon_pipeline.json
 
 metadata は Phase LV の幾何検証と Repair Loop の入力になる。図解・フローチャートでは `role`, `container_id`, `connects_to` をなるべく付ける。
 
+## validate レポート
+
+`lineart validate --report` は Validation Report JSON v0.1 を `generated/logs/` に保存する。
+現時点では LV0.1-LV2.4 として metadata 参照整合性、geometry 正規化、線分交差、重なり、包含、接続距離を確認する。レイヤー順は後続 LV2.5 以降で扱う。
+
+```bash
+uv run graphassist lineart validate samples/lineart/icon_minimal.json --report generated/logs/icon_minimal_validation.json
+```
+
 ## Batch 連携
 
 LineArt PNG を ImageJob で後処理するときは `lineart.render` の `png_output` を直後の `job.input` にする。
@@ -144,6 +161,7 @@ LineArt PNG を ImageJob で後処理するときは `lineart.render` の `png_o
 | LineArt JSON 入力 | `samples/lineart/`, `generated/lineart/` |
 | SVG 出力 | `generated/vector/` |
 | PNG 出力 | `generated/images/` |
+| 検証レポート | `generated/logs/` |
 | Batch manifest | `samples/jobs/` |
 
 ## 禁止事項
@@ -159,6 +177,7 @@ LineArt PNG を ImageJob で後処理するときは `lineart.render` の `png_o
 - [docs/ja/image/lineart.md](../../docs/ja/image/lineart.md)（編集正本）
 - [docs/en/image/lineart.md](../../docs/en/image/lineart.md)
 - [docs/ja/image/lineart-metadata.md](../../docs/ja/image/lineart-metadata.md)
+- [docs/ja/image/lineart-validation.md](../../docs/ja/image/lineart-validation.md)
 - [docs/ja/image/batch.md](../../docs/ja/image/batch.md)
 - [samples/lineart/icon_minimal.json](../../samples/lineart/icon_minimal.json)
 - [samples/jobs/lineart_icon_pipeline.json](../../samples/jobs/lineart_icon_pipeline.json)

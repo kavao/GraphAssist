@@ -17,6 +17,7 @@ JOB_ROOT = "samples/jobs"
 LINEART_JSON_ROOTS = ("samples/lineart", "generated/lineart")
 LINEART_OUTPUT_ROOT = "generated/vector"
 LINEART_RASTER_OUTPUT_ROOT = "generated/images"
+LINEART_REPORT_OUTPUT_ROOT = "generated/logs"
 FONT_OUTLINE_OUTPUT_ROOT = "generated/vector"
 
 
@@ -139,6 +140,15 @@ def resolve_lineart_raster_output(path_str: str, *, root: Path | None = None) ->
     safe = _under(base, LINEART_RASTER_OUTPUT_ROOT)
     if not str(resolved).startswith(str(safe)):
         raise ValueError(f"lineart raster output must be under {LINEART_RASTER_OUTPUT_ROOT}/: {path_str}")
+    return resolved
+
+
+def resolve_lineart_report_output(path_str: str, *, root: Path | None = None) -> Path:
+    base = root or project_root()
+    resolved = _resolve_relative(path_str, base)
+    safe = _under(base, LINEART_REPORT_OUTPUT_ROOT)
+    if not str(resolved).startswith(str(safe)):
+        raise ValueError(f"lineart report output must be under {LINEART_REPORT_OUTPUT_ROOT}/: {path_str}")
     return resolved
 
 

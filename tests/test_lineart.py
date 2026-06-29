@@ -10,13 +10,16 @@ from PIL import Image
 
 from graphassist.engine.lineart.smooth import catmull_rom_to_commands
 from graphassist.engine.lineart.svg_export import export_svg
+from graphassist.engine.lineart.geometry import normalize_lineart_geometry
+from graphassist.engine.lineart.validate import validate_lineart_document
 from graphassist.graphassist import main
-from graphassist.lineart_cmd import run_lineart_render
+from graphassist.lineart_cmd import run_lineart_render, run_lineart_validate
 from graphassist.schema.lineart import LineArtDocument, PathCommand
 from graphassist.schema.paths import (
     project_root,
     resolve_lineart_input,
     resolve_lineart_output,
+    resolve_lineart_report_output,
     resolve_lineart_raster_output,
 )
 
@@ -36,20 +39,32 @@ def _has_svg_raster_backend() -> bool:
         return False
 
 
+def _lineart_doc(shapes: list[dict]) -> dict:
+    return {
+        "version": "1.0",
+        "canvas": {"width": 120, "height": 120, "background": "transparent"},
+        "layers": [{"id": "main_layer", "shapes": shapes}],
+    }
+
+
 class LineArtTest(unittest.TestCase):
     def setUp(self) -> None:
         self.root = project_root()
         self.sample = self.root / "samples/lineart/icon_minimal.json"
         self.output = self.root / "generated/vector/icon_minimal_test.svg"
         self.png_output = self.root / "generated/images/icon_minimal_test.png"
+        self.report_output = self.root / "generated/logs/icon_minimal_validation_test.json"
         self.output.parent.mkdir(parents=True, exist_ok=True)
         self.png_output.parent.mkdir(parents=True, exist_ok=True)
+        self.report_output.parent.mkdir(parents=True, exist_ok=True)
         self.output.unlink(missing_ok=True)
         self.png_output.unlink(missing_ok=True)
+        self.report_output.unlink(missing_ok=True)
 
     def tearDown(self) -> None:
         self.output.unlink(missing_ok=True)
         self.png_output.unlink(missing_ok=True)
+        self.report_output.unlink(missing_ok=True)
 
     def test_schema_accepts_metadata(self) -> None:
         data = json.loads(self.sample.read_text(encoding="utf-8"))
@@ -214,12 +229,184 @@ class LineArtTest(unittest.TestCase):
             resolve_lineart_raster_output("generated/images/out.png", root=self.root).name,
             "out.png",
         )
+        self.assertEqual(
+            resolve_lineart_report_output("generated/logs/out.json", root=self.root).name,
+            "out.json",
+        )
         with self.assertRaises(ValueError):
             resolve_lineart_input("samples/source/not_lineart.json", root=self.root)
         with self.assertRaises(ValueError):
             resolve_lineart_output("generated/images/out.svg", root=self.root)
         with self.assertRaises(ValueError):
             resolve_lineart_raster_output("generated/vector/out.png", root=self.root)
+        with self.assertRaises(ValueError):
+            resolve_lineart_report_output("generated/vector/out.json", root=self.root)
+
+    def test_lineart_geometry_normalizes_shapes(self) -> None:
+        document = LineArtDocument.model_validate(json.loads(self.sample.read_text(encoding="utf-8")))
+        geometries = normalize_lineart_geometry(document)
+        by_id = {geometry.id: geometry for geometry in geometries}
+        self.assertIn("panel_01", by_id)
+        self.assertIn("wave_01", by_id)
+        self.assertIn("group_bar_01", by_id)
+        self.assertEqual(by_id["panel_01"].bbox, (20, 20, 88, 88))
+        self.assertGreater(len(by_id["wave_01"].points), 4)
+        self.assertEqual(by_id["wave_01"].role, "annotation")
+
+    def test_lineart_validate_report_passes_for_sample(self) -> None:
+        document = LineArtDocument.model_validate(json.loads(self.sample.read_text(encoding="utf-8")))
+        report = validate_lineart_document(document, input_path="samples/lineart/icon_minimal.json")
+        self.assertEqual(report.validation_result, "passed")
+        self.assertEqual(report.summary.errors, 0)
+        self.assertEqual(report.summary.warnings, 0)
+        self.assertGreaterEqual(report.summary.geometries, 6)
+
+    def test_lineart_validate_reports_missing_metadata_reference(self) -> None:
+        data = json.loads(self.sample.read_text(encoding="utf-8"))
+        wave = next(shape for shape in data["layers"][0]["shapes"] if shape["id"] == "wave_01")
+        wave["validation"]["expected"]["inside"] = "missing_panel"
+        document = LineArtDocument.model_validate(data)
+        report = validate_lineart_document(document, input_path="samples/lineart/icon_minimal.json")
+        self.assertEqual(report.validation_result, "warning_only")
+        self.assertEqual(report.summary.warnings, 1)
+        self.assertEqual(report.issues[0].type, "metadata_reference_missing")
+        self.assertEqual(report.issues[0].metric["field"], "validation.expected.inside")
+
+    def test_lineart_validate_reports_line_intersection(self) -> None:
+        document = LineArtDocument.model_validate(
+            _lineart_doc(
+                [
+                    {
+                        "id": "route_01",
+                        "type": "path",
+                        "role": "connector",
+                        "validation": {"expected": {"no_intersections": True}, "severity": "warning"},
+                        "commands": [["M", 10, 10], ["L", 90, 90]],
+                        "stroke": {"color": "#111111", "width": 2},
+                    },
+                    {
+                        "id": "barrier_01",
+                        "type": "path",
+                        "commands": [["M", 10, 90], ["L", 90, 10]],
+                        "stroke": {"color": "#111111", "width": 2},
+                    },
+                ]
+            )
+        )
+        report = validate_lineart_document(document, input_path="samples/lineart/intersection.json")
+        self.assertEqual(report.validation_result, "warning_only")
+        self.assertEqual(report.issues[0].type, "line_intersection")
+        self.assertEqual(report.issues[0].object_ids, ["route_01", "barrier_01"])
+        self.assertEqual(report.issues[0].position, [50.0, 50.0])
+
+    def test_lineart_validate_reports_overlap_when_disallowed(self) -> None:
+        document = LineArtDocument.model_validate(
+            _lineart_doc(
+                [
+                    {
+                        "id": "label_01",
+                        "type": "rect",
+                        "allow_overlap": False,
+                        "x": 10,
+                        "y": 10,
+                        "width": 40,
+                        "height": 30,
+                        "fill": {"type": "solid", "color": "#ffffff"},
+                    },
+                    {
+                        "id": "icon_01",
+                        "type": "rect",
+                        "x": 30,
+                        "y": 20,
+                        "width": 40,
+                        "height": 30,
+                        "fill": {"type": "solid", "color": "#eeeeee"},
+                    },
+                ]
+            )
+        )
+        report = validate_lineart_document(document, input_path="samples/lineart/overlap.json")
+        self.assertEqual(report.validation_result, "warning_only")
+        self.assertEqual(report.issues[0].type, "overlap")
+        self.assertEqual(report.issues[0].metric["overlap_area"], 400)
+
+    def test_lineart_validate_reports_outside_container(self) -> None:
+        document = LineArtDocument.model_validate(
+            _lineart_doc(
+                [
+                    {
+                        "id": "panel_01",
+                        "type": "rect",
+                        "role": "container",
+                        "x": 10,
+                        "y": 10,
+                        "width": 50,
+                        "height": 50,
+                    },
+                    {
+                        "id": "label_01",
+                        "type": "rect",
+                        "role": "label",
+                        "container_id": "panel_01",
+                        "validation": {"expected": {"inside": "panel_01"}, "severity": "error"},
+                        "x": 45,
+                        "y": 45,
+                        "width": 30,
+                        "height": 20,
+                    },
+                ]
+            )
+        )
+        report = validate_lineart_document(document, input_path="samples/lineart/outside.json")
+        self.assertEqual(report.validation_result, "failed")
+        self.assertEqual(report.issues[0].type, "outside_container")
+        self.assertEqual(report.issues[0].severity, "error")
+        self.assertEqual(report.issues[0].repair_hint.action, "move")
+
+    def test_lineart_validate_reports_connector_misaligned(self) -> None:
+        document = LineArtDocument.model_validate(
+            _lineart_doc(
+                [
+                    {"id": "node_a", "type": "rect", "role": "node", "x": 10, "y": 10, "width": 20, "height": 20},
+                    {"id": "node_b", "type": "rect", "role": "node", "x": 80, "y": 10, "width": 20, "height": 20},
+                    {
+                        "id": "arrow_01",
+                        "type": "path",
+                        "role": "connector",
+                        "connects_to": {"from": "node_a", "to": "node_b"},
+                        "validation": {"expected": {"near": {"target": "node_b", "max_distance": 4}}, "severity": "error"},
+                        "commands": [["M", 30, 20], ["L", 60, 20]],
+                        "stroke": {"color": "#111111", "width": 2},
+                    },
+                ]
+            )
+        )
+        report = validate_lineart_document(document, input_path="samples/lineart/connector.json")
+        self.assertEqual(report.validation_result, "failed")
+        self.assertEqual(report.issues[0].type, "connector_misaligned")
+        self.assertEqual(report.issues[0].metric["to_distance"], 20.0)
+        self.assertEqual(report.issues[0].repair_hint.anchor, "to")
+
+    def test_run_lineart_validate_dry_run(self) -> None:
+        out = run_lineart_validate(
+            Path("samples/lineart/icon_minimal.json"),
+            report=Path("generated/logs/icon_minimal_validation_test.json"),
+            root=self.root,
+            dry_run=True,
+        )
+        self.assertEqual(out, self.report_output)
+        self.assertFalse(self.report_output.exists())
+
+    def test_run_lineart_validate_writes_report(self) -> None:
+        out = run_lineart_validate(
+            Path("samples/lineart/icon_minimal.json"),
+            report=Path("generated/logs/icon_minimal_validation_test.json"),
+            root=self.root,
+        )
+        self.assertEqual(out, self.report_output)
+        data = json.loads(self.report_output.read_text(encoding="utf-8"))
+        self.assertEqual(data["validation_result"], "passed")
+        self.assertGreaterEqual(data["summary"]["geometries"], 6)
 
     def test_run_lineart_render_dry_run(self) -> None:
         out = run_lineart_render(
@@ -269,6 +456,19 @@ class LineArtTest(unittest.TestCase):
         )
         self.assertEqual(code, 0)
         self.assertTrue(self.output.exists())
+
+    def test_cli_lineart_validate(self) -> None:
+        code = main(
+            [
+                "lineart",
+                "validate",
+                "samples/lineart/icon_minimal.json",
+                "--report",
+                "generated/logs/icon_minimal_validation_test.json",
+            ]
+        )
+        self.assertEqual(code, 0)
+        self.assertTrue(self.report_output.exists())
 
     @unittest.skipUnless(_has_svg_raster_backend(), "resvg-py or cairosvg is not installed")
     def test_cli_lineart_render_png(self) -> None:

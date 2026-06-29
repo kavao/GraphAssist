@@ -15,7 +15,7 @@ from graphassist.batch_runner import run_batch_file
 from graphassist.convert_cmd import ConvertOptions, run_convert
 from graphassist.font_cmd import run_font_outline
 from graphassist.job_runner import run_job_file
-from graphassist.lineart_cmd import run_lineart_render
+from graphassist.lineart_cmd import run_lineart_render, run_lineart_validate
 from graphassist.mosaic_cmd import (
     MosaicDecodeOptions,
     MosaicEncodeOptions,
@@ -151,6 +151,10 @@ def build_parser() -> argparse.ArgumentParser:
     lineart_render.add_argument("--dry-run", action="store_true", help="validate without writing output")
     lineart_render.add_argument("--png", type=Path, default=None, help="also rasterize to PNG under generated/images/")
     lineart_render.add_argument("--png-width", type=int, default=None, help="PNG output width; defaults to canvas width")
+    lineart_validate = lineart_sub.add_parser("validate", help="validate LineArt metadata and geometry foundation")
+    lineart_validate.add_argument("json_path", type=Path, help="LineArt JSON under samples/lineart/ or generated/lineart/")
+    lineart_validate.add_argument("--report", required=True, type=Path, help="report JSON under generated/logs/")
+    lineart_validate.add_argument("--dry-run", action="store_true", help="validate without writing report")
 
     font = sub.add_parser("font", help="FontVector outline extraction")
     font_sub = font.add_subparsers(dest="font_command", required=True)
@@ -346,6 +350,10 @@ def main(argv: list[str] | None = None) -> int:
                 png_output=args.png,
                 png_width=args.png_width,
             )
+            print(out)
+            return 0
+        if args.lineart_command == "validate":
+            out = run_lineart_validate(args.json_path, report=args.report, dry_run=args.dry_run)
             print(out)
             return 0
 
