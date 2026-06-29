@@ -150,6 +150,12 @@ Repair Loop defines how an LLM should use a Validation Report to repair a LineAr
 - Decide whether warnings are acceptable with `stop_when.allow_warnings`.
 - Stop at the maximum iteration count when the same `issue_id` or `type` remains.
 
+LR2 turns this policy into a Pydantic `RepairLoopConfig` schema.
+It validates `mode`, `max_iterations`, `stop_when`, `repair_scope`, and `inputs`, and treats issues that touch `locked_ids` as blocked.
+When `editable_ids` is set, only that scope is considered editable.
+When no editable issues remain and only blocked issues are left, the loop stops with `blocked_by_scope`.
+Repeated issue type and object-id combinations can stop the loop with `stop_when.repeated_issue_limit`.
+
 ## Relationship To Metadata
 
 LineArt Metadata stores what the drawing intends. Validation Report stores what actually failed. Repair Loop returns that difference to the LLM for correction.
@@ -162,7 +168,7 @@ repair: move label_01 into panel_01
 
 ## Current Implementation Scope
 
-LV0.1-LV2.4 currently provides the checks below.
+LV0.1-LV2.5 and LR2 currently provide the checks below.
 
 - Reads `role`, `container_id`, `connects_to`, and `validation.expected`, then checks that referenced shape ids exist.
 - Normalizes `rect`, `ellipse`, `polygon`, `star`, `path`, `smooth_path`, and `group` into point / polyline / polygon / bbox geometry.
@@ -171,9 +177,12 @@ LV0.1-LV2.4 currently provides the checks below.
 - Reports bbox-based overlap as `overlap` when a closed shape has `allow_overlap: false`.
 - Reports `outside_container` when a shape with `container_id` or `validation.expected.inside` is not fully inside its container bbox.
 - Reports `connector_misaligned` when a connector with `connects_to` has endpoints too far from the target bboxes.
+- Reports unnatural drawing order as `layer_order` from role, bbox, and containment signals.
+  - A `background` shape is drawn in front of other shapes.
+  - A `container` is drawn in front of contained shapes.
+  - A `decorative` shape may cover a `connector`.
 - Saves Validation Report JSON v0.1 under `generated/logs/` with `lineart validate --report`.
-
-Layer-order checks will be added in LV2.5 or later.
+- Validates Repair Loop JSON v0.1 schema, stop conditions, locked / editable scope, and repeated issue stopping.
 
 ## Update Policy
 

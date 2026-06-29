@@ -27,6 +27,7 @@ def validate_lineart_document(document: LineArtDocument, *, input_path: str) -> 
         _validate_connector_alignment(shape, by_id=by_id, issues=issues)
         _validate_line_intersections(shape, by_id=by_id, issues=issues)
     _validate_overlaps(geometries, issues=issues)
+    _validate_layer_order(geometries, issues=issues)
 
     summary = ValidationSummary(
         errors=sum(1 for issue in issues if issue.severity == "error"),
@@ -246,6 +247,104 @@ def _validate_overlaps(geometries: list[ShapeGeometry], *, issues: list[Validati
             break
         if index > len(watched):  # pragma: no cover - defensive no-op
             break
+
+
+def _validate_layer_order(geometries: list[ShapeGeometry], *, issues: list[ValidationIssue]) -> None:
+    order = {geometry.id: index for index, geometry in enumerate(geometries)}
+    by_id = {geometry.id: geometry for geometry in geometries}
+    seen: set[tuple[str, str, str]] = set()
+
+    for geometry in geometries:
+        if geometry.role == "background":
+            for other in geometries:
+                if other.id == geometry.id or other.role == "background":
+                    continue
+                if order[geometry.id] > order[other.id] and _bbox_intersects(geometry.bbox, other.bbox):
+                    _append_layer_order_issue(
+                        issues,
+                        seen=seen,
+                        reason="background_in_front",
+                        front=geometry,
+                        behind=other,
+                        message=f"{geometry.id} is a background drawn in front of {other.id}.",
+                    )
+                    break
+
+        if geometry.role == "decorative":
+            for other in geometries:
+                if other.id == geometry.id or other.role != "connector":
+                    continue
+                if order[geometry.id] > order[other.id] and _bbox_intersects(geometry.bbox, other.bbox):
+                    _append_layer_order_issue(
+                        issues,
+                        seen=seen,
+                        reason="decorative_covers_connector",
+                        front=geometry,
+                        behind=other,
+                        message=f"{geometry.id} is decorative and may cover connector {other.id}.",
+                    )
+                    break
+
+        container = by_id.get(geometry.container_id or "")
+        if container is not None and order[container.id] > order[geometry.id]:
+            _append_layer_order_issue(
+                issues,
+                seen=seen,
+                reason="container_in_front",
+                front=container,
+                behind=geometry,
+                message=f"{container.id} is drawn in front of contained shape {geometry.id}.",
+            )
+
+    containers = [geometry for geometry in geometries if geometry.role == "container"]
+    for container in containers:
+        for child in geometries:
+            if child.id == container.id or child.role in {"background", "container"}:
+                continue
+            if child.container_id is not None:
+                continue
+            if order[container.id] > order[child.id] and _bbox_contains(container.bbox, child.bbox):
+                _append_layer_order_issue(
+                    issues,
+                    seen=seen,
+                    reason="container_in_front",
+                    front=container,
+                    behind=child,
+                    message=f"{container.id} is drawn in front of visually contained shape {child.id}.",
+                )
+
+
+def _append_layer_order_issue(
+    issues: list[ValidationIssue],
+    *,
+    seen: set[tuple[str, str, str]],
+    reason: str,
+    front: ShapeGeometry,
+    behind: ShapeGeometry,
+    message: str,
+) -> None:
+    key = (reason, front.id, behind.id)
+    if key in seen:
+        return
+    seen.add(key)
+    issues.append(
+        ValidationIssue(
+            issue_id=_next_issue_id(issues),
+            type="layer_order",
+            severity="warning",
+            object_ids=[front.id, behind.id],
+            position=_bbox_center(_bbox_intersection(front.bbox, behind.bbox)),
+            metric={
+                "reason": reason,
+                "front_object": front.id,
+                "behind_object": behind.id,
+                "front_layer": front.layer_id,
+                "behind_layer": behind.layer_id,
+            },
+            message=message,
+            repair_hint=RepairHint(action="reorder", target=front.id, toward=behind.id, constraints={"place": "behind"}),
+        )
+    )
 
 
 def _unknown_reference(index: int, shape_id: str, field: str, target: str, *, severity: str) -> ValidationIssue:

@@ -150,6 +150,12 @@ Repair Loop は、Validation Report を受け取った LLM がどの範囲をど
 - `warning` を許容するかは `stop_when.allow_warnings` で決めます。
 - 同じ `issue_id` または同じ `type` が残り続ける場合は、最大試行回数で停止します。
 
+LR2 では、この方針を `RepairLoopConfig` として Pydantic schema 化しています。
+`mode`, `max_iterations`, `stop_when`, `repair_scope`, `inputs` を検証し、修復対象 issue が `locked_ids` に触れる場合は blocked として扱います。
+`editable_ids` を指定した場合は、その範囲だけを修復候補にします。
+修復可能な issue がなく blocked のみ残る場合は `blocked_by_scope` として停止します。
+同じ issue type と object ids が繰り返される場合は、`stop_when.repeated_issue_limit` で停止判定できます。
+
 ## メタデータとの関係
 
 LineArt Metadata は「何を意図しているか」を shape 側に持たせます。Validation Report は「実際に何が問題だったか」を出力します。Repair Loop は、その差分を LLM に戻して修正させます。
@@ -162,7 +168,7 @@ repair: move label_01 into panel_01
 
 ## 現在の実装範囲
 
-LV0.1-LV2.4 では、次の処理を行います。
+LV0.1-LV2.5 と LR2 では、次の処理を行います。
 
 - `role`, `container_id`, `connects_to`, `validation.expected` を読み、参照先 shape が存在するか確認します。
 - `rect`, `ellipse`, `polygon`, `star`, `path`, `smooth_path`, `group` を point / polyline / polygon / bbox に正規化します。
@@ -171,9 +177,12 @@ LV0.1-LV2.4 では、次の処理を行います。
 - `allow_overlap: false` がある閉じた shape について、bbox ベースの重なりを `overlap` として報告します。
 - `container_id` または `validation.expected.inside` がある shape について、bbox が container 内に収まるか確認し、外れていれば `outside_container` として報告します。
 - `connects_to` がある connector について、始点・終点が接続対象 bbox に近いか確認し、離れていれば `connector_misaligned` として報告します。
+- role と bbox / containment から不自然な描画順を検出し、`layer_order` として報告します。
+  - `background` が他の図形より前面に描かれている場合
+  - `container` が内包 shape より前面に描かれている場合
+  - `decorative` が `connector` を覆う可能性がある場合
 - `lineart validate --report` で Validation Report JSON v0.1 を `generated/logs/` へ保存します。
-
-レイヤー順の実判定は LV2.5 以降で追加します。
+- Repair Loop JSON v0.1 の schema、停止条件、locked / editable scope、同一 issue 反復停止を検証します。
 
 ## 更新方針
 

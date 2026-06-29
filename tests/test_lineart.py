@@ -15,6 +15,13 @@ from graphassist.engine.lineart.validate import validate_lineart_document
 from graphassist.graphassist import main
 from graphassist.lineart_cmd import run_lineart_render, run_lineart_validate
 from graphassist.schema.lineart import LineArtDocument, PathCommand
+from graphassist.schema.lineart_validation import (
+    RepairLoopConfig,
+    ValidationReport,
+    decide_repair_loop,
+    repair_issue_is_editable,
+    repair_issue_repeat_keys,
+)
 from graphassist.schema.paths import (
     project_root,
     resolve_lineart_input,
@@ -45,6 +52,46 @@ def _lineart_doc(shapes: list[dict]) -> dict:
         "canvas": {"width": 120, "height": 120, "background": "transparent"},
         "layers": [{"id": "main_layer", "shapes": shapes}],
     }
+
+
+def _repair_report(*, errors: int = 0, warnings: int = 0, target: str = "label_01") -> ValidationReport:
+    issues = []
+    if errors:
+        issues.append(
+            {
+                "issue_id": "LV-0001",
+                "type": "outside_container",
+                "severity": "error",
+                "object_ids": [target, "panel_01"],
+                "message": f"{target} is outside panel_01.",
+                "repair_hint": {"action": "move", "target": target, "toward": "panel_01"},
+            }
+        )
+    if warnings:
+        issues.append(
+            {
+                "issue_id": "LV-0002",
+                "type": "layer_order",
+                "severity": "warning",
+                "object_ids": ["panel_01", target],
+                "message": "panel_01 is drawn in front.",
+                "repair_hint": {"action": "reorder", "target": "panel_01", "toward": target},
+            }
+        )
+    if errors:
+        result = "failed"
+    elif warnings:
+        result = "warning_only"
+    else:
+        result = "passed"
+    return ValidationReport.model_validate(
+        {
+            "validation_result": result,
+            "source": {"document_id": "repair_test", "input_path": "samples/lineart/repair_test.json"},
+            "summary": {"errors": errors, "warnings": warnings, "info": 0, "geometries": 2},
+            "issues": issues,
+        }
+    )
 
 
 class LineArtTest(unittest.TestCase):
@@ -386,6 +433,179 @@ class LineArtTest(unittest.TestCase):
         self.assertEqual(report.issues[0].type, "connector_misaligned")
         self.assertEqual(report.issues[0].metric["to_distance"], 20.0)
         self.assertEqual(report.issues[0].repair_hint.anchor, "to")
+
+    def test_lineart_validate_reports_background_in_front(self) -> None:
+        document = LineArtDocument.model_validate(
+            _lineart_doc(
+                [
+                    {
+                        "id": "label_01",
+                        "type": "rect",
+                        "role": "label",
+                        "x": 20,
+                        "y": 20,
+                        "width": 40,
+                        "height": 20,
+                    },
+                    {
+                        "id": "bg_01",
+                        "type": "rect",
+                        "role": "background",
+                        "x": 0,
+                        "y": 0,
+                        "width": 120,
+                        "height": 120,
+                    },
+                ]
+            )
+        )
+        report = validate_lineart_document(document, input_path="samples/lineart/layer_order.json")
+        self.assertEqual(report.validation_result, "warning_only")
+        self.assertEqual(report.issues[0].type, "layer_order")
+        self.assertEqual(report.issues[0].metric["reason"], "background_in_front")
+        self.assertEqual(report.issues[0].object_ids, ["bg_01", "label_01"])
+        self.assertEqual(report.issues[0].repair_hint.action, "reorder")
+
+    def test_lineart_validate_reports_container_in_front(self) -> None:
+        document = LineArtDocument.model_validate(
+            _lineart_doc(
+                [
+                    {
+                        "id": "label_01",
+                        "type": "rect",
+                        "role": "label",
+                        "container_id": "panel_01",
+                        "x": 30,
+                        "y": 30,
+                        "width": 30,
+                        "height": 20,
+                    },
+                    {
+                        "id": "panel_01",
+                        "type": "rect",
+                        "role": "container",
+                        "x": 10,
+                        "y": 10,
+                        "width": 80,
+                        "height": 80,
+                    },
+                ]
+            )
+        )
+        report = validate_lineart_document(document, input_path="samples/lineart/layer_order.json")
+        self.assertEqual(report.validation_result, "warning_only")
+        self.assertEqual(report.issues[0].type, "layer_order")
+        self.assertEqual(report.issues[0].metric["reason"], "container_in_front")
+        self.assertEqual(report.issues[0].object_ids, ["panel_01", "label_01"])
+
+    def test_lineart_validate_reports_decorative_covering_connector(self) -> None:
+        document = LineArtDocument.model_validate(
+            _lineart_doc(
+                [
+                    {
+                        "id": "arrow_01",
+                        "type": "path",
+                        "role": "connector",
+                        "commands": [["M", 10, 10], ["L", 90, 90]],
+                        "stroke": {"color": "#111111", "width": 2},
+                    },
+                    {
+                        "id": "spark_01",
+                        "type": "rect",
+                        "role": "decorative",
+                        "x": 40,
+                        "y": 40,
+                        "width": 20,
+                        "height": 20,
+                    },
+                ]
+            )
+        )
+        report = validate_lineart_document(document, input_path="samples/lineart/layer_order.json")
+        self.assertEqual(report.validation_result, "warning_only")
+        self.assertEqual(report.issues[0].type, "layer_order")
+        self.assertEqual(report.issues[0].metric["reason"], "decorative_covers_connector")
+        self.assertEqual(report.issues[0].object_ids, ["spark_01", "arrow_01"])
+
+    def test_repair_loop_config_schema_round_trip(self) -> None:
+        config = RepairLoopConfig.model_validate(
+            {
+                "version": "0.1",
+                "mode": "patch_preferred",
+                "max_iterations": 3,
+                "stop_when": {"errors": 0, "allow_warnings": True, "repeated_issue_limit": 2},
+                "repair_scope": {"locked_ids": ["logo_mark"], "editable_ids": ["label_01"]},
+                "inputs": {
+                    "lineart_document": "current document JSON",
+                    "validation_report": "Validation Report JSON v0.1",
+                },
+            }
+        )
+        payload = config.model_dump(mode="json")
+        self.assertEqual(payload["mode"], "patch_preferred")
+        self.assertEqual(payload["repair_scope"]["locked_ids"], ["logo_mark"])
+
+    def test_repair_loop_rejects_locked_editable_overlap(self) -> None:
+        with self.assertRaises(ValueError):
+            RepairLoopConfig.model_validate(
+                {
+                    "inputs": {"lineart_document": "doc", "validation_report": "report"},
+                    "repair_scope": {"locked_ids": ["label_01"], "editable_ids": ["label_01"]},
+                }
+            )
+
+    def test_repair_loop_stop_conditions(self) -> None:
+        config = RepairLoopConfig.model_validate(
+            {"inputs": {"lineart_document": "doc", "validation_report": "report"}}
+        )
+        clean = decide_repair_loop(config, _repair_report(), iteration=0)
+        self.assertTrue(clean.should_stop)
+        self.assertEqual(clean.reason, "error_goal_met")
+
+        warning_only = decide_repair_loop(config, _repair_report(warnings=1), iteration=0)
+        self.assertTrue(warning_only.should_stop)
+        self.assertEqual(warning_only.reason, "warning_goal_met")
+
+        active = decide_repair_loop(config, _repair_report(errors=1), iteration=0)
+        self.assertFalse(active.should_stop)
+        self.assertEqual(active.reason, "continue")
+
+        maxed = decide_repair_loop(config, _repair_report(errors=1), iteration=3)
+        self.assertTrue(maxed.should_stop)
+        self.assertEqual(maxed.reason, "max_iterations")
+
+    def test_repair_loop_repeated_issue_stops_after_limit(self) -> None:
+        config = RepairLoopConfig.model_validate(
+            {
+                "inputs": {"lineart_document": "doc", "validation_report": "report"},
+                "stop_when": {"repeated_issue_limit": 2},
+            }
+        )
+        report = _repair_report(errors=1)
+        previous = repair_issue_repeat_keys(report, config)
+        first_repeat = decide_repair_loop(config, report, iteration=1, previous_issue_keys=previous, repeated_issue_count=1)
+        second_repeat = decide_repair_loop(config, report, iteration=1, previous_issue_keys=previous, repeated_issue_count=2)
+        self.assertFalse(first_repeat.should_stop)
+        self.assertTrue(second_repeat.should_stop)
+        self.assertEqual(second_repeat.reason, "repeated_issue")
+
+    def test_repair_loop_respects_locked_and_editable_scope(self) -> None:
+        config = RepairLoopConfig.model_validate(
+            {
+                "inputs": {"lineart_document": "doc", "validation_report": "report"},
+                "repair_scope": {"locked_ids": ["label_01"], "editable_ids": ["panel_01"]},
+            }
+        )
+        locked_report = _repair_report(errors=1, target="label_01")
+        editable_report = _repair_report(warnings=1, target="label_01")
+        self.assertFalse(repair_issue_is_editable(config, locked_report.issues[0]))
+        self.assertTrue(repair_issue_is_editable(config, editable_report.issues[0]))
+
+        decision = decide_repair_loop(config, locked_report, iteration=0)
+        self.assertTrue(decision.should_stop)
+        self.assertEqual(decision.reason, "blocked_by_scope")
+        self.assertEqual(decision.editable_issue_ids, [])
+        self.assertEqual(decision.blocked_issue_ids, ["LV-0001"])
 
     def test_run_lineart_validate_dry_run(self) -> None:
         out = run_lineart_validate(

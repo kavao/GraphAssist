@@ -121,7 +121,8 @@ metadata は Phase LV の幾何検証と Repair Loop の入力になる。図解
 ## validate レポート
 
 `lineart validate --report` は Validation Report JSON v0.1 を `generated/logs/` に保存する。
-現時点では LV0.1-LV2.4 として metadata 参照整合性、geometry 正規化、線分交差、重なり、包含、接続距離を確認する。レイヤー順は後続 LV2.5 以降で扱う。
+現時点では LV0.1-LV2.5 として metadata 参照整合性、geometry 正規化、線分交差、重なり、包含、接続距離、layer order warning を確認する。
+Repair Loop LR2 として `RepairLoopConfig` schema、停止条件、`locked_ids` / `editable_ids`、warning 許容、同一 issue 反復停止、blocked scope 停止も Pydantic で検証する。
 
 ```bash
 uv run graphassist lineart validate samples/lineart/icon_minimal.json --report generated/logs/icon_minimal_validation.json
