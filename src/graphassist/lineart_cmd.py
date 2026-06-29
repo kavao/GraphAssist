@@ -29,13 +29,17 @@ def run_lineart_render(
     dry_run: bool = False,
     png_output: Path | None = None,
     png_width: int | None = None,
+    validate_report: Path | None = None,
 ) -> Path:
     if png_width is not None and png_width <= 0:
         raise ValueError("png_width must be greater than 0")
     input_path = resolve_lineart_input(str(json_path), root=root, must_exist=True)
     output_path = resolve_lineart_output(str(output), root=root)
     png_path = resolve_lineart_raster_output(str(png_output), root=root) if png_output is not None else None
+    report_path = resolve_lineart_report_output(str(validate_report), root=root) if validate_report is not None else None
     document = load_lineart_document(input_path)
+    if report_path is not None:
+        _write_validation_report(document, input_path=input_path, report_path=report_path, root=root)
     if dry_run:
         return output_path
     svg_path = write_svg(document, output_path)
@@ -54,16 +58,26 @@ def run_lineart_validate(
     input_path = resolve_lineart_input(str(json_path), root=root, must_exist=True)
     report_path = resolve_lineart_report_output(str(report), root=root)
     document = load_lineart_document(input_path)
-    rel_input = _display_path(input_path, root=root)
-    validation_report = validate_lineart_document(document, input_path=rel_input)
     if dry_run:
         return report_path
+    _write_validation_report(document, input_path=input_path, report_path=report_path, root=root)
+    return report_path
+
+
+def _write_validation_report(
+    document: LineArtDocument,
+    *,
+    input_path: Path,
+    report_path: Path,
+    root: Path | None,
+) -> None:
+    rel_input = _display_path(input_path, root=root)
+    validation_report = validate_lineart_document(document, input_path=rel_input)
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(
         json.dumps(validation_report.model_dump(mode="json"), ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
-    return report_path
 
 
 def _display_path(path: Path, *, root: Path | None) -> str:

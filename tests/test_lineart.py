@@ -640,6 +640,20 @@ class LineArtTest(unittest.TestCase):
         self.assertFalse(self.output.exists())
         self.assertFalse(self.png_output.exists())
 
+    def test_run_lineart_render_dry_run_writes_validation_report(self) -> None:
+        out = run_lineart_render(
+            Path("samples/lineart/icon_minimal.json"),
+            Path("generated/vector/icon_minimal_test.svg"),
+            root=self.root,
+            dry_run=True,
+            validate_report=Path("generated/logs/icon_minimal_validation_test.json"),
+        )
+        self.assertEqual(out, self.output)
+        self.assertFalse(self.output.exists())
+        self.assertTrue(self.report_output.exists())
+        data = json.loads(self.report_output.read_text(encoding="utf-8"))
+        self.assertEqual(data["validation_result"], "passed")
+
     def test_run_lineart_render(self) -> None:
         out = run_lineart_render(
             Path("samples/lineart/icon_minimal.json"),
@@ -676,6 +690,22 @@ class LineArtTest(unittest.TestCase):
         )
         self.assertEqual(code, 0)
         self.assertTrue(self.output.exists())
+
+    def test_cli_lineart_render_validate_report(self) -> None:
+        code = main(
+            [
+                "lineart",
+                "render",
+                "samples/lineart/icon_minimal.json",
+                "generated/vector/icon_minimal_test.svg",
+                "--dry-run",
+                "--validate-report",
+                "generated/logs/icon_minimal_validation_test.json",
+            ]
+        )
+        self.assertEqual(code, 0)
+        self.assertFalse(self.output.exists())
+        self.assertTrue(self.report_output.exists())
 
     def test_cli_lineart_validate(self) -> None:
         code = main(

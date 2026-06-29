@@ -151,6 +151,7 @@ def build_parser() -> argparse.ArgumentParser:
     lineart_render.add_argument("--dry-run", action="store_true", help="validate without writing output")
     lineart_render.add_argument("--png", type=Path, default=None, help="also rasterize to PNG under generated/images/")
     lineart_render.add_argument("--png-width", type=int, default=None, help="PNG output width; defaults to canvas width")
+    lineart_render.add_argument("--validate-report", type=Path, default=None, help="write Validation Report JSON under generated/logs/")
     lineart_validate = lineart_sub.add_parser("validate", help="validate LineArt metadata and geometry foundation")
     lineart_validate.add_argument("json_path", type=Path, help="LineArt JSON under samples/lineart/ or generated/lineart/")
     lineart_validate.add_argument("--report", required=True, type=Path, help="report JSON under generated/logs/")
@@ -350,6 +351,7 @@ def main(argv: list[str] | None = None) -> int:
                 dry_run=args.dry_run,
                 png_output=args.png,
                 png_width=args.png_width,
+                validate_report=args.validate_report,
             )
             print(out)
             return 0

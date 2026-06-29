@@ -59,6 +59,7 @@ Single ImageJob files (no `commands` key) still use `graphassist job`.
 | `mosaic.encode` | Image → MosaicArt JSON |
 | `mosaic.export` | MosaicArt JSON → JS / JSON text |
 | `lineart.render` | LineArt JSON → SVG, and optionally PNG |
+| `lineart.validate` | LineArt JSON → Validation Report JSON |
 | `assets.materialize` | Fetch and mirror catalog assets (`ids` omitted = all enabled) |
 | `analyze` | Image metrics (profile or compare when `compare` is set) |
 
@@ -96,6 +97,7 @@ See [birds_on_trunk_pipeline.json](../../../samples/jobs/birds_on_trunk_pipeline
 ## LineArt To Job
 
 `lineart.render` generates SVG from LineArt JSON. When `png_output` is set, it also writes a PNG, which can be used as the next `job.input`.
+When `validate_report` is set, it also saves Validation Report JSON v0.1 for the same input under `generated/logs/`.
 
 ```json
 {
@@ -106,7 +108,8 @@ See [birds_on_trunk_pipeline.json](../../../samples/jobs/birds_on_trunk_pipeline
       "input": "samples/lineart/icon_minimal.json",
       "output": "generated/vector/lineart_icon.svg",
       "png_output": "generated/images/lineart_icon_base.png",
-      "png_width": 128
+      "png_width": 128,
+      "validate_report": "generated/logs/lineart_icon_validation.json"
     },
     {
       "type": "job",
@@ -121,6 +124,21 @@ See [birds_on_trunk_pipeline.json](../../../samples/jobs/birds_on_trunk_pipeline
 ```
 
 When `png_output` is used as a downstream `job.input`, it must match the previous command output path.
+
+Use `lineart.validate` when a Batch manifest only needs to write a validation report.
+
+```json
+{
+  "version": "1.0",
+  "commands": [
+    {
+      "type": "lineart.validate",
+      "input": "samples/lineart/icon_minimal.json",
+      "report": "generated/logs/icon_minimal_validation.json"
+    }
+  ]
+}
+```
 
 ## Previous command output as analyze input
 

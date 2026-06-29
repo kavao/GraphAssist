@@ -27,6 +27,12 @@ uv run graphassist lineart validate samples/lineart/icon_minimal.json --report g
 ```
 
 After the command runs, the validation report is saved under `generated/logs/`.
+Use `lineart render --validate-report` when a render dry-run should also save a report.
+
+```bash
+# Check and save a report — write Validation Report JSON v0.1 without writing SVG/PNG
+uv run graphassist lineart render samples/lineart/icon_minimal.json generated/vector/icon_minimal.svg --dry-run --validate-report generated/logs/icon_minimal_validation.json
+```
 
 ## Overall Flow
 
@@ -182,6 +188,8 @@ LV0.1-LV2.5 and LR2 currently provide the checks below.
   - A `container` is drawn in front of contained shapes.
   - A `decorative` shape may cover a `connector`.
 - Saves Validation Report JSON v0.1 under `generated/logs/` with `lineart validate --report`.
+- Saves Validation Report JSON v0.1 for render inputs with `lineart render --validate-report`.
+- Adds Batch `lineart.validate` for report generation inside multi-step manifests.
 - Validates Repair Loop JSON v0.1 schema, stop conditions, locked / editable scope, and repeated issue stopping.
 
 ## Update Policy

@@ -27,6 +27,12 @@ uv run graphassist lineart validate samples/lineart/icon_minimal.json --report g
 ```
 
 実行後、`generated/logs/` に検証レポートが保存されます。
+SVG レンダリングの dry-run と同時に report を保存したい場合は、`lineart render --validate-report` を使います。
+
+```bash
+# 確認と report 保存 — SVG/PNG は書かず、Validation Report JSON v0.1 を保存する
+uv run graphassist lineart render samples/lineart/icon_minimal.json generated/vector/icon_minimal.svg --dry-run --validate-report generated/logs/icon_minimal_validation.json
+```
 
 ## 全体フロー
 
@@ -182,6 +188,8 @@ LV0.1-LV2.5 と LR2 では、次の処理を行います。
   - `container` が内包 shape より前面に描かれている場合
   - `decorative` が `connector` を覆う可能性がある場合
 - `lineart validate --report` で Validation Report JSON v0.1 を `generated/logs/` へ保存します。
+- `lineart render --validate-report` で、SVG/PNG render と同じ入力に対する Validation Report JSON v0.1 を保存します。
+- Batch `lineart.validate` command で、複数ステップの中に検証 report 出力を組み込めます。
 - Repair Loop JSON v0.1 の schema、停止条件、locked / editable scope、同一 issue 反復停止を検証します。
 
 ## 更新方針

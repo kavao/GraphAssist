@@ -45,6 +45,7 @@ class BatchTest(unittest.TestCase):
         self.out_lineart_svg = self.root / "generated/vector/lineart_icon_pipeline.svg"
         self.out_lineart_base = self.root / "generated/images/lineart_icon_pipeline_base.png"
         self.out_lineart = self.root / "generated/images/lineart_icon_pipeline.png"
+        self.out_lineart_report = self.root / "generated/logs/lineart_icon_pipeline_validation_test.json"
         self._bootstrapped_fonts: list[Path] = []
         for path in (
             self.out_file,
@@ -56,6 +57,7 @@ class BatchTest(unittest.TestCase):
             self.out_lineart_svg,
             self.out_lineart_base,
             self.out_lineart,
+            self.out_lineart_report,
         ):
             if path.exists():
                 path.unlink()
@@ -71,6 +73,7 @@ class BatchTest(unittest.TestCase):
             self.out_lineart_svg,
             self.out_lineart_base,
             self.out_lineart,
+            self.out_lineart_report,
         ):
             if path.exists():
                 path.unlink()
@@ -161,6 +164,21 @@ class BatchTest(unittest.TestCase):
         self.assertEqual(manifest.commands[0].type, "lineart.render")
         self.assertEqual(manifest.commands[1].type, "job")
 
+    def test_lineart_validate_command_schema(self) -> None:
+        manifest = BatchManifest.model_validate(
+            {
+                "version": "1.0",
+                "commands": [
+                    {
+                        "type": "lineart.validate",
+                        "input": "samples/lineart/icon_minimal.json",
+                        "report": "generated/logs/lineart_icon_pipeline_validation_test.json",
+                    }
+                ],
+            }
+        )
+        self.assertEqual(manifest.commands[0].type, "lineart.validate")
+
     def test_lineart_pipeline_dry_run(self) -> None:
         results = run_batch_file(self.lineart_batch, dry_run=True)
         self.assertEqual(
@@ -172,6 +190,46 @@ class BatchTest(unittest.TestCase):
         )
         self.assertFalse(self.out_lineart_base.exists())
         self.assertFalse(self.out_lineart.exists())
+
+    def test_lineart_validate_command_dry_run(self) -> None:
+        manifest_path = self.root / "samples/jobs/lineart_validate_test.json"
+        data = {
+            "version": "1.0",
+            "commands": [
+                {
+                    "type": "lineart.validate",
+                    "input": "samples/lineart/icon_minimal.json",
+                    "report": "generated/logs/lineart_icon_pipeline_validation_test.json",
+                }
+            ],
+        }
+        manifest_path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        try:
+            results = run_batch_file(manifest_path, dry_run=True)
+        finally:
+            manifest_path.unlink(missing_ok=True)
+        self.assertEqual(results, ["generated/logs/lineart_icon_pipeline_validation_test.json"])
+        self.assertFalse(self.out_lineart_report.exists())
+
+    def test_run_lineart_validate_command(self) -> None:
+        manifest_path = self.root / "samples/jobs/lineart_validate_test.json"
+        data = {
+            "version": "1.0",
+            "commands": [
+                {
+                    "type": "lineart.validate",
+                    "input": "samples/lineart/icon_minimal.json",
+                    "report": "generated/logs/lineart_icon_pipeline_validation_test.json",
+                }
+            ],
+        }
+        manifest_path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        try:
+            results = run_batch_file(manifest_path, dry_run=False)
+        finally:
+            manifest_path.unlink(missing_ok=True)
+        self.assertEqual(results, ["generated/logs/lineart_icon_pipeline_validation_test.json"])
+        self.assertTrue(self.out_lineart_report.exists())
 
     @unittest.skipUnless(_has_svg_raster_backend(), "resvg-py or cairosvg is not installed")
     def test_run_lineart_pipeline(self) -> None:

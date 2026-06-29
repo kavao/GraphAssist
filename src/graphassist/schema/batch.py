@@ -16,6 +16,7 @@ from graphassist.schema.paths import (
     resolve_lineart_input,
     resolve_lineart_output,
     resolve_lineart_raster_output,
+    resolve_lineart_report_output,
     resolve_input,
     resolve_mosaic_json,
     resolve_mosaic_output,
@@ -153,6 +154,7 @@ class LineArtRenderCommand(BaseModel):
     output: str
     png_output: str | None = None
     png_width: int | None = Field(default=None, ge=1, le=8000)
+    validate_report: str | None = None
 
     @field_validator("input")
     @classmethod
@@ -172,6 +174,32 @@ class LineArtRenderCommand(BaseModel):
         if value is None:
             return None
         resolve_lineart_raster_output(value)
+        return value
+
+    @field_validator("validate_report")
+    @classmethod
+    def validate_report_output(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        resolve_lineart_report_output(value)
+        return value
+
+
+class LineArtValidateCommand(BaseModel):
+    type: Literal["lineart.validate"]
+    input: str
+    report: str
+
+    @field_validator("input")
+    @classmethod
+    def validate_input(cls, value: str) -> str:
+        resolve_lineart_input(value, must_exist=False)
+        return value
+
+    @field_validator("report")
+    @classmethod
+    def validate_report(cls, value: str) -> str:
+        resolve_lineart_report_output(value)
         return value
 
 
@@ -243,6 +271,7 @@ BatchCommand = Annotated[
         MosaicEncodeCommand,
         MosaicExportCommand,
         LineArtRenderCommand,
+        LineArtValidateCommand,
         AssetsMaterializeCommand,
         AnalyzeCommand,
     ],
@@ -255,6 +284,8 @@ def command_output_path(command: BatchCommand) -> str | None:
         return command.output
     if isinstance(command, LineArtRenderCommand):
         return command.png_output or command.output
+    if isinstance(command, LineArtValidateCommand):
+        return command.report
     if isinstance(command, (JobCommand, MosaicDecodeCommand, MosaicEncodeCommand, AnalyzeCommand)):
         return command.output
     return None
