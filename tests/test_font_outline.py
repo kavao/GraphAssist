@@ -8,8 +8,10 @@ from pathlib import Path
 
 from graphassist.font_cmd import run_font_outline
 from graphassist.graphassist import main
+from graphassist.lineart_cmd import run_lineart_render
 from graphassist.schema.font_outline import FontOutlineDocument
-from graphassist.schema.paths import project_root, resolve_font_outline_output
+from graphassist.schema.lineart import LineArtDocument
+from graphassist.schema.paths import project_root, resolve_font_outline_output, resolve_lineart_json_output
 
 
 try:
@@ -58,11 +60,18 @@ class FontOutlineExtractionTest(unittest.TestCase):
     def setUp(self) -> None:
         self.root = project_root()
         self.output = self.root / "generated/vector/font_outline_test.json"
+        self.lineart_output = self.root / "generated/lineart/font_outline_test.json"
+        self.svg_output = self.root / "generated/vector/font_outline_lineart_test.svg"
         self.output.parent.mkdir(parents=True, exist_ok=True)
+        self.lineart_output.parent.mkdir(parents=True, exist_ok=True)
         self.output.unlink(missing_ok=True)
+        self.lineart_output.unlink(missing_ok=True)
+        self.svg_output.unlink(missing_ok=True)
 
     def tearDown(self) -> None:
         self.output.unlink(missing_ok=True)
+        self.lineart_output.unlink(missing_ok=True)
+        self.svg_output.unlink(missing_ok=True)
 
     def test_extract_latin_glyph(self) -> None:
         out = run_font_outline(
@@ -101,8 +110,14 @@ class FontOutlineExtractionTest(unittest.TestCase):
             resolve_font_outline_output("generated/vector/out.font-outline.json", root=self.root).name,
             "out.font-outline.json",
         )
+        self.assertEqual(
+            resolve_lineart_json_output("generated/lineart/out.lineart.json", root=self.root).name,
+            "out.lineart.json",
+        )
         with self.assertRaises(ValueError):
             resolve_font_outline_output("generated/images/out.font-outline.json", root=self.root)
+        with self.assertRaises(ValueError):
+            resolve_lineart_json_output("samples/lineart/out.lineart.json", root=self.root)
 
     def test_run_font_outline_dry_run(self) -> None:
         out = run_font_outline(
@@ -110,12 +125,54 @@ class FontOutlineExtractionTest(unittest.TestCase):
             font=Path("assets/fonts/DejaVuSans.ttf"),
             size=96,
             output=Path("generated/vector/font_outline_test.json"),
+            lineart_output=Path("generated/lineart/font_outline_test.json"),
             root=self.root,
             dry_run=True,
             strict=True,
         )
         self.assertEqual(out, self.output)
         self.assertFalse(self.output.exists())
+        self.assertFalse(self.lineart_output.exists())
+
+    def test_run_font_outline_writes_lineart_json(self) -> None:
+        run_font_outline(
+            text="G",
+            font=Path("assets/fonts/DejaVuSans.ttf"),
+            size=96,
+            output=Path("generated/vector/font_outline_test.json"),
+            lineart_output=Path("generated/lineart/font_outline_test.json"),
+            root=self.root,
+            strict=True,
+        )
+        self.assertTrue(self.output.exists())
+        document = LineArtDocument.model_validate(json.loads(self.lineart_output.read_text(encoding="utf-8")))
+        self.assertEqual(document.layers[0].id, "font_outline")
+        group = document.layers[0].shapes[0]
+        self.assertEqual(group.type, "group")
+        glyph = group.shapes[0]
+        self.assertEqual(glyph.type, "path")
+        self.assertEqual(glyph.role, "glyph")
+        self.assertIsNotNone(glyph.fill)
+
+    def test_run_font_outline_lineart_can_render(self) -> None:
+        run_font_outline(
+            text="G",
+            font=Path("assets/fonts/DejaVuSans.ttf"),
+            size=96,
+            output=Path("generated/vector/font_outline_test.json"),
+            lineart_output=Path("generated/lineart/font_outline_test.json"),
+            root=self.root,
+            strict=True,
+        )
+        out = run_lineart_render(
+            Path("generated/lineart/font_outline_test.json"),
+            Path("generated/vector/font_outline_lineart_test.svg"),
+            root=self.root,
+        )
+        self.assertEqual(out, self.svg_output)
+        svg = self.svg_output.read_text(encoding="utf-8")
+        self.assertIn('id="text_outline"', svg)
+        self.assertIn('fill="#111111"', svg)
 
     def test_cli_font_outline(self) -> None:
         code = main(
@@ -130,11 +187,14 @@ class FontOutlineExtractionTest(unittest.TestCase):
                 "96",
                 "--output",
                 "generated/vector/font_outline_test.json",
+                "--lineart-output",
+                "generated/lineart/font_outline_test.json",
                 "--strict",
             ]
         )
         self.assertEqual(code, 0)
         self.assertTrue(self.output.exists())
+        self.assertTrue(self.lineart_output.exists())
 
 
 if __name__ == "__main__":

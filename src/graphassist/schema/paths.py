@@ -15,6 +15,7 @@ MOSAIC_JSON_ROOTS = ("samples/mosaic", "generated/mosaic")
 MOSAIC_OUTPUT_ROOT = "generated/mosaic"
 JOB_ROOT = "samples/jobs"
 LINEART_JSON_ROOTS = ("samples/lineart", "generated/lineart")
+LINEART_JSON_OUTPUT_ROOT = "generated/lineart"
 LINEART_OUTPUT_ROOT = "generated/vector"
 LINEART_RASTER_OUTPUT_ROOT = "generated/images"
 LINEART_REPORT_OUTPUT_ROOT = "generated/logs"
@@ -122,6 +123,15 @@ def resolve_lineart_input(path_str: str, *, root: Path | None = None, must_exist
         raise ValueError(f"lineart JSON must be under {allowed}: {path_str}")
     if must_exist and not resolved.exists():
         raise FileNotFoundError(resolved)
+    return resolved
+
+
+def resolve_lineart_json_output(path_str: str, *, root: Path | None = None) -> Path:
+    base = root or project_root()
+    resolved = _resolve_relative(path_str, base)
+    safe = _under(base, LINEART_JSON_OUTPUT_ROOT)
+    if not str(resolved).startswith(str(safe)):
+        raise ValueError(f"lineart JSON output must be under {LINEART_JSON_OUTPUT_ROOT}/: {path_str}")
     return resolved
 
 

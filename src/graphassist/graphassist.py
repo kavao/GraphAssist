@@ -163,6 +163,7 @@ def build_parser() -> argparse.ArgumentParser:
     font_outline.add_argument("--font", required=True, type=Path, help="font path under assets/fonts/")
     font_outline.add_argument("--size", type=float, default=48, help="font size in px")
     font_outline.add_argument("--output", required=True, type=Path, help="output JSON under generated/vector/")
+    font_outline.add_argument("--lineart-output", type=Path, default=None, help="also write LineArt JSON under generated/lineart/")
     font_outline.add_argument("--dry-run", action="store_true", help="validate without writing output")
     font_outline.add_argument("--strict", action="store_true", help="fail when a glyph is missing or empty")
 
@@ -366,6 +367,7 @@ def main(argv: list[str] | None = None) -> int:
                 output=args.output,
                 dry_run=args.dry_run,
                 strict=args.strict,
+                lineart_output=args.lineart_output,
             )
             print(out)
             return 0
