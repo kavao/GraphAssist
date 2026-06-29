@@ -59,16 +59,19 @@ uv run graphassist run samples/jobs/birds_on_trunk_pipeline.json
 | ファイル | コマンド | 出力 |
 |----------|----------|------|
 | [lineart_icon_pipeline.json](lineart_icon_pipeline.json) | `run` | `generated/images/lineart_icon_pipeline.png` |
+| [lineart_repair_loop_validate.json](lineart_repair_loop_validate.json) | `run` | `generated/logs/lineart_repair_loop_validation.json` |
 | [title_logo_neon_forge_pipeline.json](title_logo_neon_forge_pipeline.json) | `run` | `generated/images/title_logo_neon_forge.png` |
 | [neon_yoroshiku_medicine_pipeline.json](neon_yoroshiku_medicine_pipeline.json) | `run` | `generated/images/neon_yoroshiku_medicine.png` |
 
 ```bash
 uv run graphassist run samples/jobs/lineart_icon_pipeline.json
+uv run graphassist run samples/jobs/lineart_repair_loop_validate.json
 uv run graphassist run samples/jobs/title_logo_neon_forge_pipeline.json
 uv run graphassist run samples/jobs/neon_yoroshiku_medicine_pipeline.json
 ```
 
 - LineArt 正本: [samples/lineart/icon_minimal.json](../lineart/icon_minimal.json)
+- 修正ループ fixture: [samples/lineart/repair_loop_issues.json](../lineart/repair_loop_issues.json)
 - タイトルロゴ正本: [samples/lineart/title_logo_neon_forge.json](../lineart/title_logo_neon_forge.json)
 - 日本語ネオン正本: [samples/lineart/neon_yoroshiku_medicine.json](../lineart/neon_yoroshiku_medicine.json)
 - 中間 SVG: `generated/vector/lineart_icon_pipeline.svg`

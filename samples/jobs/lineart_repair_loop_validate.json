@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "commands": [
+    {
+      "type": "lineart.validate",
+      "input": "samples/lineart/repair_loop_issues.json",
+      "report": "generated/logs/lineart_repair_loop_validation.json"
+    }
+  ]
+}

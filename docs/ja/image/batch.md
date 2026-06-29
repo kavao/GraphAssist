@@ -230,6 +230,7 @@ uv run graphassist run samples/jobs/mosaic_pipeline.json
 - [samples/jobs/mosaic_pipeline.json](../../../samples/jobs/mosaic_pipeline.json)
 - [samples/jobs/birds_on_trunk_pipeline.json](../../../samples/jobs/birds_on_trunk_pipeline.json) — mosaic.decode → job（タイトル付き）
 - [samples/jobs/lineart_icon_pipeline.json](../../../samples/jobs/lineart_icon_pipeline.json) — lineart.render → job
+- [samples/jobs/lineart_repair_loop_validate.json](../../../samples/jobs/lineart_repair_loop_validate.json) — lineart.validate → Validation Report
 - [samples/jobs/tone_analyze_pipeline.json](../../../samples/jobs/tone_analyze_pipeline.json) — job → adjust → analyze compare
 - [samples/jobs/demo_catalog_pipeline_asset_ids.json](../../../samples/jobs/demo_catalog_pipeline_asset_ids.json) — 推奨（materialize + overlay_asset）
 - [samples/jobs/demo_catalog_pipeline.json](../../../samples/jobs/demo_catalog_pipeline.json)

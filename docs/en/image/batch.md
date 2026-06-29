@@ -193,6 +193,7 @@ Logs are written to `generated/logs/` as JSONL.
 - [samples/jobs/mosaic_pipeline.json](../../../samples/jobs/mosaic_pipeline.json)
 - [samples/jobs/birds_on_trunk_pipeline.json](../../../samples/jobs/birds_on_trunk_pipeline.json) — mosaic.decode → job (titled)
 - [samples/jobs/lineart_icon_pipeline.json](../../../samples/jobs/lineart_icon_pipeline.json) — lineart.render → job
+- [samples/jobs/lineart_repair_loop_validate.json](../../../samples/jobs/lineart_repair_loop_validate.json) — lineart.validate → Validation Report
 - [samples/jobs/tone_analyze_pipeline.json](../../../samples/jobs/tone_analyze_pipeline.json) — job → adjust → analyze compare
 - [samples/jobs/demo_catalog_pipeline_asset_ids.json](../../../samples/jobs/demo_catalog_pipeline_asset_ids.json) — recommended (materialize + overlay_asset)
 - [samples/jobs/demo_catalog_pipeline.json](../../../samples/jobs/demo_catalog_pipeline.json)

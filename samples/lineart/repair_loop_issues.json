@@ -1,0 +1,178 @@
+{
+  "version": "1.0",
+  "canvas": {
+    "width": 120,
+    "height": 120,
+    "background": "transparent"
+  },
+  "layers": [
+    {
+      "id": "main_layer",
+      "shapes": [
+        {
+          "id": "label_01",
+          "type": "rect",
+          "role": "label",
+          "container_id": "panel_01",
+          "allow_overlap": false,
+          "validation": {
+            "expected": {
+              "inside": "panel_01"
+            },
+            "severity": "error"
+          },
+          "x": 45,
+          "y": 45,
+          "width": 30,
+          "height": 25,
+          "fill": {
+            "type": "solid",
+            "color": "#ffffff"
+          },
+          "stroke": {
+            "color": "#111111",
+            "width": 1
+          }
+        },
+        {
+          "id": "panel_01",
+          "type": "rect",
+          "role": "container",
+          "x": 10,
+          "y": 10,
+          "width": 50,
+          "height": 50,
+          "fill": {
+            "type": "solid",
+            "color": "#f3f4f6"
+          },
+          "stroke": {
+            "color": "#111111",
+            "width": 2
+          }
+        },
+        {
+          "id": "icon_01",
+          "type": "rect",
+          "role": "decorative",
+          "x": 50,
+          "y": 50,
+          "width": 35,
+          "height": 30,
+          "fill": {
+            "type": "solid",
+            "color": "#dbeafe"
+          }
+        },
+        {
+          "id": "node_a",
+          "type": "rect",
+          "role": "node",
+          "x": 10,
+          "y": 85,
+          "width": 15,
+          "height": 15,
+          "fill": {
+            "type": "solid",
+            "color": "#dcfce7"
+          }
+        },
+        {
+          "id": "node_b",
+          "type": "rect",
+          "role": "node",
+          "x": 90,
+          "y": 85,
+          "width": 15,
+          "height": 15,
+          "fill": {
+            "type": "solid",
+            "color": "#dcfce7"
+          }
+        },
+        {
+          "id": "arrow_01",
+          "type": "path",
+          "role": "connector",
+          "connects_to": {
+            "from": "node_a",
+            "to": "node_b"
+          },
+          "validation": {
+            "expected": {
+              "near": {
+                "target": "node_b",
+                "max_distance": 4
+              },
+              "no_intersections": true
+            },
+            "severity": "error"
+          },
+          "commands": [
+            [
+              "M",
+              25,
+              88
+            ],
+            [
+              "L",
+              70,
+              96
+            ]
+          ],
+          "stroke": {
+            "color": "#111111",
+            "width": 2
+          }
+        },
+        {
+          "id": "barrier_01",
+          "type": "path",
+          "role": "annotation",
+          "commands": [
+            [
+              "M",
+              50,
+              78
+            ],
+            [
+              "L",
+              50,
+              108
+            ]
+          ],
+          "stroke": {
+            "color": "#ef4444",
+            "width": 2
+          }
+        },
+        {
+          "id": "spark_01",
+          "type": "rect",
+          "role": "decorative",
+          "x": 45,
+          "y": 85,
+          "width": 12,
+          "height": 15,
+          "fill": {
+            "type": "solid",
+            "color": "#fde68a"
+          }
+        },
+        {
+          "id": "bg_01",
+          "type": "rect",
+          "role": "background",
+          "x": 0,
+          "y": 0,
+          "width": 120,
+          "height": 120,
+          "fill": {
+            "type": "solid",
+            "color": "#f8fafc"
+          }
+        }
+      ]
+    }
+  ]
+}

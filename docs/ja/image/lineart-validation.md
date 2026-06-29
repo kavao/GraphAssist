@@ -162,6 +162,39 @@ LR2 では、この方針を `RepairLoopConfig` として Pydantic schema 化し
 修復可能な issue がなく blocked のみ残る場合は `blocked_by_scope` として停止します。
 同じ issue type と object ids が繰り返される場合は、`stop_when.repeated_issue_limit` で停止判定できます。
 
+## LLM 修正入力として返す形
+
+Validation Report を LLM に戻すときは、自然文だけで「ここを直す」と伝えず、保存済み JSON のパスと修正制約を一緒に渡します。
+これにより、同じ入力で再検証でき、`locked_ids` や `editable_ids` の制約も保持できます。
+
+```json
+{
+  "lineart_document": "samples/lineart/repair_loop_issues.json",
+  "validation_report": "generated/logs/lineart_repair_loop_validation.json",
+  "repair_loop": {
+    "version": "0.1",
+    "mode": "patch_preferred",
+    "max_iterations": 3,
+    "stop_when": {
+      "errors": 0,
+      "allow_warnings": true,
+      "repeated_issue_limit": 2
+    },
+    "repair_scope": {
+      "locked_ids": [],
+      "editable_ids": []
+    },
+    "inputs": {
+      "lineart_document": "samples/lineart/repair_loop_issues.json",
+      "validation_report": "generated/logs/lineart_repair_loop_validation.json"
+    }
+  },
+  "repair_focus": ["outside_container", "connector_misaligned", "line_intersection"]
+}
+```
+
+サンプルとして、複数の issue を意図的に含む [repair_loop_issues.json](../../../samples/lineart/repair_loop_issues.json) と、検証 report を出力する [lineart_repair_loop_validate.json](../../../samples/jobs/lineart_repair_loop_validate.json) を用意しています。
+
 ## メタデータとの関係
 
 LineArt Metadata は「何を意図しているか」を shape 側に持たせます。Validation Report は「実際に何が問題だったか」を出力します。Repair Loop は、その差分を LLM に戻して修正させます。
@@ -174,7 +207,7 @@ repair: move label_01 into panel_01
 
 ## 現在の実装範囲
 
-LV0.1-LV2.5 と LR2 では、次の処理を行います。
+LV0.1-LV4.2 と LR2 では、次の処理を行います。
 
 - `role`, `container_id`, `connects_to`, `validation.expected` を読み、参照先 shape が存在するか確認します。
 - `rect`, `ellipse`, `polygon`, `star`, `path`, `smooth_path`, `group` を point / polyline / polygon / bbox に正規化します。
@@ -191,6 +224,7 @@ LV0.1-LV2.5 と LR2 では、次の処理を行います。
 - `lineart render --validate-report` で、SVG/PNG render と同じ入力に対する Validation Report JSON v0.1 を保存します。
 - Batch `lineart.validate` command で、複数ステップの中に検証 report 出力を組み込めます。
 - Repair Loop JSON v0.1 の schema、停止条件、locked / editable scope、同一 issue 反復停止を検証します。
+- Validation Report JSON を LLM 修正入力として返すための JSON 形と fixture を用意します。
 
 ## 更新方針
 

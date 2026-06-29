@@ -162,6 +162,39 @@ When `editable_ids` is set, only that scope is considered editable.
 When no editable issues remain and only blocked issues are left, the loop stops with `blocked_by_scope`.
 Repeated issue type and object-id combinations can stop the loop with `stop_when.repeated_issue_limit`.
 
+## Returning LLM Repair Input
+
+When passing a Validation Report back to an LLM, do not rely on prose alone.
+Return the saved JSON paths together with repair constraints so the same input can be revalidated and `locked_ids` / `editable_ids` remain explicit.
+
+```json
+{
+  "lineart_document": "samples/lineart/repair_loop_issues.json",
+  "validation_report": "generated/logs/lineart_repair_loop_validation.json",
+  "repair_loop": {
+    "version": "0.1",
+    "mode": "patch_preferred",
+    "max_iterations": 3,
+    "stop_when": {
+      "errors": 0,
+      "allow_warnings": true,
+      "repeated_issue_limit": 2
+    },
+    "repair_scope": {
+      "locked_ids": [],
+      "editable_ids": []
+    },
+    "inputs": {
+      "lineart_document": "samples/lineart/repair_loop_issues.json",
+      "validation_report": "generated/logs/lineart_repair_loop_validation.json"
+    }
+  },
+  "repair_focus": ["outside_container", "connector_misaligned", "line_intersection"]
+}
+```
+
+The project includes [repair_loop_issues.json](../../../samples/lineart/repair_loop_issues.json), which intentionally triggers multiple issues, and [lineart_repair_loop_validate.json](../../../samples/jobs/lineart_repair_loop_validate.json), which writes the validation report.
+
 ## Relationship To Metadata
 
 LineArt Metadata stores what the drawing intends. Validation Report stores what actually failed. Repair Loop returns that difference to the LLM for correction.
@@ -174,7 +207,7 @@ repair: move label_01 into panel_01
 
 ## Current Implementation Scope
 
-LV0.1-LV2.5 and LR2 currently provide the checks below.
+LV0.1-LV4.2 and LR2 currently provide the checks below.
 
 - Reads `role`, `container_id`, `connects_to`, and `validation.expected`, then checks that referenced shape ids exist.
 - Normalizes `rect`, `ellipse`, `polygon`, `star`, `path`, `smooth_path`, and `group` into point / polyline / polygon / bbox geometry.
@@ -191,6 +224,7 @@ LV0.1-LV2.5 and LR2 currently provide the checks below.
 - Saves Validation Report JSON v0.1 for render inputs with `lineart render --validate-report`.
 - Adds Batch `lineart.validate` for report generation inside multi-step manifests.
 - Validates Repair Loop JSON v0.1 schema, stop conditions, locked / editable scope, and repeated issue stopping.
+- Provides the JSON shape and fixtures for returning Validation Report JSON as LLM repair input.
 
 ## Update Policy
 

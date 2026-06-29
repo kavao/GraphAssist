@@ -42,10 +42,12 @@ class BatchTest(unittest.TestCase):
         self.out_birds_base = self.root / "generated/images/birds_on_trunk_base.png"
         self.out_birds = self.root / "generated/images/birds_on_trunk.png"
         self.lineart_batch = self.root / "samples/jobs/lineart_icon_pipeline.json"
+        self.lineart_repair_batch = self.root / "samples/jobs/lineart_repair_loop_validate.json"
         self.out_lineart_svg = self.root / "generated/vector/lineart_icon_pipeline.svg"
         self.out_lineart_base = self.root / "generated/images/lineart_icon_pipeline_base.png"
         self.out_lineart = self.root / "generated/images/lineart_icon_pipeline.png"
         self.out_lineart_report = self.root / "generated/logs/lineart_icon_pipeline_validation_test.json"
+        self.out_lineart_repair_report = self.root / "generated/logs/lineart_repair_loop_validation.json"
         self._bootstrapped_fonts: list[Path] = []
         for path in (
             self.out_file,
@@ -58,6 +60,7 @@ class BatchTest(unittest.TestCase):
             self.out_lineart_base,
             self.out_lineart,
             self.out_lineart_report,
+            self.out_lineart_repair_report,
         ):
             if path.exists():
                 path.unlink()
@@ -74,6 +77,7 @@ class BatchTest(unittest.TestCase):
             self.out_lineart_base,
             self.out_lineart,
             self.out_lineart_report,
+            self.out_lineart_repair_report,
         ):
             if path.exists():
                 path.unlink()
@@ -179,6 +183,12 @@ class BatchTest(unittest.TestCase):
         )
         self.assertEqual(manifest.commands[0].type, "lineart.validate")
 
+    def test_lineart_repair_loop_validate_schema(self) -> None:
+        manifest = load_manifest(self.lineart_repair_batch)
+        self.assertIsInstance(manifest, BatchManifest)
+        self.assertEqual(len(manifest.commands), 1)
+        self.assertEqual(manifest.commands[0].type, "lineart.validate")
+
     def test_lineart_pipeline_dry_run(self) -> None:
         results = run_batch_file(self.lineart_batch, dry_run=True)
         self.assertEqual(
@@ -230,6 +240,14 @@ class BatchTest(unittest.TestCase):
             manifest_path.unlink(missing_ok=True)
         self.assertEqual(results, ["generated/logs/lineart_icon_pipeline_validation_test.json"])
         self.assertTrue(self.out_lineart_report.exists())
+
+    def test_run_lineart_repair_loop_validate_sample(self) -> None:
+        results = run_batch_file(self.lineart_repair_batch, dry_run=False)
+        self.assertEqual(results, ["generated/logs/lineart_repair_loop_validation.json"])
+        self.assertTrue(self.out_lineart_repair_report.exists())
+        data = json.loads(self.out_lineart_repair_report.read_text(encoding="utf-8"))
+        self.assertEqual(data["validation_result"], "failed")
+        self.assertGreaterEqual(data["summary"]["errors"], 2)
 
     @unittest.skipUnless(_has_svg_raster_backend(), "resvg-py or cairosvg is not installed")
     def test_run_lineart_pipeline(self) -> None:

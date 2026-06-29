@@ -98,20 +98,24 @@ class LineArtTest(unittest.TestCase):
     def setUp(self) -> None:
         self.root = project_root()
         self.sample = self.root / "samples/lineart/icon_minimal.json"
+        self.repair_sample = self.root / "samples/lineart/repair_loop_issues.json"
         self.output = self.root / "generated/vector/icon_minimal_test.svg"
         self.png_output = self.root / "generated/images/icon_minimal_test.png"
         self.report_output = self.root / "generated/logs/icon_minimal_validation_test.json"
+        self.repair_report_output = self.root / "generated/logs/lineart_repair_loop_validation_test.json"
         self.output.parent.mkdir(parents=True, exist_ok=True)
         self.png_output.parent.mkdir(parents=True, exist_ok=True)
         self.report_output.parent.mkdir(parents=True, exist_ok=True)
         self.output.unlink(missing_ok=True)
         self.png_output.unlink(missing_ok=True)
         self.report_output.unlink(missing_ok=True)
+        self.repair_report_output.unlink(missing_ok=True)
 
     def tearDown(self) -> None:
         self.output.unlink(missing_ok=True)
         self.png_output.unlink(missing_ok=True)
         self.report_output.unlink(missing_ok=True)
+        self.repair_report_output.unlink(missing_ok=True)
 
     def test_schema_accepts_metadata(self) -> None:
         data = json.loads(self.sample.read_text(encoding="utf-8"))
@@ -307,6 +311,23 @@ class LineArtTest(unittest.TestCase):
         self.assertEqual(report.summary.errors, 0)
         self.assertEqual(report.summary.warnings, 0)
         self.assertGreaterEqual(report.summary.geometries, 6)
+
+    def test_lineart_repair_loop_fixture_reports_core_issue_types(self) -> None:
+        document = LineArtDocument.model_validate(json.loads(self.repair_sample.read_text(encoding="utf-8")))
+        report = validate_lineart_document(document, input_path="samples/lineart/repair_loop_issues.json")
+        issue_types = {issue.type for issue in report.issues}
+        self.assertEqual(report.validation_result, "failed")
+        self.assertGreaterEqual(report.summary.errors, 2)
+        self.assertGreaterEqual(report.summary.warnings, 3)
+        self.assertTrue(
+            {
+                "outside_container",
+                "connector_misaligned",
+                "line_intersection",
+                "overlap",
+                "layer_order",
+            }.issubset(issue_types)
+        )
 
     def test_lineart_validate_reports_missing_metadata_reference(self) -> None:
         data = json.loads(self.sample.read_text(encoding="utf-8"))
@@ -627,6 +648,19 @@ class LineArtTest(unittest.TestCase):
         data = json.loads(self.report_output.read_text(encoding="utf-8"))
         self.assertEqual(data["validation_result"], "passed")
         self.assertGreaterEqual(data["summary"]["geometries"], 6)
+
+    def test_run_lineart_validate_repair_loop_fixture_writes_report(self) -> None:
+        out = run_lineart_validate(
+            Path("samples/lineart/repair_loop_issues.json"),
+            report=Path("generated/logs/lineart_repair_loop_validation_test.json"),
+            root=self.root,
+        )
+        self.assertEqual(out, self.repair_report_output)
+        data = json.loads(self.repair_report_output.read_text(encoding="utf-8"))
+        issue_types = {issue["type"] for issue in data["issues"]}
+        self.assertEqual(data["validation_result"], "failed")
+        self.assertIn("connector_misaligned", issue_types)
+        self.assertIn("layer_order", issue_types)
 
     def test_run_lineart_render_dry_run(self) -> None:
         out = run_lineart_render(

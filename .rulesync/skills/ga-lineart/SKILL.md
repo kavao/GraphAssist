@@ -136,6 +136,49 @@ Repair Loop LR2 として `RepairLoopConfig` schema、停止条件、`locked_ids
 uv run graphassist lineart validate samples/lineart/icon_minimal.json --report generated/logs/icon_minimal_validation.json
 ```
 
+## 修正入力フロー
+
+Validation Report JSON を LLM 修正入力として返すときは、自然文だけで指摘しない。
+次の順で、保存済み JSON のパスと修正制約を短く返す。
+
+1. `lineart validate --report` または Batch `lineart.validate` で report を保存する。
+2. report の `validation_result`, `summary`, `issues[]`, `repair_hint` を確認する。
+3. ユーザーへ次を返す。
+   - `lineart_document`: 修正対象 LineArt JSON
+   - `validation_report`: 保存済み report JSON
+   - `repair_loop`: `mode`, `max_iterations`, `stop_when`, `repair_scope`
+   - `repair_focus`: 優先 issue type と対象 id
+4. 修正時は `locked_ids` を変更せず、`editable_ids` が指定されていればその範囲だけを変更する。
+5. 修正後、同じ validate command を再実行して report を更新する。
+
+修正入力の最小形:
+
+```json
+{
+  "lineart_document": "samples/lineart/repair_loop_issues.json",
+  "validation_report": "generated/logs/lineart_repair_loop_validation.json",
+  "repair_loop": {
+    "version": "0.1",
+    "mode": "patch_preferred",
+    "max_iterations": 3,
+    "stop_when": {
+      "errors": 0,
+      "allow_warnings": true,
+      "repeated_issue_limit": 2
+    },
+    "repair_scope": {
+      "locked_ids": [],
+      "editable_ids": []
+    },
+    "inputs": {
+      "lineart_document": "samples/lineart/repair_loop_issues.json",
+      "validation_report": "generated/logs/lineart_repair_loop_validation.json"
+    }
+  },
+  "repair_focus": ["outside_container", "connector_misaligned", "line_intersection"]
+}
+```
+
 ## Batch 連携
 
 LineArt PNG を ImageJob で後処理するときは `lineart.render` の `png_output` を直後の `job.input` にする。
