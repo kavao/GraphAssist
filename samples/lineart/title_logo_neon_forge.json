@@ -1,0 +1,208 @@
+{
+  "version": "1.0",
+  "canvas": {
+    "width": 1200,
+    "height": 480,
+    "background": "transparent"
+  },
+  "definitions": {
+    "gradients": {
+      "panel_glow": {
+        "type": "linear",
+        "from": [80, 80],
+        "to": [1120, 400],
+        "stops": [
+          {
+            "offset": 0,
+            "color": "#102a43"
+          },
+          {
+            "offset": 0.55,
+            "color": "#171233"
+          },
+          {
+            "offset": 1,
+            "color": "#3b103f"
+          }
+        ]
+      },
+      "symbol_core": {
+        "type": "radial",
+        "center": [232, 230],
+        "radius": 115,
+        "stops": [
+          {
+            "offset": 0,
+            "color": "#fff7ad"
+          },
+          {
+            "offset": 0.5,
+            "color": "#16f4d0"
+          },
+          {
+            "offset": 1,
+            "color": "#276ef1"
+          }
+        ]
+      }
+    },
+    "clip_paths": {}
+  },
+  "layers": [
+    {
+      "id": "backing",
+      "shapes": [
+        {
+          "id": "logo_panel",
+          "type": "rect",
+          "role": "container",
+          "tags": ["title-logo", "background"],
+          "x": 64,
+          "y": 64,
+          "width": 1072,
+          "height": 352,
+          "rx": 34,
+          "ry": 34,
+          "fill": {
+            "type": "gradient",
+            "ref": "panel_glow"
+          },
+          "stroke": {
+            "color": "#b8fff3",
+            "width": 5,
+            "join": "round",
+            "cap": "round"
+          }
+        },
+        {
+          "id": "panel_shadow",
+          "type": "rect",
+          "role": "background",
+          "x": 82,
+          "y": 86,
+          "width": 1036,
+          "height": 310,
+          "rx": 24,
+          "ry": 24,
+          "fill": "none",
+          "stroke": {
+            "color": "#362260",
+            "width": 4,
+            "join": "round",
+            "cap": "round"
+          }
+        }
+      ]
+    },
+    {
+      "id": "symbol",
+      "shapes": [
+        {
+          "id": "symbol_ring",
+          "type": "ellipse",
+          "role": "decorative",
+          "tags": ["symbol", "ring"],
+          "cx": 232,
+          "cy": 230,
+          "rx": 112,
+          "ry": 112,
+          "fill": "none",
+          "stroke": {
+            "color": "#16f4d0",
+            "width": 9,
+            "join": "round",
+            "cap": "round"
+          }
+        },
+        {
+          "id": "symbol_diamond",
+          "type": "polygon",
+          "role": "decorative",
+          "tags": ["symbol", "diamond"],
+          "points": [[232, 92], [350, 230], [232, 368], [114, 230]],
+          "fill": "none",
+          "stroke": {
+            "color": "#ff4ecd",
+            "width": 6,
+            "join": "round",
+            "cap": "round"
+          }
+        },
+        {
+          "id": "symbol_star",
+          "type": "star",
+          "role": "decorative",
+          "tags": ["symbol", "spark"],
+          "cx": 232,
+          "cy": 230,
+          "points": 8,
+          "outer_radius": 88,
+          "inner_radius": 36,
+          "rotation": 22.5,
+          "fill": {
+            "type": "gradient",
+            "ref": "symbol_core"
+          },
+          "stroke": {
+            "color": "#ffffff",
+            "width": 4,
+            "join": "round",
+            "cap": "round"
+          }
+        },
+        {
+          "id": "symbol_bolt",
+          "type": "polygon",
+          "role": "decorative",
+          "tags": ["symbol", "bolt"],
+          "points": [[246, 140], [198, 236], [232, 236], [210, 326], [282, 210], [244, 210]],
+          "fill": {
+            "type": "solid",
+            "color": "#fff07a"
+          },
+          "stroke": {
+            "color": "#16121f",
+            "width": 4,
+            "join": "round",
+            "cap": "round"
+          }
+        }
+      ]
+    },
+    {
+      "id": "accent_lines",
+      "shapes": [
+        {
+          "id": "top_glint",
+          "type": "smooth_path",
+          "role": "annotation",
+          "tags": ["glow"],
+          "points": [[410, 132], [596, 102], [780, 124], [1038, 106]],
+          "interpolation": "catmull_rom",
+          "closed": false,
+          "stroke": {
+            "color": "#7cffea",
+            "width": 5,
+            "join": "round",
+            "cap": "round"
+          }
+        },
+        {
+          "id": "bottom_glint",
+          "type": "smooth_path",
+          "role": "annotation",
+          "tags": ["glow"],
+          "points": [[396, 356], [588, 386], [774, 360], [1056, 380]],
+          "interpolation": "catmull_rom",
+          "closed": false,
+          "stroke": {
+            "color": "#ff8de3",
+            "width": 5,
+            "join": "round",
+            "cap": "round"
+          }
+        }
+      ]
+    }
+  ]
+}

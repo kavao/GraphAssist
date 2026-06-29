@@ -1,0 +1,293 @@
+{
+  "version": "1.0",
+  "canvas": {
+    "width": 1400,
+    "height": 520,
+    "background": "transparent"
+  },
+  "definitions": {
+    "gradients": {
+      "sign_panel": {
+        "type": "linear",
+        "from": [80, 60],
+        "to": [1320, 460],
+        "stops": [
+          {
+            "offset": 0,
+            "color": "#071b2f"
+          },
+          {
+            "offset": 0.55,
+            "color": "#201141"
+          },
+          {
+            "offset": 1,
+            "color": "#401034"
+          }
+        ]
+      },
+      "mask_face": {
+        "type": "radial",
+        "center": [272, 258],
+        "radius": 150,
+        "stops": [
+          {
+            "offset": 0,
+            "color": "#ffe4ba"
+          },
+          {
+            "offset": 0.72,
+            "color": "#ffb36b"
+          },
+          {
+            "offset": 1,
+            "color": "#f06a54"
+          }
+        ]
+      }
+    },
+    "clip_paths": {}
+  },
+  "layers": [
+    {
+      "id": "sign",
+      "shapes": [
+        {
+          "id": "main_panel",
+          "type": "rect",
+          "role": "container",
+          "tags": ["sample", "japanese-neon"],
+          "x": 54,
+          "y": 54,
+          "width": 1292,
+          "height": 412,
+          "rx": 38,
+          "ry": 38,
+          "fill": {
+            "type": "gradient",
+            "ref": "sign_panel"
+          },
+          "stroke": {
+            "color": "#69ffe3",
+            "width": 6,
+            "join": "round",
+            "cap": "round"
+          }
+        },
+        {
+          "id": "inner_panel_line",
+          "type": "rect",
+          "role": "background",
+          "x": 82,
+          "y": 84,
+          "width": 1236,
+          "height": 352,
+          "rx": 26,
+          "ry": 26,
+          "fill": "none",
+          "stroke": {
+            "color": "#b249ff",
+            "width": 4,
+            "join": "round",
+            "cap": "round"
+          }
+        }
+      ]
+    },
+    {
+      "id": "hyottoko_mask",
+      "shapes": [
+        {
+          "id": "lantern_ring",
+          "type": "ellipse",
+          "role": "decorative",
+          "tags": ["hyottoko", "halo"],
+          "cx": 274,
+          "cy": 258,
+          "rx": 166,
+          "ry": 154,
+          "fill": "none",
+          "stroke": {
+            "color": "#ff4fd8",
+            "width": 8,
+            "join": "round",
+            "cap": "round"
+          }
+        },
+        {
+          "id": "mask_face",
+          "type": "ellipse",
+          "role": "decorative",
+          "tags": ["hyottoko", "face"],
+          "cx": 274,
+          "cy": 264,
+          "rx": 116,
+          "ry": 132,
+          "fill": {
+            "type": "gradient",
+            "ref": "mask_face"
+          },
+          "stroke": {
+            "color": "#ffffff",
+            "width": 5,
+            "join": "round",
+            "cap": "round"
+          }
+        },
+        {
+          "id": "head_scarf",
+          "type": "polygon",
+          "role": "decorative",
+          "tags": ["hyottoko", "scarf"],
+          "points": [[174, 156], [276, 108], [382, 156], [350, 190], [276, 160], [204, 190]],
+          "fill": {
+            "type": "solid",
+            "color": "#2fd5ff"
+          },
+          "stroke": {
+            "color": "#071421",
+            "width": 5,
+            "join": "round",
+            "cap": "round"
+          }
+        },
+        {
+          "id": "left_eye",
+          "type": "ellipse",
+          "role": "decorative",
+          "tags": ["hyottoko", "eye"],
+          "cx": 236,
+          "cy": 242,
+          "rx": 15,
+          "ry": 9,
+          "fill": {
+            "type": "solid",
+            "color": "#101010"
+          }
+        },
+        {
+          "id": "right_eye",
+          "type": "ellipse",
+          "role": "decorative",
+          "tags": ["hyottoko", "eye"],
+          "cx": 312,
+          "cy": 242,
+          "rx": 15,
+          "ry": 9,
+          "fill": {
+            "type": "solid",
+            "color": "#101010"
+          }
+        },
+        {
+          "id": "nose",
+          "type": "polygon",
+          "role": "decorative",
+          "tags": ["hyottoko", "nose"],
+          "points": [[274, 258], [250, 298], [302, 298]],
+          "fill": {
+            "type": "solid",
+            "color": "#ef6f5a"
+          },
+          "stroke": {
+            "color": "#101010",
+            "width": 3,
+            "join": "round",
+            "cap": "round"
+          }
+        },
+        {
+          "id": "puckered_mouth",
+          "type": "ellipse",
+          "role": "decorative",
+          "tags": ["hyottoko", "mouth"],
+          "cx": 344,
+          "cy": 316,
+          "rx": 38,
+          "ry": 24,
+          "fill": {
+            "type": "solid",
+            "color": "#e1134f"
+          },
+          "stroke": {
+            "color": "#fff7d6",
+            "width": 5,
+            "join": "round",
+            "cap": "round"
+          }
+        },
+        {
+          "id": "left_cheek",
+          "type": "ellipse",
+          "role": "decorative",
+          "tags": ["hyottoko", "cheek"],
+          "cx": 214,
+          "cy": 306,
+          "rx": 22,
+          "ry": 16,
+          "fill": {
+            "type": "solid",
+            "color": "#ff5b86"
+          }
+        },
+        {
+          "id": "neon_spark",
+          "type": "star",
+          "role": "decorative",
+          "tags": ["spark"],
+          "cx": 424,
+          "cy": 150,
+          "points": 6,
+          "outer_radius": 34,
+          "inner_radius": 12,
+          "rotation": 30,
+          "fill": {
+            "type": "solid",
+            "color": "#fff26a"
+          },
+          "stroke": {
+            "color": "#ff4fd8",
+            "width": 4,
+            "join": "round",
+            "cap": "round"
+          }
+        }
+      ]
+    },
+    {
+      "id": "neon_accents",
+      "shapes": [
+        {
+          "id": "cyan_swoosh",
+          "type": "smooth_path",
+          "role": "annotation",
+          "tags": ["neon", "swoosh"],
+          "points": [[500, 132], [690, 90], [910, 112], [1200, 92]],
+          "interpolation": "catmull_rom",
+          "closed": false,
+          "stroke": {
+            "color": "#68ffe8",
+            "width": 6,
+            "join": "round",
+            "cap": "round"
+          }
+        },
+        {
+          "id": "pink_swoosh",
+          "type": "smooth_path",
+          "role": "annotation",
+          "tags": ["neon", "swoosh"],
+          "points": [[498, 402], [720, 438], [932, 400], [1226, 426]],
+          "interpolation": "catmull_rom",
+          "closed": false,
+          "stroke": {
+            "color": "#ff66d6",
+            "width": 6,
+            "join": "round",
+            "cap": "round"
+          }
+        }
+      ]
+    }
+  ]
+}

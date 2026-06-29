@@ -1,0 +1,74 @@
+{
+  "version": "1.0",
+  "commands": [
+    {
+      "type": "lineart.render",
+      "input": "samples/lineart/neon_yoroshiku_medicine.json",
+      "output": "generated/vector/neon_yoroshiku_medicine_base.svg",
+      "png_output": "generated/images/neon_yoroshiku_medicine_base.png",
+      "png_width": 1400
+    },
+    {
+      "type": "job",
+      "input": "generated/images/neon_yoroshiku_medicine_base.png",
+      "output": "generated/images/neon_yoroshiku_medicine.png",
+      "operations": [
+        {
+          "type": "text",
+          "content": "ヨロシク",
+          "font": "assets/fonts/PixelMplus12-Regular.ttf",
+          "size": 104,
+          "color": "#fff7ff",
+          "stroke_color": "#3b0b52",
+          "stroke_width": 12,
+          "x": 510,
+          "y": 142
+        },
+        {
+          "type": "text",
+          "content": "ヨロシク",
+          "font": "assets/fonts/PixelMplus12-Regular.ttf",
+          "size": 104,
+          "color": "#ffffff",
+          "stroke_color": "#ff4fd8",
+          "stroke_width": 3,
+          "x": 510,
+          "y": 142
+        },
+        {
+          "type": "text",
+          "content": "メディシン",
+          "font": "assets/fonts/PixelMplus12-Regular.ttf",
+          "size": 104,
+          "color": "#fff6a8",
+          "stroke_color": "#2b0a42",
+          "stroke_width": 12,
+          "x": 510,
+          "y": 270
+        },
+        {
+          "type": "text",
+          "content": "メディシン",
+          "font": "assets/fonts/PixelMplus12-Regular.ttf",
+          "size": 104,
+          "color": "#fff6a8",
+          "stroke_color": "#68ffe8",
+          "stroke_width": 3,
+          "x": 510,
+          "y": 270
+        },
+        {
+          "type": "text",
+          "content": "HYOTTOKO NEON SAMPLE",
+          "font": "assets/fonts/DejaVuSans.ttf",
+          "size": 30,
+          "color": "#c7fff5",
+          "stroke_color": "#11051d",
+          "stroke_width": 2,
+          "x": 524,
+          "y": 410
+        }
+      ]
+    }
+  ]
+}

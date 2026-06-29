@@ -1,0 +1,52 @@
+{
+  "version": "1.0",
+  "commands": [
+    {
+      "type": "lineart.render",
+      "input": "samples/lineart/title_logo_neon_forge.json",
+      "output": "generated/vector/title_logo_neon_forge_base.svg",
+      "png_output": "generated/images/title_logo_neon_forge_base.png",
+      "png_width": 1200
+    },
+    {
+      "type": "job",
+      "input": "generated/images/title_logo_neon_forge_base.png",
+      "output": "generated/images/title_logo_neon_forge.png",
+      "operations": [
+        {
+          "type": "text",
+          "content": "NEON",
+          "font": "assets/fonts/DejaVuSans.ttf",
+          "size": 118,
+          "color": "#f7fff7",
+          "stroke_color": "#070716",
+          "stroke_width": 8,
+          "x": 386,
+          "y": 126
+        },
+        {
+          "type": "text",
+          "content": "FORGE",
+          "font": "assets/fonts/DejaVuSans.ttf",
+          "size": 118,
+          "color": "#ffdf6e",
+          "stroke_color": "#070716",
+          "stroke_width": 8,
+          "x": 388,
+          "y": 240
+        },
+        {
+          "type": "text",
+          "content": "VECTOR MARK SAMPLE",
+          "font": "assets/fonts/DejaVuSans.ttf",
+          "size": 30,
+          "color": "#b8fff3",
+          "stroke_color": "#070716",
+          "stroke_width": 2,
+          "x": 400,
+          "y": 374
+        }
+      ]
+    }
+  ]
+}
